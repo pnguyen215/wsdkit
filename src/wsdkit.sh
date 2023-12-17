@@ -59,4 +59,4 @@ function wsdkit() {
 }
 
 # Execute wsdkit to suggest options to install packages
-wsdkit
+# wsdkit
