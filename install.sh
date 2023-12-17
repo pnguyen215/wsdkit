@@ -3,37 +3,37 @@ echo "🚀 Installing wsdkit..."
 
 # Specify the GitHub repository owner and name
 owner="pnguyen215"
-repository="wsdkit"
-mark="$repository-master"
+wsdkit_repository="wsdkit"
+wsdkit_mark="$wsdkit_repository-master"
 
 # Try fetching the latest release information using GitHub API
-release_info=$(curl -s "https://api.github.com/repos/$owner/$repository/releases/latest")
+wsdkit_release_url=$(curl -s "https://api.github.com/repos/$owner/$wsdkit_repository/releases/latest")
 
 # Extract the download URL for the source code zip file
-zip_url=$(echo "$release_info" | grep -o '"browser_download_url": ".*wsdkit.*.zip"' | cut -d'"' -f4)
+wsdkit_zip_url=$(echo "$wsdkit_release_url" | grep -o '"browser_download_url": ".*wsdkit.*.zip"' | cut -d'"' -f4)
 
-if [ -z "$zip_url" ]; then
+if [ -z "$wsdkit_zip_url" ]; then
     echo "🚨 Latest release not found. Downloading from the master branch."
-    zip_url="https://github.com/$owner/$repository/archive/master.zip"
+    wsdkit_zip_url="https://github.com/$owner/$wsdkit_repository/archive/master.zip"
 fi
 
 # Specify the installation directory
-install_dir="$HOME/wsdkit"
+wsdkit_wrk="$HOME/wsdkit"
 
 # Download the repository as a zip file
-curl -LJO "$zip_url"
+curl -LJO "$wsdkit_zip_url"
 
 # Extract the contents of the zip file directly into the install directory
-unzip -o "$mark.zip" -d "$install_dir"
+unzip -o "$wsdkit_mark.zip" -d "$wsdkit_wrk"
 
 # Adjusted the directory structure to avoid nested wsdkit directory
-mv "$install_dir/$mark"/* "$install_dir/"
+mv "$wsdkit_wrk/$wsdkit_mark"/* "$wsdkit_wrk/"
 
 # Remove the unnecessary nested wsdkit directory
-rmdir "$install_dir/$mark"
+rmdir "$wsdkit_wrk/$wsdkit_mark"
 
 # Add command to .zshrc if not already present
-line="source $install_dir/src/wsdkit.sh"
+line="source $wsdkit_wrk/src/wsdkit.sh"
 zshrc="$HOME/.zshrc"
 
 if ! grep -q "$line" "$zshrc"; then
@@ -44,10 +44,6 @@ else
 fi
 
 # Clean up: remove the downloaded zip file
-rm "$mark.zip"
-
-# Adjust paths in wsdkit.sh for the moved files
-# sed -i "" "s|source src/brew.sh|source $install_dir/src/brew.sh|" "$install_dir/src/wsdkit.sh"
-# sed -i "" "s|source src/plugins.sh|source $install_dir/src/plugins.sh|" "$install_dir/src/wsdkit.sh"
+rm "$wsdkit_mark.zip"
 
 echo "🍺 wsdkit has been successfully installed. Please restart your terminal or run 'source ~/.zshrc' to apply changes."

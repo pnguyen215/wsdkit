@@ -1,16 +1,21 @@
-# Get the absolute path of the directory containing this script
-# SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
-
-echo "DEBUG: Script directory is $SCRIPT_DIR"
+function add_suffix_if_missing() {
+    local path="$1"
+    local suffix="$2"
+    if [[ "$path" != *"$suffix" ]]; then
+        path="$path/$suffix"
+    fi
+    echo "$path"
+}
+# Get the absolute path of wsdkit
+wsdkit_bash_source="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+wsdkit_suffix="/wsdkit"
+wsdkit_wrk=$(add_suffix_if_missing "$wsdkit_bash_source" "$wsdkit_suffix")
+echo "🍺 DEBUG: wsdkit working on $wsdkit_wrk"
 
 # Reload functions
-# source "$SCRIPT_DIR/src/brew.sh"
-# source "$SCRIPT_DIR/src/plugins.sh"
-# source "$SCRIPT_DIR/src/git.sh"
-. src/brew.sh
-. src/git.sh
-. src/plugins.sh
+source "$wsdkit_wrk/src/brew.sh"
+source "$wsdkit_wrk/src/plugins.sh"
+source "$wsdkit_wrk/src/git.sh"
 
 ######################
 #### Requirements ####
@@ -21,7 +26,7 @@ install_jq_if_needed
 
 # WsdKit installations
 function wsdkit() {
-    local json_file="assets/usage.json"
+    local json_file="$wsdkit_wrk/assets/usage.json"
 
     if [ ! -f "$json_file" ]; then
         echo "❌ Error JSON file 'usage.json' not found."
