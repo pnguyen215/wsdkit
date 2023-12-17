@@ -37,13 +37,17 @@ line="source $install_dir/src/wsdkit.sh"
 zshrc="$HOME/.zshrc"
 
 if ! grep -q "$line" "$zshrc"; then
-    echo "✅ Command added to .zshrc"
+    echo "✅ wsdkit added to .zshrc"
     echo "$line" >>"$zshrc"
 else
-    echo "🚨 Command already exists in .zshrc"
+    echo "🚨 wsdkit already exists in .zshrc"
 fi
 
 # Clean up: remove the downloaded zip file
 rm "$mark.zip"
+
+# Adjust paths in wsdkit.sh for the moved files
+# sed -i "" "s|source src/brew.sh|source $install_dir/src/brew.sh|" "$install_dir/src/wsdkit.sh"
+# sed -i "" "s|source src/plugins.sh|source $install_dir/src/plugins.sh|" "$install_dir/src/wsdkit.sh"
 
 echo "🍺 wsdkit has been successfully installed. Please restart your terminal or run 'source ~/.zshrc' to apply changes."

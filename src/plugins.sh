@@ -1,6 +1,9 @@
+# Get the absolute path of the directory containing this script
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 # Reload functions
-source src/brew.sh
-source src/git.sh
+source "$SCRIPT_DIR/src/brew.sh"
+source "$SCRIPT_DIR/src/git.sh"
 
 function install_homebrew_if_needed() {
     if ! is_homebrew_installed; then
