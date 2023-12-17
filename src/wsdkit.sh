@@ -8,7 +8,7 @@ function add_suffix_if_missing() {
 }
 # Get the absolute path of wsdkit
 wsdkit_bash_source="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
-wsdkit_suffix="/wsdkit"
+wsdkit_suffix="wsdkit"
 wsdkit_wrk=$(add_suffix_if_missing "$wsdkit_bash_source" "$wsdkit_suffix")
 echo "🍺 DEBUG: wsdkit working on $wsdkit_wrk"
 
@@ -17,15 +17,14 @@ source "$wsdkit_wrk/src/brew.sh"
 source "$wsdkit_wrk/src/plugins.sh"
 source "$wsdkit_wrk/src/git.sh"
 
-######################
-#### Requirements ####
-######################
-install_homebrew_if_needed
-install_fzf_if_needed
-install_jq_if_needed
-
 # WsdKit installations
 function wsdkit() {
+    ######################
+    #### Requirements ####
+    ######################
+    install_homebrew_if_needed
+    install_fzf_if_needed
+    install_jq_if_needed
     local json_file="$wsdkit_wrk/assets/usage.json"
 
     if [ ! -f "$json_file" ]; then
