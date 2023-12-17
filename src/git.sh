@@ -1,11 +1,3 @@
-# Get the absolute path of the directory containing this script
-# SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
-
-# Reload functions
-source "$SCRIPT_DIR/src/brew.sh"
-echo "git lib path: $SCRIPT_DIR/src/brew.sh"
-
 function git_user_info_setting() {
     local username=""
     local email=""

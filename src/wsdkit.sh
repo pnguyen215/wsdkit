@@ -2,9 +2,15 @@
 # SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 
+echo "DEBUG: Script directory is $SCRIPT_DIR"
+
 # Reload functions
-source "$SCRIPT_DIR/src/brew.sh"
-source "$SCRIPT_DIR/src/plugins.sh"
+# source "$SCRIPT_DIR/src/brew.sh"
+# source "$SCRIPT_DIR/src/plugins.sh"
+# source "$SCRIPT_DIR/src/git.sh"
+. src/brew.sh
+. src/git.sh
+. src/plugins.sh
 
 ######################
 #### Requirements ####
