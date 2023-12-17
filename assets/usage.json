@@ -1,0 +1,34 @@
+[
+  {
+    "title": "Install Homebrew",
+    "key": "wsd_install_brew",
+    "link": ["https://brew.sh"],
+    "enabled": false
+  },
+  {
+    "title": "Install Git",
+    "key": "wsd_install_git",
+    "link": [
+      "https://www.atlassian.com/git/tutorials/install-git#install-the-git-credential-osx"
+    ],
+    "enabled": true
+  },
+  {
+    "title": "Install Git Credentials",
+    "key": "wsd_install_git_credentials",
+    "link": [
+      "https://www.atlassian.com/git/tutorials/install-git#install-the-git-credential-osx"
+    ],
+    "enabled": true
+  },
+  {
+    "title": "Install Zsh",
+    "key": "wsd_install_zsh",
+    "link": [
+      "https://www.freecodecamp.org/news/how-to-configure-your-macos-terminal-with-zsh-like-a-pro-c0ab3f3c1156/",
+      "https://magz.techover.io/2020/02/29/cai-thien-terminal-mac-dinh-cua-macos-voi-zsh-va-zsh-autosuggestions/",
+      "https://dev.to/devsk1207/how-to-setup-zsh-on-mac-terminal-37dj"
+    ],
+    "enabled": true
+  }
+]
