@@ -7,7 +7,7 @@ function add_suffix_if_missing() {
     echo "$path"
 }
 # Get the absolute path of wsdkit
-wsdkit_bash_source="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+wsdkit_bash_source="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 wsdkit_suffix="wsdkit"
 wsdkit_wrk=$(add_suffix_if_missing "$wsdkit_bash_source" "$wsdkit_suffix")
 echo "🍺 DEBUG: wsdkit working on $wsdkit_wrk"
