@@ -1,3 +1,6 @@
+# Homebrew Utility Functions
+# These functions provide utility for checking and installing Homebrew and managing Homebrew packages.
+
 # Check if Homebrew is installed
 function is_homebrew_installed() {
   command -v brew >/dev/null 2>&1
@@ -28,3 +31,22 @@ function install_homebrew_pkg() {
   local pkg="$1"
   brew install "$pkg"
 }
+
+# Example usages:
+# Check if Homebrew is installed
+# if is_homebrew_installed; then
+#     echo "Homebrew is installed."
+# else
+#     echo "Homebrew is not installed."
+#     # Uncomment the line below to install Homebrew if not already installed
+#     # install_homebrew
+# fi
+
+# Check if a specific Homebrew package is installed
+# if is_homebrew_pkg_installed "package_name"; then
+#     echo "The package is installed."
+# else
+#     echo "The package is not installed."
+#     # Uncomment the line below to install the package if not already installed
+#     # install_homebrew_pkg "package_name"
+# fi

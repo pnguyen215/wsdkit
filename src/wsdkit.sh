@@ -1,24 +1,22 @@
-function add_suffix_if_missing() {
-    local path="$1"
-    local suffix="$2"
-    if [[ "$path" != *"$suffix" ]]; then
-        path="$path/$suffix"
-    fi
-    echo "$path"
+# Define the global variable
+function set_global_variables() {
+    filename_conf="/Users/$(whoami)/wsdkit/assets/usage.json"
 }
+
+# Set the global variables
+set_global_variables
+
+# Firstly, load all function helpers
+source "$(dirname "$0")/h.sh"
+
 # Get the absolute path of wsdkit
 wsdkit_bash_source="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 wsdkit_suffix="wsdkit"
-wsdkit_wrk=$(add_suffix_if_missing "$wsdkit_bash_source" "$wsdkit_suffix")
+wsdkit_wrk=$(add_suffix_if_needed "$wsdkit_bash_source" "$wsdkit_suffix")
 echo "🍺 DEBUG: wsdkit working on $wsdkit_wrk"
 
 # Reload functions
-# source "$wsdkit_wrk/src/brew.sh"
-# source "$wsdkit_wrk/src/plugins.sh"
-# source "$wsdkit_wrk/src/git.sh"
-source "$(dirname "$0")/brew.sh"
-source "$(dirname "$0")/plugins.sh"
-source "$(dirname "$0")/git.sh"
+source "$(dirname "$0")/deps.sh"
 
 # WsdKit installations
 function wsdkit() {
@@ -28,12 +26,10 @@ function wsdkit() {
     install_homebrew_if_needed
     install_fzf_if_needed
     install_jq_if_needed
-    # local json_file="$wsdkit_wrk/assets/usage.json"
-    # local json_file="$(dirname "$0")/assets/usage.json"
-    local json_file="/Users/$(whoami)/wsdkit/assets/usage.json"
+    local json_filename_conf=$filename_conf
 
-    if [ ! -f "$json_file" ]; then
-        echo "❌ Error JSON file 'usage.json' not found."
+    if [ ! -f "$json_filename_conf" ]; then
+        echo "❌ Error JSON file 'usage.json' not found: $filename_conf"
         return 1
     fi
 
@@ -42,10 +38,10 @@ function wsdkit() {
         local selected_key
         local selected_enabled
 
-        selected_title=$(jq -r '. | map(select(.enabled == true)) | .[].title' "$json_file" | fzf --prompt="👉 Select (Ctrl+C to exit): " --select-1)
+        selected_title=$(jq -r '. | map(select(.enabled == true)) | .[].title' "$json_filename_conf" | fzf --prompt="👉 Select (Ctrl+C to exit): " --select-1)
         if [ -n "$selected_title" ]; then
-            selected_key=$(jq -r --arg title "$selected_title" '.[] | select(.title == $title) | .key' "$json_file")
-            selected_enabled=$(jq -r --arg title "$selected_title" '.[] | select(.title == $title) | .enabled' "$json_file")
+            selected_key=$(jq -r --arg title "$selected_title" '.[] | select(.title == $title) | .key' "$json_filename_conf")
+            selected_enabled=$(jq -r --arg title "$selected_title" '.[] | select(.title == $title) | .enabled' "$json_filename_conf")
 
             if [ "$selected_enabled" = "true" ]; then
                 echo "✅ $selected_title"

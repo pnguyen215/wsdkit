@@ -1,3 +1,5 @@
+# git_user_info_setting function
+# This function prompts the user to enter their Git username and email, and updates the global Git configuration accordingly.
 function git_user_info_setting() {
     local username=""
     local email=""
