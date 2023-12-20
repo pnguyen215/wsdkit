@@ -1,6 +1,7 @@
 # Define the global variable
 function set_global_variables() {
     filename_conf="/Users/$(whoami)/wsdkit/assets/usage.json"
+    # filename_conf="./assets/usage.json"
 }
 
 # Set the global variables
@@ -58,6 +59,9 @@ function wsdkit() {
                     ;;
                 "wsd_install_git_credentials")
                     install_git_credentials_if_needed
+                    ;;
+                "wsd_uninstall_brew")
+                    wsd_exe_cmd_hook uninstall_homebrew
                     ;;
                 *)
                     echo "❓ Unsupported function."

@@ -32,6 +32,22 @@ function install_homebrew_pkg() {
   brew install "$pkg"
 }
 
+# Uninstall Homebrew
+function uninstall_homebrew() {
+  if is_homebrew_installed; then
+    echo "🚀 Uninstalling Homebrew..."
+    # Remove Homebrew installation
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)"
+
+    # Remove Homebrew-related lines from the shell profile
+    sed -i.bak '/# Homebrew/d' "$HOME/.zprofile"
+
+    echo "🍺 Homebrew uninstalled successfully!"
+  else
+    echo "🍺 Homebrew is not installed. Nothing to uninstall."
+  fi
+}
+
 # Example usages:
 # Check if Homebrew is installed
 # if is_homebrew_installed; then

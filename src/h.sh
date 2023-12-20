@@ -18,3 +18,26 @@ function add_suffix_if_needed() {
     fi
     echo "$path"
 }
+
+# wsd_exe_cmd function
+# Function to print and execute a command
+function wsd_exe_cmd() {
+    local command="$*"
+    # Print the command
+    echo "🚀 Executing: $command"
+    # Execute the command without using eval
+    "$@"
+    # eval "$command"
+}
+
+# wsd_exe_cmd_hook function
+# Print a command
+function wsd_exe_cmd_hook() {
+    local command="$*"
+    # Print the command
+    echo "👉 use: $command"
+}
+
+# Example usage:
+# wsd_exe_cmd ls -l
+# wsd_exe_cmd echo "Hello, World!"

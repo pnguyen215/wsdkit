@@ -6,6 +6,12 @@
     "enabled": false
   },
   {
+    "title": "Uninstall Homebrew",
+    "key": "wsd_uninstall_brew",
+    "link": ["https://brew.sh"],
+    "enabled": true
+  },
+  {
     "title": "Install Git",
     "key": "wsd_install_git",
     "link": [
