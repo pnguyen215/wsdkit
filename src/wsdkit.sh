@@ -28,7 +28,8 @@ function wsdkit() {
     install_homebrew_if_needed
     install_fzf_if_needed
     install_jq_if_needed
-    local json_file="$wsdkit_wrk/assets/usage.json"
+    # local json_file="$wsdkit_wrk/assets/usage.json"
+    local json_file="$(dirname "$0")/assets/usage.json"
 
     if [ ! -f "$json_file" ]; then
         echo "❌ Error JSON file 'usage.json' not found."
