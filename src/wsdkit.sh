@@ -13,9 +13,12 @@ wsdkit_wrk=$(add_suffix_if_missing "$wsdkit_bash_source" "$wsdkit_suffix")
 echo "🍺 DEBUG: wsdkit working on $wsdkit_wrk"
 
 # Reload functions
-source "$wsdkit_wrk/src/brew.sh"
-source "$wsdkit_wrk/src/plugins.sh"
-source "$wsdkit_wrk/src/git.sh"
+# source "$wsdkit_wrk/src/brew.sh"
+# source "$wsdkit_wrk/src/plugins.sh"
+# source "$wsdkit_wrk/src/git.sh"
+source "$(dirname "$0")/brew.sh"
+source "$(dirname "$0")/plugins.sh"
+source "$(dirname "$0")/git.sh"
 
 # WsdKit installations
 function wsdkit() {
