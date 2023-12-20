@@ -63,6 +63,9 @@ function wsdkit() {
                 "wsd_uninstall_brew")
                     wsd_exe_cmd_hook uninstall_homebrew
                     ;;
+                "wsd_list_git_configs")
+                    git_info_global_setting
+                    ;;
                 *)
                     echo "❓ Unsupported function."
                     ;;

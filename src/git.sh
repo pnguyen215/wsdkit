@@ -22,7 +22,11 @@ function git_user_info_setting() {
     done
 
     echo "🚀 Updating git configuration..."
-    git config --global user.name "$username"
-    git config --global user.email "$email"
+    wsd_exe_cmd git config --global user.name "$username"
+    wsd_exe_cmd git config --global user.email "$email"
     echo "🍺 Git username $username and email $email updated successfully!"
+}
+
+function git_info_global_setting() {
+    wsd_exe_cmd git config --global --list
 }

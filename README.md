@@ -19,3 +19,11 @@ As a developer, setting up your workspace on Linux or MacOS can often be a time-
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/pnguyen215/wsdkit/master/uninstall.sh)"
 ```
+
+## Usage
+
+Open your terminal and typing:
+
+```bash
+wsdkit
+```
