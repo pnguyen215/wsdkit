@@ -33,3 +33,7 @@ go.work
 # Logs
 logs/
 logs
+
+# Keys
+assets/secrets.txt
+assets/secrets.txt.bak

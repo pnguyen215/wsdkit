@@ -7,7 +7,7 @@ function install_homebrew_if_needed() {
         source "/Users/$(whoami)/.zprofile"
         echo "🍺 brew installed successfully! $(which brew)"
     else
-        echo "🍺 brew already installed successfully! $(which brew)"
+        # echo "🍺 brew already installed successfully! $(which brew)"
     fi
 }
 
@@ -17,7 +17,7 @@ function install_fzf_if_needed() {
         install_homebrew_pkg "fzf"
         echo "🍺 fzf installed successfully! $(which fzf)"
     else
-        echo "🍺 fzf already installed successfully! $(which fzf)"
+        # echo "🍺 fzf already installed successfully! $(which fzf)"
     fi
 }
 
@@ -27,7 +27,7 @@ function install_jq_if_needed() {
         install_homebrew_pkg "jq"
         echo "🍺 jq installed successfully! $(which jq)"
     else
-        echo "🍺 jq already installed successfully! $(which jq)"
+        # echo "🍺 jq already installed successfully! $(which jq)"
     fi
 }
 

@@ -44,5 +44,29 @@
       "https://dev.to/devsk1207/how-to-setup-zsh-on-mac-terminal-37dj"
     ],
     "enabled": true
+  },
+  {
+    "title": "Add secret.dev",
+    "key": "wsd_add_secret",
+    "link": [],
+    "enabled": true
+  },
+  {
+    "title": "Get secret.dev",
+    "key": "wsd_get_secret",
+    "link": [],
+    "enabled": true
+  },
+  {
+    "title": "Get all secret.dev",
+    "key": "wsd_get_all_secret",
+    "link": [],
+    "enabled": true
+  },
+  {
+    "title": "Remove secret.dev",
+    "key": "wsd_remove_secret",
+    "link": [],
+    "enabled": true
   }
 ]

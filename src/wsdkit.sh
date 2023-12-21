@@ -1,6 +1,11 @@
 # Define the global variable
 function set_global_variables() {
     filename_conf="/Users/$(whoami)/wsdkit/assets/usage.json"
+    filename_secret_conf="/Users/$(whoami)/wsdkit/assets/secrets.txt"
+    filename_secret_bak_conf="/Users/$(whoami)/wsdkit/assets/secrets.txt.bak"
+
+    # local -g vars
+    # filename_secret_conf="./assets/secrets.txt"
     # filename_conf="./assets/usage.json"
 }
 
@@ -65,6 +70,18 @@ function wsdkit() {
                     ;;
                 "wsd_list_git_configs")
                     git_info_global_setting
+                    ;;
+                "wsd_add_secret")
+                    add_secret
+                    ;;
+                "wsd_get_secret")
+                    get_secret_noop
+                    ;;
+                "wsd_remove_secret")
+                    delete_secret_noop
+                    ;;
+                "wsd_get_all_secret")
+                    get_all_secret
                     ;;
                 *)
                     echo "❓ Unsupported function."
