@@ -56,19 +56,19 @@ function send_telegram_git_activity() {
         echo "Usage: send_telegram_git_activity <message>"
         return 1
     fi
-    local token=$(get_secret JARVIS_TELEGRAM_BOT_TOKEN_1)
+    local token=$(get_secret "JARVIS_TELEGRAM_BOT_TOKEN_1")
     if is_blank "$token"; then
         echo "❌ Key 'JARVIS_TELEGRAM_BOT_TOKEN_1' not found"
         echo "🚀 Setting key 'JARVIS_TELEGRAM_BOT_TOKEN_1'"
         add_secret
-        token=$(get_secret JARVIS_TELEGRAM_BOT_TOKEN_1)
+        token=$(get_secret "JARVIS_TELEGRAM_BOT_TOKEN_1")
     fi
-    local chatId=$(get_secret JARVIS_TELEGRAM_BOT_GROUP_CHAT_ID_1)
+    local chatId=$(get_secret "JARVIS_TELEGRAM_BOT_GROUP_CHAT_ID_1")
     if is_blank "$chatId"; then
         echo "❌ Key 'JARVIS_TELEGRAM_BOT_GROUP_CHAT_ID_1' not found"
         echo "🚀 Setting key 'JARVIS_TELEGRAM_BOT_GROUP_CHAT_ID_1'"
         add_secret
-        chatId=$(get_secret JARVIS_TELEGRAM_BOT_GROUP_CHAT_ID_1)
+        chatId=$(get_secret "JARVIS_TELEGRAM_BOT_GROUP_CHAT_ID_1")
     fi
     local message="$1"
     send_telegram_message_setting "$token" "$chatId" "$message"
