@@ -41,3 +41,15 @@ function wsd_exe_cmd_hook() {
 # Example usage:
 # wsd_exe_cmd ls -l
 # wsd_exe_cmd echo "Hello, World!"
+
+function is_blank() {
+    local str="$1"
+    [[ -z "${str}" || -z "${str##*[![:space:]]*}" ]]
+}
+
+# Example usage:
+# if is_blank "$my_string"; then
+#     echo "String is blank or empty"
+# else
+#     echo "String is not blank or empty"
+# fi
