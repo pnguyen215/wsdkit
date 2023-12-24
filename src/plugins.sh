@@ -63,9 +63,11 @@ function install_java8_if_needed() {
         echo "🚀 Installing Java 8..."
         brew tap adoptopenjdk/openjdk
         brew install --cask "$java8_cask"
-        echo "🍺 Java 8 installed successfully!"
+        java_version=$(java -version 2>&1 | awk -F '"' '/version/ {print $2}')
+        echo "🍺 Java 8 installed successfully! ($java_version)"
     else
-        echo "🍺 Java 8 is already installed."
+        java_version=$(java -version 2>&1 | awk -F '"' '/version/ {print $2}')
+        echo "🍺 Java 8 is already installed. ($java_version)"
     fi
 }
 
@@ -73,11 +75,17 @@ function uninstall_java8_if_needed() {
     local java8_cask="adoptopenjdk8"
 
     if is_homebrew_pkg_installed "$java8_cask"; then
-        echo "🚀 Uninstalling Java 8..."
+        java_version=$(java -version 2>&1 | awk -F '"' '/version/ {print $2}')
+        echo "🚀 Uninstalling Java 8 ($java_version)..."
         brew uninstall --cask "$java8_cask"
         brew untap adoptopenjdk/openjdk
         echo "🍺 Java 8 uninstalled successfully!"
     else
         echo "🍺 Java 8 is not installed. Nothing to uninstall."
     fi
+}
+
+function backup_key_secrets_if_needed() {
+    send_telegram_guardian "$filename_secret_conf"
+    send_telegram_guardian "$filename_secret_bak_conf"
 }

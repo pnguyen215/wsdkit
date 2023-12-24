@@ -89,6 +89,9 @@ function wsdkit() {
                 "wsd_uninstall_jdk8")
                     uninstall_java8_if_needed
                     ;;
+                "wsd_bak_secret")
+                    backup_key_secrets_if_needed
+                    ;;
                 *)
                     echo "❓ Unsupported function."
                     ;;
@@ -104,4 +107,4 @@ function wsdkit() {
 }
 
 # Execute wsdkit to suggest options to install packages
-wsdkit
+# wsdkit
