@@ -24,7 +24,7 @@ function add_secret() {
     done
 
     # Check if the secret file exists, create it if not
-    [ -e "$filename_secret_conf" ] || touch "$filename_secret_conf"
+    create_file_if_not_exists "$filename_secret_conf"
 
     # Add or update the secret in the file
     echo "$key=$value" >>"$filename_secret_conf"

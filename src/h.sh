@@ -38,22 +38,56 @@ function wsd_exe_cmd_hook() {
     echo "👉 use: $command"
 }
 
-# Example usage:
-# wsd_exe_cmd ls -l
-# wsd_exe_cmd echo "Hello, World!"
-
-function is_blank() {
-    local var="$1"
-    if [ -z "$var" ]; then
-        return 0 # Return 0 for true (empty)
-    else
-        return 1 # Return 1 for false (not empty)
+# create_file_if_not_exists function
+# Creates a file with administrator privileges if it doesn't exist.
+# Parameters:
+#   $1: File path
+# Returns:
+#   0 on success, 1 on error
+function create_file_if_not_exists() {
+    if [ $# -lt 1 ]; then
+        echo "Usage: create_file_if_not_exists <filename>"
+        return 1
     fi
+
+    local filename="$1"
+    local directory="$(dirname "$filename")"
+
+    # Check if the directory exists
+    if [ ! -d "$directory" ]; then
+        echo "📁 Directory does not exist. Creating $directory with admin privileges..."
+
+        # Use sudo to create the directory with elevated privileges
+        sudo mkdir -p "$directory"
+
+        # Check if the directory was successfully created
+        if [ $? -eq 0 ]; then
+            echo "✅ Directory created successfully."
+        else
+            echo "❌ Error: Failed to create the directory."
+            return 1
+        fi
+    fi
+
+    # Check if the file exists
+    if [ ! -e "$filename" ]; then
+        echo "📄 File does not exist. Creating $filename with admin privileges..."
+
+        # Use sudo to create the file with elevated privileges
+        sudo touch "$filename"
+
+        # Check if the file was successfully created
+        if [ $? -eq 0 ]; then
+            echo "✅ File created successfully."
+            return 0
+        else
+            echo "❌ Error: Failed to create the file."
+            return 1
+        fi
+    fi
+
+    return 0
 }
 
 # Example usage:
-# if is_blank "$my_string"; then
-#     echo "String is blank or empty"
-# else
-#     echo "String is not blank or empty"
-# fi
+# create_file_if_not_exists "/Users/arisnguyenit97/wsdkit.conf/assets/secrets.txt"
