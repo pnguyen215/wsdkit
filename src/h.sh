@@ -86,10 +86,10 @@ function create_file_if_not_exists() {
         fi
 
         # the file permissions to allow read and write access only for the owner and no access for others.
-        sudo chmod 600 "$filename"
+        sudo chmod -R 777 "$filename"
     else
         # the file permissions to allow read and write access only for the owner and no access for others.
-        sudo chmod 600 "$filename"
+        sudo chmod -R 777 "$filename"
     fi
 
     return 0
