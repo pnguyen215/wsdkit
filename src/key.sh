@@ -79,7 +79,10 @@ function delete_secret() {
 
     # Check if the secret file exists, create it if not
     create_file_if_not_exists "$filename_secret_bak_conf"
-
+    # Checking here
+    # Allow permissions
+    sudo chmod 777 "$filename_secret_bak_conf"
+    sudo chmod 777 "$filename_secret_conf"
     # Check if the secret file exists
     if [ -e "$filename_secret_conf" ]; then
         sed -i.bak "/^$key=/d" "$filename_secret_conf"
