@@ -872,3 +872,165 @@ function git_commit_with_format() {
     fi
 }
 alias gitcommitwithformat="git_commit_with_format"
+
+# git_revert_branch_current function
+# Creates a new branch and reverts the current branch to its state, creating a clean slate for further development.
+
+# Usage:
+#   git_revert_branch_current
+
+# Description:
+#   The 'git_revert_branch_current' function creates a new branch with a timestamp in its name and reverts the current branch to its state.
+#   This operation is useful when you want to start fresh with a clean slate on your current development branch.
+#   The newly created branch can be used for experimental changes or isolating specific features.
+
+# Example:
+#   git_revert_branch_current
+
+# Recommendations:
+#   - Use this function when you want to create a clean branch for experimental changes or isolating specific features.
+#   - The new branch name includes a timestamp and the name of the current branch, providing a unique identifier.
+function git_revert_branch_current() {
+    local current_branch=$(git rev-parse --abbrev-ref HEAD)
+
+    # Check if the current branch is a valid commit hash or branch name
+    if ! git rev-parse --verify "$current_branch" >/dev/null 2>&1; then
+        echo "❌ Invalid commit/branch: $current_branch"
+        return 1
+    fi
+
+    timestamp=$(date +"%Y%m%d.%H%M%S")
+    echo "🍉 Pre. newly branch: $timestamp"
+    branch_name="rev/$timestamp"."$current_branch"
+
+    echo "🚀 Reverting to <commit/branch> $current_branch..."
+
+    # Perform the revert operation
+    wsd_exe_cmd git checkout -b "$branch_name"
+    wsd_exe_cmd git reset --hard "$current_branch"
+
+    msg="Revert branch '$current_branch' completed. New branch: \`$branch_name\`"
+    echo "$msg"
+    # Push the newly created branch to the remote origin
+    wsd_exe_cmd git push origin "$branch_name"
+    echo "🍺 Branch $branch_name pushed to origin."
+    send_telegram_git_activity "$msg"
+}
+alias gitrevertbranchcurrent="git_revert_branch_current"
+
+# git_backup_branch function
+# Creates a backup branch by creating a new branch and checking out a specific commit or branch.
+#
+# Usage:
+#   git_backup_branch <commit/branch>
+#
+# Parameters:
+#   <commit/branch>: The commit hash or branch name to create a backup from.
+#
+# Description:
+#   The 'git_backup_branch' function creates a backup branch by checking out a specific commit or branch.
+#   This is useful when you want to create a backup of the current state before making significant changes.
+#   The newly created backup branch includes a timestamp in its name for easy identification.
+
+# Example:
+#   git_backup_branch main
+#
+# Recommendations:
+#   - Use this function when you want to create a backup of a specific commit or branch before making significant changes.
+#   - The backup branch name includes a timestamp and the name of the target commit or branch, providing a unique identifier.
+function git_backup_branch() {
+    if [ $# -lt 1 ]; then
+        echo "Usage: git_backup_branch <commit/branch>"
+        return 1
+    fi
+
+    local target="$1"
+
+    # Check if the target is a valid commit hash or branch name
+    if ! git rev-parse --verify "$target" >/dev/null 2>&1; then
+        echo "❌ Invalid commit/branch: $target"
+        return 1
+    fi
+
+    timestamp=$(date +"%Y%m%d.%H%M%S")
+    local current_branch=$(git rev-parse --abbrev-ref HEAD)
+    echo "🍉 Pre. newly branch: $timestamp"
+    branch_name="backup/$timestamp"."$target"
+
+    echo "🚀 Backup to <commit/branch> $target..."
+
+    # Perform the backup operation
+    wsd_exe_cmd git checkout -b "$branch_name"
+
+    msg="Backup branch '$target' completed. New branch: \`$branch_name\`"
+    echo "$msg"
+
+    # Push the newly created branch to the remote origin
+    wsd_exe_cmd git push origin "$branch_name"
+    echo "🍺 Branch $branch_name pushed to origin."
+    wsd_exe_cmd git checkout "$current_branch"
+    send_telegram_git_activity "$msg"
+}
+alias gitbackupbranch="git_backup_branch"
+
+function git_backup_branch_current() {
+    local current_branch=$(git rev-parse --abbrev-ref HEAD)
+    git_backup_branch "$current_branch"
+}
+alias gitbackupbranchcurrent="git_backup_branch_current"
+
+# git_revert_branch_local function
+# Reverts to a specific commit or branch by creating a new branch and checking out the target commit or branch on the local repository.
+#
+# Usage:
+#   git_revert_branch_local <commit/branch>
+#
+# Parameters:
+#   <commit/branch>: The commit hash or branch name to revert to.
+#
+# Description:
+#   The 'git_revert_branch_local' function creates a new branch and checks out a specific commit or branch,
+#   effectively reverting the local repository to the specified state.
+#   The newly created branch includes a timestamp in its name for easy identification.
+#
+# Example:
+#   git_revert_branch_local main
+#
+# Recommendations:
+#   - Use this function when you want to revert the local repository to a specific commit or branch.
+#   - The revert operation is performed by creating a new branch, leaving the current branch unchanged.
+function git_revert_branch_local() {
+    if [ $# -lt 1 ]; then
+        echo "Usage: git_revert_branch_local <commit/branch>"
+        return 1
+    fi
+
+    local target="$1"
+
+    # Check if the target is a valid commit hash or branch name
+    if ! git rev-parse --verify "$target" >/dev/null 2>&1; then
+        echo "❌ Invalid commit/branch: $target"
+        return 1
+    fi
+
+    timestamp=$(date +"%Y%m%d.%H%M%S")
+    echo "🍉 Pre. newly branch: $timestamp"
+    branch_name="rev/$timestamp"."$target"
+
+    echo "🚀 Reverting to <commit/branch> $target..."
+
+    # Perform the revert operation
+    wsd_exe_cmd git checkout -b "$branch_name"
+    wsd_exe_cmd git reset --hard "$target"
+
+    msg="Revert branch '$target' completed on local. New branch: \`$branch_name\`"
+    echo "$msg"
+    send_telegram_git_activity "$msg"
+}
+alias gitrevertbranchlocal="git_revert_branch_local"
+
+function git_revert_branch_local_current() {
+    local current_branch=$(git rev-parse --abbrev-ref HEAD)
+    git_revert_branch_local "$current_branch"
+}
+alias gitrevertbranchlocalcurrent="git_revert_branch_local_current"
