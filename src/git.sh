@@ -698,3 +698,177 @@ function git_merge_push() {
     wsd_exe_cmd git checkout "$current_branch"
 }
 alias gitmergepush="git_merge_push"
+
+# git_revert_branch function
+# Creates a new branch reverting changes from a specified commit or branch and pushes the new branch to the remote repository.
+#
+# Usage:
+#   git_revert_branch <commit/branch>
+#
+# Parameters:
+#   <commit/branch>: The commit hash or branch name to which changes will be reverted.
+#
+# Description:
+#   The 'git_revert_branch' function automates the process of reverting changes from a specified commit or branch.
+#   It creates a new branch prefixed with 'rev/' and a timestamp, reverting changes to the specified commit or branch.
+#   The new branch is then pushed to the remote repository.
+#
+# Example:
+#   git_revert_branch feature-branch
+#   git_revert_branch abc1234
+#
+# Notes:
+#   - Ensure that you are in a Git repository before using this function.
+#   - The target can be a commit hash or branch name.
+#   - The new branch name is prefixed with 'rev/' followed by a timestamp and the specified commit/branch name.
+#
+# Recommendations:
+#   - This function is useful when you need to revert changes from a specific commit or branch and push the changes to a new branch.
+#   - It simplifies the process of creating a branch that contains the reverted changes, ensuring that the original branch remains unaffected.
+function git_revert_branch() {
+    if [ $# -lt 1 ]; then
+        echo "Usage: git_revert_branch <commit/branch>"
+        return 1
+    fi
+
+    target="$1"
+
+    # Check if the target is a valid commit hash or branch name
+    if ! git rev-parse --verify "$target" >/dev/null 2>&1; then
+        echo "❌ Invalid commit/branch: $target"
+        return 1
+    fi
+
+    timestamp=$(date +"%Y%m%d.%H%M%S")
+    echo "🍉 Pre. newly branch: $timestamp"
+    branch_name="rev/$timestamp"."$target"
+
+    echo "🚀 Reverting to <commit/branch> $target..."
+
+    # Perform the revert operation
+    wsd_exe_cmd git checkout -b "$branch_name"
+    wsd_exe_cmd git reset --hard "$target"
+
+    msg="Revert branch '$target' completed. New branch: \`$branch_name\`"
+    echo "$msg"
+
+    # Push the newly created branch to the remote origin
+    wsd_exe_cmd git push origin "$branch_name"
+    echo "🍺 Branch $branch_name pushed to origin."
+    send_telegram_git_activity "$msg"
+}
+alias gitrevertbranch="git_revert_branch"
+
+# git_commit_with_format function
+# Simplifies the process of creating well-formatted and standardized Git commit messages with emoji icons.
+
+# Usage:
+#   git_commit_with_format
+#
+# Description:
+#   The 'git_commit_with_format' function guides the user in creating a Git commit with a standardized format.
+#   It prompts the user to select a commit type (e.g., feat, fix, chore) and enter a concise commit description.
+#   Additionally, the user can optionally provide an issue number associated with the commit.
+#   The function constructs a commit message with an emoji icon representing the commit type, the commit description,
+#   and the issue number (if provided). The user is then prompted for confirmation to commit the changes.
+#
+# Example:
+#   git_commit_with_format
+#
+# Recommendations:
+#   - Use this function to ensure consistent and meaningful commit messages.
+#   - The commit types and corresponding emoji icons provide visual categorization of commit purposes.
+#   - Emoji icons help convey the nature of the change quickly.
+function git_commit_with_format() {
+    # Checking stages
+    # list_stage_interactive
+    # Define emoji icons for different commit types
+    emoji_icons=(
+        ":sparkles:"                 # feat
+        ":bug:"                      # fix
+        ":wrench:"                   # chore
+        ":books:"                    # docs
+        ":art:"                      # style
+        ":recycle:"                  # refactor
+        ":white_check_mark:"         # test
+        ":chart_with_upwards_trend:" # perf
+        ":construction:"             # WIP
+        ":zap:"                      # improvement
+        ":rewind:"                   # revert
+        ":lock:"                     # security
+        ":fire:"                     # remove
+        ":tada:"                     # initial source
+        ":loud_sound:"               # logs
+        ":gear:"                     # config
+        ":hammer:"                   # build
+        ":package:"                  # dependency
+        ":rocket:"                   # deployment
+        ":earth_americas:"           # localization
+        ":mag:"                      # search
+        ":alien:"                    # experimental
+        ":bookmark:"                 # version tag
+        ":mute:"                     # silent changes
+        ":warning:"                  # deprecation
+        ":gem:"                      # release
+    )
+    # Prompt for commit type
+    echo "Select commit type:"
+    select commit_type in "feat" "fix" "chore" "docs" "style" "refactor" "test" "perf" "WIP" "improvement" "revert" "security" "remove" "initial source" "logs" "config" "build" "dependency" "deployment" "localization" "search" "experimental" "version tag" "silent changes" "deprecation" "release"; do
+        break
+    done
+
+    # Prompt for commit description
+    local commit_description=""
+    while [ -z "$commit_description" ]; do
+        echo -n "Enter a concise and clear commit desc: "
+        read commit_description
+        if [ -z "$commit_description" ]; then
+            echo "❌ Invalid commit desc. Please try again."
+        fi
+    done
+
+    # Prompt for issue number
+    local issue_number=""
+    while [ -z "$issue_number" ]; do
+        echo -n "Enter issue number (e.g. #1): "
+        read issue_number
+        if [ -z "$issue_number" ]; then
+            echo "❌ Invalid issue number. Please try again."
+        fi
+    done
+
+    # Issue number binding
+    local issue_info=""
+    if [[ ! -z "$issue_number" ]]; then
+        issue_info=" $issue_number"
+    fi
+
+    # Construct the commit message
+    emoji_icon=${emoji_icons[$REPLY]}
+    commit_message="$emoji_icon $commit_type: $commit_description$issue_info"
+
+    # Display the constructed commit message
+    echo "🚀 Commit message:"
+    echo -e "$commit_message"
+
+    # Ask for confirmation
+    echo "❓ Wanna to commit this message? (y/n): "
+    read confirm
+
+    #   The user input is checked to be a valid confirmation response (y/yes/Yes/YES or n/no/No/NO).
+    #   If an invalid response is entered, the prompt will be repeated until a valid response is received.
+    while [[ ! "$confirm" =~ ^(y|yes|Yes|YES|n|no|No|NO)$ ]]; do
+        echo "❌ Invalid input. Please enter a valid response(y/n): "
+        read confirm
+    done
+
+    if [[ "$confirm" =~ ^(y|yes|Yes|YES)$ ]]; then
+        wsd_exe_cmd git commit -m "$commit_message"
+        send_telegram_git_activity "\`$commit_message\`"
+        wsd_exe_cmd git push -f
+        echo "🍺 The commit pushed successfully to origin."
+    else
+        echo "🍌 Commit aborted."
+    fi
+}
+alias gitcommitwithformat="git_commit_with_format"
