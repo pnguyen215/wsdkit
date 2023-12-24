@@ -84,6 +84,12 @@ function create_file_if_not_exists() {
             echo "❌ Error: Failed to create the file."
             return 1
         fi
+
+        # the file permissions to allow read and write access only for the owner and no access for others.
+        sudo chmod 600 "$filename"
+    else
+        # the file permissions to allow read and write access only for the owner and no access for others.
+        sudo chmod 600 "$filename"
     fi
 
     return 0
