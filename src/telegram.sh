@@ -56,20 +56,83 @@ function send_telegram_git_activity() {
         echo "Usage: send_telegram_git_activity <message>"
         return 1
     fi
-    local token=$(get_secret "JARVIS_TELEGRAM_BOT_TOKEN_1")
-    if is_blank "$token"; then
-        echo "❌ Key 'JARVIS_TELEGRAM_BOT_TOKEN_1' not found"
+    local message="$1"
+    # reloading file conf
+    source "$filename_secret_conf"
+    # local variables
+    local token="$JARVIS_TELEGRAM_BOT_TOKEN_1"
+    local chatId="$JARVIS_TELEGRAM_BOT_GROUP_CHAT_ID_1"
+
+    # setting token
+    if [[ -n "$token" ]]; then
+        echo "🚀 Processing token"
+    else
+        echo "❌ Key 'JARVIS_TELEGRAM_BOT_TOKEN_1' not found or empty."
         echo "🚀 Setting key 'JARVIS_TELEGRAM_BOT_TOKEN_1'"
         add_secret
-        token=$(get_secret "JARVIS_TELEGRAM_BOT_TOKEN_1")
+        source "$filename_secret_conf"
+        token="$JARVIS_TELEGRAM_BOT_TOKEN_1"
     fi
-    local chatId=$(get_secret "JARVIS_TELEGRAM_BOT_GROUP_CHAT_ID_1")
-    if is_blank "$chatId"; then
-        echo "❌ Key 'JARVIS_TELEGRAM_BOT_GROUP_CHAT_ID_1' not found"
+
+    # setting chatId
+    if [[ -n "$chatId" ]]; then
+        echo "🚀 Processing chat_id"
+    else
+        echo "❌ Key 'JARVIS_TELEGRAM_BOT_GROUP_CHAT_ID_1' not found or empty."
         echo "🚀 Setting key 'JARVIS_TELEGRAM_BOT_GROUP_CHAT_ID_1'"
         add_secret
-        chatId=$(get_secret "JARVIS_TELEGRAM_BOT_GROUP_CHAT_ID_1")
+        source "$filename_secret_conf"
+        chatId="$JARVIS_TELEGRAM_BOT_GROUP_CHAT_ID_1"
     fi
-    local message="$1"
+
     send_telegram_message_setting "$token" "$chatId" "$message"
 }
+
+# send_telegram_guardian function
+# Sends a predefined message and files to a Telegram bot using the Telegram Bot API.
+# Parameters:
+#   $1 and onwards: List of filenames (can include multiple files)
+# Returns:
+#   0 on success, 1 on error
+function send_telegram_guardian() {
+    if [ $# -lt 1 ]; then
+        echo "Usage: send_telegram_guardian <filename_1> [filename_2] [filename_3] ..."
+        return 1
+    fi
+
+    local files=("${@}")
+
+    # reloading file conf
+    source "$filename_secret_conf"
+    # local variables
+    local token="$JARVIS_TELEGRAM_BOT_TOKEN_1"
+    local chatId="$JARVIS_TELEGRAM_BOT_GROUP_CHAT_ID_2"
+
+    # setting token
+    if [[ -n "$token" ]]; then
+        echo "🚀 Processing token"
+    else
+        echo "❌ Key 'JARVIS_TELEGRAM_BOT_TOKEN_1' not found or empty."
+        echo "🚀 Setting key 'JARVIS_TELEGRAM_BOT_TOKEN_1'"
+        add_secret
+        source "$filename_secret_conf"
+        token="$JARVIS_TELEGRAM_BOT_TOKEN_1"
+    fi
+
+    # setting chatId
+    if [[ -n "$chatId" ]]; then
+        echo "🚀 Processing chat_id"
+    else
+        echo "❌ Key 'JARVIS_TELEGRAM_BOT_GROUP_CHAT_ID_2' not found or empty."
+        echo "🚀 Setting key 'JARVIS_TELEGRAM_BOT_GROUP_CHAT_ID_2'"
+        add_secret
+        source "$filename_secret_conf"
+        chatId="$JARVIS_TELEGRAM_BOT_GROUP_CHAT_ID_2"
+    fi
+
+    # Send files using send_telegram_files_setting function
+    send_telegram_files_setting "$token" "$chatId" "${files[@]}"
+}
+
+# Example usage:
+# send_telegram_guardian "/path/to/file1.txt" "/path/to/file2.jpg"

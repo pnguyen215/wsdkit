@@ -1,8 +1,8 @@
 # Define the global variable
 function set_global_variables() {
     filename_conf="/Users/$(whoami)/wsdkit/assets/usage.json"
-    filename_secret_conf="/Users/$(whoami)/wsdkit/assets/secrets.txt"
-    filename_secret_bak_conf="/Users/$(whoami)/wsdkit/assets/secrets.txt.bak"
+    filename_secret_conf="/Users/$(whoami)/wsdkit.conf/assets/secrets.txt"
+    filename_secret_bak_conf="/Users/$(whoami)/wsdkit.conf/assets/secrets.txt.bak"
 
     # local -g vars
     # filename_secret_conf="./assets/secrets.txt"
