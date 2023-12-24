@@ -55,3 +55,29 @@ function install_git_if_needed() {
 function install_git_credentials_if_needed() {
     git_user_info_setting
 }
+
+function install_java8_if_needed() {
+    local java8_cask="adoptopenjdk/openjdk/adoptopenjdk8"
+
+    if ! is_homebrew_pkg_installed "$java8_cask"; then
+        echo "🚀 Installing Java 8..."
+        brew tap adoptopenjdk/openjdk
+        brew install --cask "$java8_cask"
+        echo "🍺 Java 8 installed successfully!"
+    else
+        echo "🍺 Java 8 is already installed."
+    fi
+}
+
+function uninstall_java8_if_needed() {
+    local java8_cask="adoptopenjdk8"
+
+    if is_homebrew_pkg_installed "$java8_cask"; then
+        echo "🚀 Uninstalling Java 8..."
+        brew uninstall --cask "$java8_cask"
+        brew untap adoptopenjdk/openjdk
+        echo "🍺 Java 8 uninstalled successfully!"
+    else
+        echo "🍺 Java 8 is not installed. Nothing to uninstall."
+    fi
+}

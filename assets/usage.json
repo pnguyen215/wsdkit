@@ -68,5 +68,23 @@
     "key": "wsd_remove_secret",
     "link": [],
     "enabled": true
+  },
+  {
+    "title": "Install Java JDK(8)",
+    "key": "wsd_install_jdk8",
+    "link": [
+      "https://mkyong.com/java/how-to-install-java-on-mac-osx/#homebrew-install-a-specified-java-adoptopenjdk-on-macos",
+      "https://stackoverflow.com/questions/24342886/how-to-install-java-8-on-mac"
+    ],
+    "enabled": true
+  },
+  {
+    "title": "Uninstall Java JDK(8)",
+    "key": "wsd_uninstall_jdk8",
+    "link": [
+      "https://mkyong.com/java/how-to-install-java-on-mac-osx/#homebrew-install-a-specified-java-adoptopenjdk-on-macos",
+      "https://stackoverflow.com/questions/24342886/how-to-install-java-8-on-mac"
+    ],
+    "enabled": true
   }
 ]

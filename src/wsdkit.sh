@@ -83,6 +83,12 @@ function wsdkit() {
                 "wsd_get_all_secret")
                     get_all_secret
                     ;;
+                "wsd_install_jdk8")
+                    install_java8_if_needed
+                    ;;
+                "wsd_uninstall_jdk8")
+                    uninstall_java8_if_needed
+                    ;;
                 *)
                     echo "❓ Unsupported function."
                     ;;
@@ -98,4 +104,4 @@ function wsdkit() {
 }
 
 # Execute wsdkit to suggest options to install packages
-# wsdkit
+wsdkit
