@@ -1677,3 +1677,29 @@ function git_remove_remote_branches_except() {
     done
 }
 alias gitremoveremotebranchesexcept="git_remove_remote_branches_except"
+
+# git_count_remote_branch function
+# Counts the number of remote branches in the Git repository.
+#
+# Usage:
+#   git_count_remote_branch
+#
+# Description:
+#   The 'git_count_remote_branch' function counts the number of remote branches in the Git repository.
+#   It uses the 'git for-each-ref' command to retrieve the list of remote branches and counts the total.
+#
+# Example:
+#   git_count_remote_branch
+#
+# Recommendations:
+#   - Execute the function when you want to know the number of remote branches in the Git repository.
+#   - It can be useful for monitoring and reporting purposes.
+function git_count_remote_branch() {
+    repository_path=$(wsd_exe_cmd git rev-parse --show-toplevel)
+    current_repository=$(basename "$repository_path")
+    num_remote_branches=$(wsd_exe_cmd git for-each-ref --format='%(refname:short)' refs/remotes/origin | wc -l)
+    msg="🍺 Repository: \`$current_repository\`, no. remote branches: $num_remote_branches"
+    echo "$msg"
+    send_telegram_git_activity "$msg"
+}
+alias gitcountremotebranch="git_count_remote_branch"
