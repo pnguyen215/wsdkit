@@ -38,6 +38,65 @@ function wsd_exe_cmd_hook() {
     echo "👉 use: $command"
 }
 
+# allow_execute_perm function
+# Grants execute permission to the specified file or directory.
+#
+# Usage:
+#   allow_execute_perm <file/dir>
+#
+# Description:
+#   The 'allow_execute_perm' function sets the execute permission for the specified <file/dir>.
+#   This is useful for making a script or binary executable.
+#
+# Parameters:
+#   - file/dir: The path to the file or directory for which execute permission is to be granted.
+#
+# Example:
+#   allow_execute_perm ./my_script.sh
+#
+# Recommendations:
+#   - Use this function responsibly and only on files that should be executable.
+#   - Ensure that granting execute permission is necessary for the specified file or directory.
+function allow_execute_perm() {
+    if [ $# -lt 1 ]; then
+        echo "Usage: allow_execute_perm <file/dir>"
+        return 1
+    fi
+
+    wsd_exe_cmd chmod +x "$1"
+    echo "🍺 Execute permission granted to $1"
+}
+alias allowexecuteperm="allow_execute_perm"
+
+# allow_full_perm function
+# Grants full permissions (read, write, and execute) to the specified file or directory.
+#
+# Usage:
+#   allow_full_perm <file/dir>
+#
+# Description:
+#   The 'allow_full_perm' function sets the permission to 777 for the specified <file/dir>.
+#   This provides read, write, and execute permissions to the owner, group, and others.
+#
+# Parameters:
+#   - file/dir: The path to the file or directory for which full permissions are to be granted.
+#
+# Example:
+#   allow_full_perm ./my_script.sh
+#
+# Recommendations:
+#   - Use this function responsibly and only on files or directories that require full permissions.
+#   - Granting full permissions should be done with caution, especially for security-sensitive files.
+function allow_full_perm() {
+    if [ $# -lt 1 ]; then
+        echo "Usage: allow_full_perm <file/dir>"
+        return 1
+    fi
+    wsd_exe_cmd sudo chmod 777 "$1"
+    echo "🍺 Full permissions granted to $1 (read, write and execute)"
+}
+alias allowfullperm="allow_full_perm"
+
 # create_file_if_not_exists function
 # Creates a file with administrator privileges if it doesn't exist.
 # Parameters:
@@ -49,17 +108,13 @@ function create_file_if_not_exists() {
         echo "Usage: create_file_if_not_exists <filename>"
         return 1
     fi
-
     local filename="$1"
     local directory="$(dirname "$filename")"
-
     # Check if the directory exists
     if [ ! -d "$directory" ]; then
         echo "📁 Directory does not exist. Creating $directory with admin privileges..."
-
         # Use sudo to create the directory with elevated privileges
         sudo mkdir -p "$directory"
-
         # Check if the directory was successfully created
         if [ $? -eq 0 ]; then
             echo "✅ Directory created successfully."
@@ -72,10 +127,8 @@ function create_file_if_not_exists() {
     # Check if the file exists
     if [ ! -e "$filename" ]; then
         echo "📄 File does not exist. Creating $filename with admin privileges..."
-
         # Use sudo to create the file with elevated privileges
         sudo touch "$filename"
-
         # Check if the file was successfully created
         if [ $? -eq 0 ]; then
             echo "✅ File created successfully."
@@ -84,14 +137,12 @@ function create_file_if_not_exists() {
             echo "❌ Error: Failed to create the file."
             return 1
         fi
-
         # the file permissions to allow read and write access only for the owner and no access for others.
-        sudo chmod -R 777 "$filename"
+        allow_full_perm "$filename"
     else
         # the file permissions to allow read and write access only for the owner and no access for others.
-        sudo chmod -R 777 "$filename"
+        allow_full_perm "$filename"
     fi
-
     return 0
 }
 
@@ -117,7 +168,7 @@ function kill_ports() {
     for port in $ports; do
         # Check if the port is valid
         if ! [[ "$port" =~ ^[0-9]+$ ]]; then
-            echo "Invalid port number: $port. Skipping..."
+            echo "❌ Invalid port number: $port. Skipping..."
             continue
         fi
 
@@ -140,7 +191,7 @@ function kill_ports() {
 
         # Kill the process using the specified port
         kill $process
-        echo "Process on port $port has been killed."
+        echo "🍺 Process on port $port has been killed."
     done
 }
 
@@ -156,12 +207,12 @@ function copy_file() {
     local destination="$PWD/$filename"
 
     if [ -e "$destination" ]; then
-        echo "Error: Destination file already exists."
+        echo "❌ Error: Destination file already exists."
         return 1
     fi
 
     wsd_exe_cmd cp "$source" "$destination"
-    echo "File copied successfully to $destination"
+    echo "🍺 File copied successfully to $destination"
 }
 
 # Copy filename by new filename (copy from one file to many files)
@@ -179,12 +230,12 @@ function copy_files() {
         local destination_file="$destination/$filename"
 
         if [ -e "$destination_file" ]; then
-            echo "Error: Destination file '$filename' already exists."
+            echo "❌ Error: Destination file '$filename' already exists."
             continue
         fi
 
         wsd_exe_cmd cp "$source" "$destination_file"
-        echo "File copied successfully to $destination_file"
+        echo "🍺 File copied successfully to $destination_file"
     done
 }
 
@@ -199,19 +250,19 @@ function move_file() {
     local destination_folder="$2"
 
     if [ ! -d "$destination_folder" ]; then
-        echo "Error: Destination folder does not exist."
+        echo "❌ Error: Destination folder does not exist."
         return 1
     fi
 
     local destination="$destination_folder/$(basename "$source")"
 
     if [ -e "$destination" ]; then
-        echo "Error: Destination file already exists."
+        echo "❌ Error: Destination file already exists."
         return 1
     fi
 
     wsd_exe_cmd mv "$source" "$destination"
-    echo "File moved successfully to $destination"
+    echo "🍺 File moved successfully to $destination"
 }
 
 # Move multiple files to a specified folder
@@ -225,25 +276,25 @@ function move_files() {
     shift # Remove the first argument (destination folder) from the list
 
     if [ ! -d "$destination_folder" ]; then
-        echo "Error: Destination folder does not exist."
+        echo "❌ Error: Destination folder does not exist."
         return 1
     fi
 
     for source in "$@"; do
         if [ ! -e "$source" ]; then
-            echo "Error: Source file '$source' does not exist."
+            echo "❌ Error: Source file '$source' does not exist."
             return 1
         fi
 
         local destination="$destination_folder/$(basename "$source")"
 
         if [ -e "$destination" ]; then
-            echo "Error: Destination file '$destination' already exists."
+            echo "❌ Error: Destination file '$destination' already exists."
             return 1
         fi
 
         wsd_exe_cmd mv "$source" "$destination"
-        echo "File '$source' moved successfully to $destination"
+        echo "🍺 File '$source' moved successfully to $destination"
     done
 }
 
@@ -260,15 +311,15 @@ function rename_file() {
     local new_path="$PWD/$new_name"
 
     if [ ! -e "$old_path" ]; then
-        echo "Error: Source file/directory does not exist."
+        echo "❌ Error: Source file/directory does not exist."
         return 1
     fi
 
     if [ -e "$new_path" ]; then
-        echo "Error: Destination file/directory already exists."
+        echo "❌ Error: Destination file/directory already exists."
         return 1
     fi
 
     wsd_exe_cmd mv "$old_path" "$new_path"
-    echo "File/directory renamed successfully to $new_path"
+    echo "🍺 File/directory renamed successfully to $new_path"
 }
