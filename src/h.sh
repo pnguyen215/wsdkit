@@ -323,3 +323,54 @@ function rename_file() {
     wsd_exe_cmd mv "$old_path" "$new_path"
     echo "🍺 File/directory renamed successfully to $new_path"
 }
+
+# chmod_info function
+# Provides information about the 'chmod' command, including its usage, options, and modes.
+#
+# Usage:
+#   chmod_info
+#
+# Description:
+#   The 'chmod_info' function displays information about the 'chmod' command, explaining its usage,
+#   options, and modes for changing file mode bits. It covers both numeric and symbolic notations,
+#   file permissions, and provides examples of using the 'chmod' command.
+function chmod_info() {
+    echo "chmod - Change file mode bits"
+    echo
+    echo "Usage: chmod [OPTIONS] MODE FILE"
+    echo
+    echo "Options:"
+    echo "  -c  Like verbose but report only when a change is made"
+    echo "  -f  Suppress most error messages"
+    echo "  -R  Change files and directories recursively"
+    echo "  -v  Output a diagnostic for every file processed"
+    echo "  --help  Display this help and exit"
+    echo
+    echo "MODE can be specified in several ways:"
+    echo
+    echo "Numeric Notation:"
+    echo "  3-digit octal number: e.g., 644, 755"
+    echo "    First digit: owner permissions"
+    echo "    Second digit: group permissions"
+    echo "    Third digit: others permissions"
+    echo "    4: read, 2: write, 1: execute"
+    echo "    Sum the desired numbers to set the mode"
+    echo
+    echo "Symbolic Notation:"
+    echo "  Symbolic notation: e.g., u=rw,g=r,o=r"
+    echo "    u: user, g: group, o: others, a: all"
+    echo "    r: read, w: write, x: execute"
+    echo "    +: add permission, -: remove permission, =: set permission"
+    echo "    Use commas to separate multiple settings"
+    echo
+    echo "File Permissions:"
+    echo "  r (read)    - The file can be read"
+    echo "  w (write)   - The file can be modified"
+    echo "  x (execute) - The file can be executed as a program"
+    echo
+    echo "Examples:"
+    echo "  chmod 755 myfile.txt  # Owner has read, write, and execute permission; group and others have read and execute permission"
+    echo "  chmod u+x,g-w,o=r myfile.sh  # Add execute permission for user, remove write permission for group, and set read permission for others"
+    echo "  chmod -R a+rX directory  # Recursively add read and execute permission for all"
+}
+alias chmodinfo="chmod_info"
