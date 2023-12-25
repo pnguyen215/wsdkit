@@ -1034,3 +1034,646 @@ function git_revert_branch_local_current() {
     git_revert_branch_local "$current_branch"
 }
 alias gitrevertbranchlocalcurrent="git_revert_branch_local_current"
+
+# git_backup_branch_local function
+# Creates a backup of a specific commit or branch by creating a new branch and checking out the target commit or branch on the local repository.
+#
+# Usage:
+#   git_backup_branch_local <commit/branch>
+#
+# Parameters:
+#   <commit/branch>: The commit hash or branch name to create a backup of.
+#
+# Description:
+#   The 'git_backup_branch_local' function creates a new branch and checks out a specific commit or branch,
+#   effectively creating a backup of the local repository at the specified state.
+#   The newly created branch includes a timestamp in its name for easy identification.
+#
+# Example:
+#   git_backup_branch_local feature-branch
+#
+# Recommendations:
+#   - Use this function when you want to create a backup of the local repository at a specific commit or branch.
+#   - The backup operation is performed by creating a new branch, leaving the current branch unchanged.
+function git_backup_branch_local() {
+    if [ $# -lt 1 ]; then
+        echo "Usage: git_backup_branch_local <commit/branch>"
+        return 1
+    fi
+
+    local target="$1"
+
+    # Check if the target is a valid commit hash or branch name
+    if ! git rev-parse --verify "$target" >/dev/null 2>&1; then
+        echo "❌ Invalid commit/branch: $target"
+        return 1
+    fi
+
+    timestamp=$(date +"%Y%m%d.%H%M%S")
+    local current_branch=$(git rev-parse --abbrev-ref HEAD)
+    echo "🍉 Pre. newly branch: $timestamp"
+    branch_name="backup/$timestamp"."$target"
+
+    echo "🚀 Backup to <commit/branch> $target..."
+
+    # Perform the backup operation
+    wsd_exe_cmd git checkout -b "$branch_name"
+
+    msg="Backup branch '$target' completed on local. New branch: \`$branch_name\`"
+    echo "$msg"
+
+    wsd_exe_cmd git checkout "$current_branch"
+    send_telegram_git_activity "$msg"
+}
+alias gitbackupbranchlocal="git_backup_branch_local"
+
+function git_backup_branch_local_current() {
+    local current_branch=$(git rev-parse --abbrev-ref HEAD)
+    git_backup_branch_local "$current_branch"
+}
+alias gitbackupbranchlocalcurrent="git_backup_branch_local_current"
+
+# git_remove_branch_local function
+# Removes a local branch from the Git repository.
+#
+# Usage:
+#   git_remove_branch_local <branch_name>
+#
+# Parameters:
+#   <branch_name>: The name of the local branch to be removed.
+#
+# Description:
+#   The 'git_remove_branch_local' function deletes the specified local branch from the Git repository.
+#   It uses the '-D' option, which forces the deletion of the branch, even if changes are not merged.
+#   Use this function carefully, as it permanently deletes the local branch and its history.
+#
+# Example:
+#   git_remove_branch_local feature-branch
+#
+# Recommendations:
+#   - Before removing a branch, ensure that you don't have any unmerged changes that you want to keep.
+#   - Use this function when you want to clean up your local repository by removing obsolete branches.
+function git_remove_branch_local() {
+    echo "🚀 Removing branch $1 locally..."
+    wsd_exe_cmd git branch -D "$1"
+}
+alias gitremovebranchlocal="git_remove_branch_local"
+
+# git_rename_branch function
+# Renames a local Git branch and updates the remote repository accordingly.
+#
+# Usage:
+#   git_rename_branch <old_name> <new_name>
+#
+# Parameters:
+#   <old_name>: The current name of the local branch.
+#   <new_name>: The desired new name for the local branch.
+#
+# Description:
+#   The 'git_rename_branch' function renames a local Git branch and synchronizes the changes
+#   with the remote repository. It first renames the branch locally and then pushes the changes
+#   to the remote repository, updating the branch name remotely.
+#
+# Example:
+#   git_rename_branch feature-branch new-feature-branch
+#
+# Recommendations:
+#   - Ensure that you are on the branch you want to rename.
+#   - Provide meaningful and consistent branch names.
+#   - Be cautious when renaming branches that are shared with others.
+function git_rename_branch() {
+    if [ $# -lt 2 ]; then
+        echo "Usage: git_rename_branch <old_name> <new_name>"
+        return 1
+    fi
+
+    local current_branch=$(git rev-parse --abbrev-ref HEAD)
+    local old_name="$1"
+    local new_name="$2"
+
+    # Rename the branch locally
+    if git branch -m "$old_name" "$new_name"; then
+        echo "🍺 Local branch '$old_name' renamed to '$new_name'."
+    else
+        echo "❌ Error: Failed to rename local branch '$old_name'. Aborting."
+        return 1
+    fi
+
+    # Push the new branch name to the remote repository
+    if git push origin -u "$new_name"; then
+        echo "🍺 Pushed renamed branch '$new_name' to the remote repository."
+    else
+        echo "❌ Error: Failed to push renamed branch '$new_name' to the remote repository. Aborting."
+        return 1
+    fi
+
+    # Delete the old branch on the remote repository
+    if git push origin --delete "$old_name"; then
+        echo "🍺 Deleted old branch '$old_name' on the remote repository."
+    else
+        echo "❌ Error: Failed to delete old branch '$old_name' on the remote repository."
+    fi
+
+    msg="Branch '$old_name' renamed to \`$new_name\` both locally and remotely."
+    echo "$msg"
+    wsd_exe_cmd git checkout "$current_branch"
+    send_telegram_git_activity "$msg"
+}
+alias gitrenamebranch="git_rename_branch"
+
+# git_all_branch function
+# Lists all local and remote Git branches.
+#
+# Usage:
+#   git_all_branch
+#
+# Parameters:
+#   None.
+#
+# Description:
+#   The 'git_all_branch' function lists all local and remote Git branches.
+#   It displays both local branches and remote branches from the origin repository.
+#
+# Example:
+#   git_all_branch
+#
+# Recommendations:
+#   - Use this function to quickly view the available branches in your Git repository.
+#   - It provides an overview of both local and remote branches.
+function git_all_branch() {
+    echo "✅ Local branches:"
+    git for-each-ref --format='%(refname:short)' refs/heads |
+        while read local_branch; do
+            echo "🔁 $local_branch"
+        done
+
+    echo "✅ Remote branches:"
+    git for-each-ref --format='%(refname:short)' refs/remotes/origin |
+        while read remote_branch; do
+            echo "🔅 $remote_branch"
+        done
+}
+alias gitallbranch="git_all_branch"
+
+function calculate_time_diff() {
+    local timestamp="$1"
+    local current_time=$(date +%s)
+    local time_diff=$((current_time - timestamp))
+
+    if [ $time_diff -lt 60 ]; then
+        echo "just now"
+    elif [ $time_diff -lt 3600 ]; then
+        echo "$((time_diff / 60)) minutes ago"
+    elif [ $time_diff -lt 86400 ]; then
+        echo "$((time_diff / 3600)) hours ago"
+    else
+        echo "$((time_diff / 86400)) days ago"
+    fi
+}
+
+# git_all_branch_tz function
+# Lists all local and remote Git branches with modified timestamps.
+#
+# Usage:
+#   git_all_branch_tz
+#
+# Parameters:
+#   None.
+#
+# Description:
+#   The 'git_all_branch_tz' function lists all local and remote Git branches
+#   along with their last modified timestamps. It uses a custom time format
+#   to display the time difference between the current time and the last modification.
+#
+# Example:
+#   git_all_branch_tz
+#
+# Recommendations:
+#   - Use this function to view branches along with their last modification timestamps.
+#   - The modified timestamp is presented in a human-readable format.
+function git_all_branch_tz() {
+    echo "✅ Local branches:"
+    git for-each-ref --format='%(refname:short)' refs/heads |
+        while read local_branch; do
+            branch_date=$(git log -n 1 --format=%cd --date=format:'%s' "$local_branch")
+            echo "🔁 $local_branch (🔸 modified_at: $(calculate_time_diff $branch_date))"
+        done
+
+    echo "✅ Remote branches:"
+    git for-each-ref --format='%(refname:short)' refs/remotes/origin |
+        while read remote_branch; do
+            branch_date=$(git log -n 1 --format=%cd --date=format:'%s' "$remote_branch")
+            echo "🔅 $remote_branch (🔸 modified_at: $(calculate_time_diff $branch_date))"
+        done
+}
+alias gitallbranchtz="git_all_branch_tz"
+
+# git_remove_branches function
+# Removes specified Git branches both locally and on the remote repository.
+#
+# Usage:
+#   git_remove_branches <branch_name1> [<branch_name2> ...]
+#
+# Parameters:
+#   <branch_name1>, [<branch_name2>, ...]: Names of the branches to be removed.
+#
+# Description:
+#   The 'git_remove_branches' function deletes the specified branches both
+#   locally and on the remote repository. It uses 'git branch -D' to force
+#   delete the branches locally and 'git push origin --delete' to delete
+#   the branches on the remote repository.
+#
+# Example:
+#   git_remove_branches feature-branch bug-fix
+#
+# Recommendations:
+#   - Use this function to remove one or more branches conveniently.
+#   - Be cautious when using this function, as it permanently deletes branches.
+function git_remove_branches() {
+    if [ $# -eq 0 ]; then
+        echo "❌ Error: No branch names provided."
+        return 1
+    fi
+
+    local current_branch=$(git rev-parse --abbrev-ref HEAD)
+    for branch in "$@"; do
+        echo "🚀 Removing branch $branch locally..."
+        wsd_exe_cmd git branch -D "$branch"
+
+        echo "🚀 Removing branch $branch on remote..."
+        wsd_exe_cmd git push origin --delete "$branch"
+    done
+
+    wsd_exe_cmd git checkout "$current_branch"
+}
+alias gitremovebranches="git_remove_branches"
+
+# git_create_branches function
+# Creates and switches to new Git branches, and pushes them to the remote repository.
+#
+# Usage:
+#   git_create_branches <branch_name1> [<branch_name2> ...]
+#
+# Parameters:
+#   <branch_name1>, [<branch_name2>, ...]: Names of the branches to be created.
+#
+# Description:
+#   The 'git_create_branches' function creates new branches with the specified names
+#   and switches to each of them. It then pushes the newly created branches to the
+#   remote repository using 'git checkout -b' and 'git push -u origin'.
+#
+# Example:
+#   git_create_branches feature-branch bug-fix
+#
+# Recommendations:
+#   - Use this function to conveniently create and switch to multiple branches.
+#   - Ensure that branch names adhere to Git naming conventions.
+#   - Regularly push branches to the remote repository to make them accessible to others.
+function git_create_branches() {
+    if [ $# -eq 0 ]; then
+        echo "❌ Error: No branch names provided."
+        return 1
+    fi
+    local current_branch=$(git rev-parse --abbrev-ref HEAD)
+    for branch in "$@"; do
+        if ! [[ "$branch" =~ ^[a-zA-Z0-9_-]+$ ]]; then
+            echo "❌ Error: Invalid branch name '$branch'. Branch names can only contain letters, numbers, hyphens, and underscores."
+            continue
+        fi
+        echo "🚀 Creating and switching to branch $branch..."
+        wsd_exe_cmd git checkout -b "$branch"
+        echo "🚀 Pushing branch $branch to remote..."
+        wsd_exe_cmd git push -u origin "$branch"
+    done
+    wsd_exe_cmd git checkout "$current_branch"
+}
+alias gitcreatebranches="git_create_branches"
+
+# git_fetch_branches function
+# Checks out and fetches specified Git branches from the remote repository.
+#
+# Usage:
+#   git_fetch_branches <branch_name1> [<branch_name2> ...]
+#
+# Parameters:
+#   <branch_name1>, [<branch_name2>, ...]: Names of the branches to be fetched.
+#
+# Description:
+#   The 'git_fetch_branches' function checks out each specified branch and fetches
+#   it from the remote repository using 'git checkout', 'git fetch --all --tags', and 'git pull -f'.
+#
+# Example:
+#   git_fetch_branches feature-branch bug-fix
+#
+# Recommendations:
+#   - Use this function to efficiently check out and fetch multiple branches.
+#   - Ensure that the branches you want to fetch already exist on the remote repository.
+#   - Regularly fetch branches to keep the local repository up-to-date.
+function git_fetch_branches() {
+    if [ $# -eq 0 ]; then
+        echo "❌ Error: No branch names provided."
+        return 1
+    fi
+    local current_branch=$(git rev-parse --abbrev-ref HEAD)
+    for branch in "$@"; do
+        if ! git show-ref --verify --quiet "refs/heads/$branch"; then
+            echo "❌ Error: Branch '$branch' does not exist."
+            continue
+        fi
+        echo "🚀 Checking out branch $branch"
+        wsd_exe_cmd git fetch --all --tags
+        echo "🚀 Fetching branch $branch from remote..."
+        wsd_exe_cmd git fetch origin "$branch":"$branch"
+        wsd_exe_cmd git checkout "$branch"
+        wsd_exe_cmd git pull -f
+    done
+    wsd_exe_cmd git checkout "$current_branch"
+}
+alias gitfetchbranches="git_fetch_branches"
+
+# git_files_changed function
+# Displays a list of files that have been changed in the Git repository.
+#
+# Usage:
+#   git_files_changed
+#
+# Parameters:
+#   None.
+#
+# Description:
+#   The 'git_files_changed' function uses 'git status --porcelain' to retrieve
+#   a list of files with their status indicating whether they have been modified,
+#   added, deleted, or have other changes in the working directory.
+#
+# Example:
+#   git_files_changed
+#
+# Recommendations:
+#   - Use this function to quickly identify files with changes in the Git repository.
+#   - Check the status of files before committing to ensure you are including the intended changes.
+function git_files_changed() {
+    wsd_exe_cmd git status --porcelain | awk '{print $2}'
+}
+alias gitfileschanged="git_files_changed"
+
+# git_files_stage function
+# Stages changed files for commit in the Git repository.
+#
+# Usage:
+#   git_files_stage
+#
+# Parameters:
+#   None.
+#
+# Description:
+#   The 'git_files_stage' function iterates over the files that have changes in
+#   the working directory (using the 'git_files_changed' function) and prompts the
+#   user to stage each file for the next commit. The user can choose to stage or
+#   skip each file.
+#
+# Example:
+#   git_files_stage
+#
+# Recommendations:
+#   - Use this function to interactively stage files before committing changes.
+#   - Allows fine-grained control over the files to be included in the next commit.
+#
+# Dependencies:
+#   - Requires the 'git_files_changed' function.
+function git_files_stage() {
+    for file in $(git_files_changed); do
+        echo -n "📌 Stage '$file' for commit? (y/n): "
+        read answer
+
+        if [[ "$answer" == "y" ]]; then
+            wsd_exe_cmd git add "$file"
+            echo "✅ '$file' staged."
+        elif [[ "$answer" == "n" ]]; then
+            echo "🔅 '$file' skipped."
+        else
+            echo "❌ Invalid input. Skipping '$file'."
+        fi
+    done
+}
+alias gitfilesstage="git_files_stage"
+
+# git_latest_tag function
+# Displays the latest released tag in the Git repository.
+#
+# Usage:
+#   git_latest_tag
+#
+# Parameters:
+#   None.
+#
+# Description:
+#   The 'git_latest_tag' function retrieves and displays the latest released tag
+#   in the repository. It sorts the tags by creation date and selects the top one.
+#
+# Example:
+#   git_latest_tag
+#
+# Recommendations:
+#   - Use this function to quickly find the latest released tag in the repository.
+function git_latest_tag() {
+    latest_tag=$(wsd_exe_cmd git for-each-ref --sort=-creatordate --format='%(tag)' refs/tags | head -n 1)
+    echo "🍺 $latest_tag"
+}
+alias gitlatesttag="git_latest_tag"
+
+# git_remove_all_tags function
+# Removes all local and remote tags in the Git repository.
+#
+# Usage:
+#   git_remove_all_tags
+#
+# Parameters:
+#   None.
+#
+# Description:
+#   The 'git_remove_all_tags' function removes all local and remote tags in the
+#   repository. It iterates through the existing tags, deletes them locally,
+#   and then removes them from the remote repository.
+#
+# Example:
+#   git_remove_all_tags
+#
+# Recommendations:
+#   - Use this function cautiously as it permanently deletes all tags.
+function git_remove_all_tags() {
+    # Remove all local tags
+    for tag in $(git tag); do
+        echo "🚀 Removing local tag $tag..."
+        wsd_exe_cmd git tag -d "$tag"
+    done
+    # Remove all remote tags
+    for tag in $(git ls-remote --tags origin | awk -F '/' '{print $3}'); do
+        msg="🚀 Removing remote tag $tag..."
+        echo "$msg"
+        wsd_exe_cmd git push origin :refs/tags/"$tag"
+        send_telegram_git_activity "$msg"
+    done
+}
+alias gitremovealltags="git_remove_all_tags"
+
+# git_commit_tempory function
+# Creates a temporary commit with a predefined message for pinning the 'committion' tool.
+#
+# Usage:
+#   git_commit_tempory
+#
+# Parameters:
+#   None.
+#
+# Description:
+#   The 'git_commit_tempory' function creates a temporary commit with the
+#   message ":ok_hand: chore: pin committion tempory". This commit can be
+#   useful when pinning a specific version of the 'committion' tool in the repository.
+#
+# Example:
+#   git_commit_tempory
+#
+# Recommendations:
+#   - Use this function for creating a temporary commit to pin 'committion' or
+#     when a temporary commit is needed for other purposes.
+function git_commit_tempory() {
+    wsd_exe_cmd git commit -m ":ok_hand: chore: pin committion tempory"
+}
+alias gitcommittempory="git_commit_tempory"
+
+# git_remove_except_local_and_remote_branches function
+# Removes local and remote branches except the specified ones.
+#
+# Usage:
+#   git_remove_except_local_and_remote_branches <branch_names...>
+#
+# Parameters:
+#   <branch_names...>: List of branch names to keep. All other branches will be removed.
+#
+# Description:
+#   The 'git_remove_except_local_and_remote_branches' function removes local branches
+#   and their corresponding remote branches, except for the branches specified in the
+#   parameter list. It is useful for cleaning up branches that are no longer needed.
+#
+# Example:
+#   git_remove_except_local_and_remote_branches main develop feature/cool-feature
+#
+# Recommendations:
+#   - Use this function to clean up branches that are no longer required in both local
+#     and remote repositories.
+#   - Provide the list of branches you want to keep as parameters to the function.
+function git_remove_except_local_and_remote_branches() {
+    if [ $# -eq 0 ]; then
+        echo "❌ Error: No branch names provided."
+        return 1
+    fi
+    local current_branch=$(git rev-parse --abbrev-ref HEAD)
+    # Create an array of branches to keep
+    local branches_to_keep=("$@")
+    # Loop through all local branches
+    for branch in $(git for-each-ref --format '%(refname:short)' refs/heads/); do
+        # Check if the current branch is in the list of branches to keep
+        if [[ ! " ${branches_to_keep[@]} " =~ " $branch " ]]; then
+            # If not, remove the branch locally
+            echo "🚀 Removing branch $branch locally..."
+            wsd_exe_cmd git branch -D "$branch"
+
+            # Remove the branch on remote
+            echo "🚀 Removing branch $branch on remote..."
+            wsd_exe_cmd git push origin --delete "$branch"
+        fi
+    done
+    # Switch back to the original branch
+    wsd_exe_cmd git checkout "$current_branch"
+}
+alias gitremoveexceptlocalandremotebranches="git_remove_except_local_and_remote_branches"
+
+# git_fetch_repository function
+# Clones a Git repository with the specified URI into a local folder.
+#
+# Usage:
+#   git_fetch_repository <repo_URI> <folder_name>
+#
+# Parameters:
+#   <repo_URI>: The URI of the Git repository to clone.
+#   <folder_name>: The name of the local folder to clone the repository into.
+#
+# Description:
+#   The 'git_fetch_repository' function clones a Git repository with the specified URI
+#   into a local folder. It uses the 'git clone' command with the '--depth 1' option for
+#   a shallow clone, fetching only the latest commit.
+#
+# Example:
+#   git_fetch_repository https://github.com/example/repo.git my_local_repo
+#
+# Recommendations:
+#   - Provide the URI of the Git repository as the first parameter.
+#   - Specify the desired local folder name as the second parameter.
+#   - Use this function for quickly fetching a Git repository with a shallow clone.
+#
+# Dependencies:
+#   - Git must be installed on the system.
+function git_fetch_repository() {
+    if [ -z "$1" ] || [ -z "$2" ]; then
+        echo "Usage: git_fetch_repository <repo_URI> <folder_name>"
+    else
+        wsd_exe_cmd git clone --depth 1 "$1" "$2"
+    fi
+}
+alias gitfetchrepository="git_fetch_repository"
+
+# git_push_force function
+function git_push_force() {
+    wsd_exe_cmd git push -f
+}
+alias gpf="git_push_force"
+alias gitpushforce="git_push_force"
+
+# git_remove_remote_branches_except function
+# Removes remote branches except those specified to keep.
+#
+# Usage:
+#   git_remove_remote_branches_except <branch_name1> [<branch_name2> ...]
+#
+# Parameters:
+#   <branch_name1>, <branch_name2>, ...: Names of branches to keep. Other branches will be removed.
+#
+# Description:
+#   The 'git_remove_remote_branches_except' function removes remote branches except for the ones specified
+#   to be kept. It fetches all remote branches, identifies the local branch name, and deletes branches
+#   that are not in the list of branches to keep.
+#
+# Example:
+#   git_remove_remote_branches_except feature-1 hotfix-2
+#
+# Recommendations:
+#   - Provide the names of the branches to keep as parameters.
+#   - Use this function when you want to clean up remote branches, keeping only specific branches.
+#
+# Dependencies:
+#   - Git must be installed on the system.
+#
+# Note:
+#   - The function fetches all remote branches before processing.
+function git_remove_remote_branches_except() {
+    if [ $# -eq 0 ]; then
+        echo "❌ Error: No branch names provided."
+        return 1
+    fi
+    # Create an array of branches to keep
+    local branches_to_keep=("$@")
+    # Fetch all remote branches
+    wsd_exe_cmd git fetch --all
+    # Loop through all remote branches
+    for remote_branch in $(git branch -r | grep -vE "HEAD|master" | sed 's/origin\///'); do
+        # Extract the branch name
+        local_branch=$(echo "$remote_branch" | sed 's#origin/##')
+        # Check if the branch should be kept
+        if [[ ! " ${branches_to_keep[@]} " =~ " $local_branch " ]]; then
+            # Remove the branch on remote
+            echo "🚀 Removing remote branch $remote_branch..."
+            wsd_exe_cmd git push origin --delete "$local_branch"
+        fi
+    done
+}
+alias gitremoveremotebranchesexcept="git_remove_remote_branches_except"
