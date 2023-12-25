@@ -49,12 +49,12 @@ function git_user_info_setting() {
     wsd_exe_cmd git config --global user.email "$email"
     echo "🍺 Git username $username and email $email updated successfully!"
 }
-alias gituser="git_user_info_setting"
+alias gituserinfosetting="git_user_info_setting"
 
-function git_info_global_setting() {
+function git_config_global_setting() {
     wsd_exe_cmd git config --global --list
 }
-alias gitglobalsettings="git_info_global_setting"
+alias gitconfigglobalsetting="git_config_global_setting"
 
 # git_log_graph function
 # Displays a graphical and decorated Git log with commit history.
@@ -1703,3 +1703,43 @@ function git_count_remote_branch() {
     send_telegram_git_activity "$msg"
 }
 alias gitcountremotebranch="git_count_remote_branch"
+
+# git_config_enabled_push_auto_setup_remote function
+# Enable the 'push.autoSetupRemote' configuration globally in Git.
+#
+# Usage:
+#   git_config_enabled_push_auto_setup_remote
+#
+# Description:
+#   The 'git_config_enabled_push_auto_setup_remote' function enables the 'push.autoSetupRemote'
+#   configuration globally in Git. When this configuration is set to 'true', Git automatically
+#   configures remote tracking during the creation of a new branch.
+function git_config_enabled_push_auto_setup_remote() {
+    wsd_exe_cmd git config --global --add --bool push.autoSetupRemote true
+}
+alias gitconfigenabledpushautosetupremote="git_config_enabled_push_auto_setup_remote"
+
+# git_config_disabled_push_auto_setup_remote function
+# Disable the 'push.autoSetupRemote' configuration globally in Git.
+#
+# Usage:
+#   git_config_disabled_push_auto_setup_remote
+#
+# Description:
+#   The 'git_config_disabled_push_auto_setup_remote' function disables the 'push.autoSetupRemote'
+#   configuration globally in Git. When this configuration is set to 'false', Git does not
+#   automatically configure remote tracking during the creation of a new branch.
+function git_config_disabled_push_auto_setup_remote() {
+    wsd_exe_cmd git config --global --add --bool push.autoSetupRemote false
+}
+alias gitconfigdisabledpushautosetupremote="git_config_disabled_push_auto_setup_remote"
+
+function git_log_graph_timestamp() {
+    wsd_exe_cmd git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset'
+}
+alias gitloggraphtimestamp="git_log_graph_timestamp"
+
+function git_log_graph_stat() {
+    wsd_exe_cmd git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset' --stat
+}
+alias gitloggraphstat="git_log_graph_stat"
