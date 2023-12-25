@@ -97,3 +97,34 @@ function bookmark_removal() {
     fi
 }
 alias bookmarkremoval="bookmark_removal"
+
+# bookmark_list function
+# Lists all bookmarks stored in the ~/.bookmarks directory.
+#
+# Usage:
+#   bookmark_list
+#
+# Description:
+#   The 'bookmark_list' function displays a list of all bookmarks stored in the ~/.bookmarks directory.
+#   Bookmarks are used to quickly navigate to predefined directories or files.
+#
+# Example:
+#   bookmark_list
+#
+# Recommendations:
+#   - Regularly review the list of bookmarks to stay organized.
+#   - Use meaningful names for bookmarks to easily identify associated directories or files.
+#
+# Dependencies:
+#   - None
+function bookmark_list() {
+    if [ ! -d ~/.bookmarks ]; then
+        echo "❌ No bookmarks found."
+        return 1
+    fi
+    echo "🍺 Bookmarks:"
+    for bookmark in ~/.bookmarks/*; do
+        echo "$(basename $bookmark)"
+    done
+}
+alias bookmarklist="bookmark_list"
