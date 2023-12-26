@@ -374,3 +374,41 @@ function chmod_info() {
     echo "  chmod -R a+rX directory  # Recursively add read and execute permission for all"
 }
 alias chmodinfo="chmod_info"
+
+# extract function
+# Extract compressed files using a single command based on their file extensions.
+#
+# Usage:
+#   extract <filename>
+#
+# Description:
+#   The 'extract' function simplifies the extraction process for various compressed file formats.
+#   It detects the file type based on its extension and executes the corresponding extraction command.
+#   Supported formats include tar.bz2, tar.gz, bz2, rar, gz, tar, tbz2, tgz, zip, Z, and 7z.
+#
+# Options:
+#   <filename>: The name of the compressed file to be extracted.
+function extract() {
+    if [ $# -ne 1 ]; then
+        echo "Usage: extract <filename>"
+        return 1
+    fi
+    if [ -f "$1" ]; then
+        case "$1" in
+        *.tar.bz2) wsd_exe_cmd tar xvjf "$1" ;;
+        *.tar.gz) wsd_exe_cmd tar xvzf "$1" ;;
+        *.bz2) wsd_exe_cmd bunzip2 "$1" ;;
+        *.rar) wsd_exe_cmd unrar x "$1" ;;
+        *.gz) wsd_exe_cmd gunzip "$1" ;;
+        *.tar) wsd_exe_cmd tar xvf "$1" ;;
+        *.tbz2) wsd_exe_cmd tar xvjf "$1" ;;
+        *.tgz) wsd_exe_cmd tar xvzf "$1" ;;
+        *.zip) wsd_exe_cmd unzip "$1" ;;
+        *.Z) wsd_exe_cmd uncompress "$1" ;;
+        *.7z) wsd_exe_cmd 7z x "$1" ;;
+        *) echo "❌ '$1' cannot be extracted via extract()" ;;
+        esac
+    else
+        echo "❌ '$1' is not a valid file"
+    fi
+}
