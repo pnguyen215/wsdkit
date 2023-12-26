@@ -1734,11 +1734,29 @@ function git_config_disabled_push_auto_setup_remote() {
 }
 alias gitconfigdisabledpushautosetupremote="git_config_disabled_push_auto_setup_remote"
 
+# git_log_graph_timestamp function
+# Display a decorated Git log with a graph, commit information, and timestamp.
+#
+# Usage:
+#   git_log_graph_timestamp
+#
+# Description:
+#   The 'git_log_graph_timestamp' function displays a Git log with a graph representing commit history,
+#   commit hash, branch information, commit message, timestamp, and author information.
 function git_log_graph_timestamp() {
     wsd_exe_cmd git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset'
 }
 alias gitloggraphtimestamp="git_log_graph_timestamp"
 
+# git_log_graph_stat function
+# Display a decorated Git log with a graph, commit information, timestamp, and file statistics.
+#
+# Usage:
+#   git_log_graph_stat
+#
+# Description:
+#   The 'git_log_graph_stat' function displays a Git log with a graph representing commit history,
+#   commit hash, branch information, commit message, timestamp, author information, and file statistics.
 function git_log_graph_stat() {
     wsd_exe_cmd git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset' --stat
 }
