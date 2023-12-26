@@ -412,3 +412,97 @@ function extract() {
         echo "❌ '$1' is not a valid file"
     fi
 }
+
+# ls_files function
+# List all files within a specified folder, displaying their full paths.
+#
+# Usage:
+#   ls_files <folder>
+#
+# Description:
+#   The 'ls_files' function provides a convenient way to retrieve the full paths of all files
+#   within the specified folder. It utilizes the 'find' command to locate and display file paths.
+#
+# Options:
+#   <folder>: The directory for which to list all files.
+function ls_files() {
+    if [ $# -lt 1 ]; then
+        echo "Usage: ls_files <folder>"
+        return 1
+    fi
+    local folder="$1"
+    if [ ! -d "$folder" ]; then
+        echo "❌ Error: '$folder' is not a valid directory."
+        return 1
+    fi
+    wsd_exe_cmd find "$folder" -type f -exec readlink -f {} \;
+}
+alias lsfiles="ls_files"
+
+# editor function
+# Open a selected file from a specified folder using a chosen text editor.
+#
+# Usage:
+#   editor <folder>
+#
+# Description:
+#   The 'editor' function provides an interactive way to select a file from the specified
+#   folder and open it using a chosen text editor. It uses the 'fzf' command-line fuzzy finder
+#   for file and command selection.
+#
+# Options:
+#   <folder>: The directory containing the files you want to edit.
+#
+# Example usage:
+#   Uncomment the line below and replace '<folder>' with the actual directory you want to open files from.
+#   editor <folder>
+#
+# Instructions:
+#   1. Run the 'editor' function.
+#   2. Use 'fzf' to select a file from the specified folder.
+#   3. Choose an action (text editor) to open the selected file.
+#
+# Supported Text Editors:
+#   - cat
+#   - less
+#   - more
+#   - vim
+#   - nano
+#
+# Note:
+#   Ensure that 'fzf' is installed for proper functionality.
+#
+# Dependencies:
+#   - fzf
+#
+# Example:
+#   editor ~/documents
+function editor() {
+    if [ $# -lt 1 ]; then
+        echo "Usage: editor <folder>"
+        return 1
+    fi
+    local folder="$1"
+    if [ ! -d "$folder" ]; then
+        echo "❌ Error: '$folder' is not a valid directory."
+        return 1
+    fi
+    local file_list
+    file_list=$(find "$folder" -type f -exec readlink -f {} \;)
+    if [ -z "$file_list" ]; then
+        echo "❌ No files found in '$folder'."
+        return 1
+    fi
+    local selected_file
+    selected_file=$(echo "$file_list" | fzf --prompt="Select a file: ")
+    if [ -z "$selected_file" ]; then
+        echo "❌ No file selected."
+        return 1
+    fi
+    local selected_command
+    selected_command=$(echo "cat;less;more;vim;nano" | tr ';' '\n' | fzf --prompt="Select an action: ")
+    if [ -n "$selected_command" ]; then
+        wsd_exe_cmd $selected_command "$selected_file"
+    fi
+}
+alias ide="editor"

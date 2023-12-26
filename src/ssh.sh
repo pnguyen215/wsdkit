@@ -164,6 +164,6 @@ alias sshgenkey="ssh_gen_key"
 #   The 'ssh_all_keys' function lists all SSH keys present in the user's ~/.ssh directory.
 #   It displays detailed information about each key, including file permissions, owner, group, and modification time.
 function ssh_all_keys() {
-    wsd_exe_cmd ls -all "$HOME/.ssh/"
+    ls_files "$HOME/.ssh/"
 }
 alias sshallkeys="ssh_all_keys"
