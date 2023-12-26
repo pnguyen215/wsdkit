@@ -74,11 +74,12 @@ function create_ssh_tunnel() {
         echo "Usage: create_ssh_tunnel <filename>"
         return 1
     fi
-
+    eval "$(ssh-agent -s)"
     local filename="$1"
     read_ssh_conf "$filename"
     echo "🚀 SSH tunnel for '$ssh_name' connecting"
     # Modify this line according to your SSH tunnel requirements
+    wsd_exe_cmd ssh-add -K "$ssh_filename_rsa"
     wsd_exe_cmd ssh -i "$ssh_filename_rsa" -N -L "$local_port:$remote_host:$remote_port" "$ssh_user@$ssh_host" -p "$ssh_port" &
 }
 alias createsshtunnel="create_ssh_tunnel"
@@ -119,3 +120,36 @@ function verify_ssh_tunnel() {
     wsd_exe_cmd ssh "$ssh_user@$ssh_host" -p "$ssh_port" &
 }
 alias verifysshtunnel="verify_ssh_tunnel"
+
+# generate_ssh_key_pair function
+# Generate an SSH key pair with the specified email and optional key name.
+#
+# Usage:
+#   generate_ssh_key_pair <email> [key_name]
+#
+# Parameters:
+#   <email>: Email address associated with the SSH key.
+#   [key_name]: (Optional) Name of the SSH key files (default: id_rsa).
+#
+# Description:
+#   The 'generate_ssh_key_pair' function generates an SSH key pair using the ssh-keygen tool.
+#   It creates both private and public key files in the ~/.ssh directory.
+#
+# Options:
+#   - <email>: Specify the email address associated with the SSH key.
+#   - [key_name]: (Optional) Specify a custom name for the SSH key files. Defaults to 'id_rsa'.
+function generate_ssh_key_pair() {
+    if [ $# -lt 1 ]; then
+        echo "Usage: generate_ssh_key_pair <email> [key_name]"
+        return 1
+    fi
+    local email="$1"
+    local key_name="${2:-id_rsa}"
+    local key_filename="$HOME/.ssh/${key_name}"
+    echo "🚀 Generating SSH key pair for '$email' with the name '$key_name'..."
+    wsd_exe_cmd ssh-keygen -t rsa -b 4096 -C "$email" -f "$key_filename"
+    echo "🍺 SSH key pair generated successfully."
+    echo "ℹ️ Public key: ${key_filename}.pub"
+    echo "⚠️ Keep your private key (${key_filename}) secure."
+}
+alias gensshkeypair="generate_ssh_key_pair"
