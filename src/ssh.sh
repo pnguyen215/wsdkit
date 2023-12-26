@@ -45,14 +45,14 @@ function read_ssh_conf() {
 }
 alias readsshconf="read_ssh_conf"
 
-# create_ssh_tunnel function
+# ssh_create_tunnel function
 # Creates an SSH tunnel based on the configurations specified in an SSH configuration file.
 #
 # Usage:
-#   create_ssh_tunnel <filename>
+#   ssh_create_tunnel <filename>
 #
 # Description:
-#   The 'create_ssh_tunnel' function reads SSH configurations from the specified <filename> using the 'read_ssh_conf' function.
+#   The 'ssh_create_tunnel' function reads SSH configurations from the specified <filename> using the 'read_ssh_conf' function.
 #   It then establishes an SSH tunnel based on the configured parameters.
 #   Note: Modify the SSH tunneling command to suit your specific requirements.
 #
@@ -60,7 +60,7 @@ alias readsshconf="read_ssh_conf"
 #   - filename: The path to the SSH configuration file.
 #
 # Example:
-#   create_ssh_tunnel ~/.ssh/config
+#   ssh_create_tunnel ~/.ssh/config
 #
 # Recommendations:
 #   - Ensure the specified file contains valid SSH configuration directives.
@@ -69,9 +69,9 @@ alias readsshconf="read_ssh_conf"
 #
 # Dependencies:
 #   - read_ssh_conf function
-function create_ssh_tunnel() {
+function ssh_create_tunnel() {
     if [ $# -lt 1 ]; then
-        echo "Usage: create_ssh_tunnel <filename>"
+        echo "Usage: ssh_create_tunnel <filename>"
         return 1
     fi
     eval "$(ssh-agent -s)"
@@ -82,16 +82,16 @@ function create_ssh_tunnel() {
     wsd_exe_cmd ssh-add -K "$ssh_filename_rsa"
     wsd_exe_cmd ssh -i "$ssh_filename_rsa" -N -L "$local_port:$remote_host:$remote_port" "$ssh_user@$ssh_host" -p "$ssh_port" &
 }
-alias createsshtunnel="create_ssh_tunnel"
+alias sshcreatetunnel="ssh_create_tunnel"
 
-# verify_ssh_tunnel function
+# ssh_verify_tunnel function
 # Verifies the SSH tunnel connectivity based on the configurations specified in an SSH configuration file.
 #
 # Usage:
-#   verify_ssh_tunnel <filename>
+#   ssh_verify_tunnel <filename>
 #
 # Description:
-#   The 'verify_ssh_tunnel' function reads SSH configurations from the specified <filename> using the 'read_ssh_conf' function.
+#   The 'ssh_verify_tunnel' function reads SSH configurations from the specified <filename> using the 'read_ssh_conf' function.
 #   It then attempts to establish an SSH connection to verify the tunnel connectivity.
 #   Note: Modify the SSH connection command to suit your specific requirements.
 #
@@ -99,7 +99,7 @@ alias createsshtunnel="create_ssh_tunnel"
 #   - filename: The path to the SSH configuration file.
 #
 # Example:
-#   verify_ssh_tunnel ~/.ssh/config
+#   ssh_verify_tunnel ~/.ssh/config
 #
 # Recommendations:
 #   - Ensure the specified file contains valid SSH configuration directives.
@@ -108,9 +108,9 @@ alias createsshtunnel="create_ssh_tunnel"
 #
 # Dependencies:
 #   - read_ssh_conf function
-function verify_ssh_tunnel() {
+function ssh_verify_tunnel() {
     if [ $# -lt 1 ]; then
-        echo "Usage: verify_ssh_tunnel <filename>"
+        echo "Usage: ssh_verify_tunnel <filename>"
         return 1
     fi
     local filename="$1"
@@ -119,28 +119,28 @@ function verify_ssh_tunnel() {
     # Modify this line according to your SSH tunnel requirements
     wsd_exe_cmd ssh "$ssh_user@$ssh_host" -p "$ssh_port" &
 }
-alias verifysshtunnel="verify_ssh_tunnel"
+alias sshverifytunnel="ssh_verify_tunnel"
 
-# generate_ssh_key_pair function
+# ssh_gen_key function
 # Generate an SSH key pair with the specified email and optional key name.
 #
 # Usage:
-#   generate_ssh_key_pair <email> [key_name]
+#   ssh_gen_key <email> [key_name]
 #
 # Parameters:
 #   <email>: Email address associated with the SSH key.
 #   [key_name]: (Optional) Name of the SSH key files (default: id_rsa).
 #
 # Description:
-#   The 'generate_ssh_key_pair' function generates an SSH key pair using the ssh-keygen tool.
+#   The 'ssh_gen_key' function generates an SSH key pair using the ssh-keygen tool.
 #   It creates both private and public key files in the ~/.ssh directory.
 #
 # Options:
 #   - <email>: Specify the email address associated with the SSH key.
 #   - [key_name]: (Optional) Specify a custom name for the SSH key files. Defaults to 'id_rsa'.
-function generate_ssh_key_pair() {
+function ssh_gen_key() {
     if [ $# -lt 1 ]; then
-        echo "Usage: generate_ssh_key_pair <email> [key_name]"
+        echo "Usage: ssh_gen_key <email> [key_name]"
         return 1
     fi
     local email="$1"
@@ -152,4 +152,18 @@ function generate_ssh_key_pair() {
     echo "ℹ️ Public key: ${key_filename}.pub"
     echo "⚠️ Keep your private key (${key_filename}) secure."
 }
-alias gensshkeypair="generate_ssh_key_pair"
+alias sshgenkey="ssh_gen_key"
+
+# ssh_all_keys function
+# List all SSH keys in the user's ~/.ssh directory.
+#
+# Usage:
+#   ssh_all_keys
+#
+# Description:
+#   The 'ssh_all_keys' function lists all SSH keys present in the user's ~/.ssh directory.
+#   It displays detailed information about each key, including file permissions, owner, group, and modification time.
+function ssh_all_keys() {
+    wsd_exe_cmd ls -all "$HOME/.ssh/"
+}
+alias sshallkeys="ssh_all_keys"
