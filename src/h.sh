@@ -311,7 +311,7 @@ function copy_file() {
         return 1
     fi
 
-    wsd_exe_cmd cp "$source" "$destination"
+    wsd_exe_cmd sudo cp "$source" "$destination"
     echo "🍺 File copied successfully to $destination"
 }
 
@@ -334,7 +334,7 @@ function copy_files() {
             continue
         fi
 
-        wsd_exe_cmd cp "$source" "$destination_file"
+        wsd_exe_cmd sudo cp "$source" "$destination_file"
         echo "🍺 File copied successfully to $destination_file"
     done
 }
@@ -361,7 +361,7 @@ function move_file() {
         return 1
     fi
 
-    wsd_exe_cmd mv "$source" "$destination"
+    wsd_exe_cmd sudo mv "$source" "$destination"
     echo "🍺 File moved successfully to $destination"
 }
 
@@ -393,7 +393,7 @@ function move_files() {
             return 1
         fi
 
-        wsd_exe_cmd mv "$source" "$destination"
+        wsd_exe_cmd sudo mv "$source" "$destination"
         echo "🍺 File '$source' moved successfully to $destination"
     done
 }
@@ -420,7 +420,7 @@ function rename_file() {
         return 1
     fi
 
-    wsd_exe_cmd mv "$old_path" "$new_path"
+    wsd_exe_cmd sudo mv "$old_path" "$new_path"
     echo "🍺 File/directory renamed successfully to $new_path"
 }
 
@@ -536,6 +536,8 @@ function ls_files() {
         return 1
     fi
     wsd_exe_cmd find "$folder" -type f -exec readlink -f {} \;
+    echo "💭💭💭"
+    wsd_exe_cmd ls -all "$folder"
 }
 alias lsfiles="ls_files"
 
