@@ -9,7 +9,7 @@ function set_global_variables() {
 
     # SSH configs
     filename_basename_ssh_kit_conf="/Users/$(whoami)/.ssh"
-    filename_ssh_conf="/Users/$(whoami)/wsdkit.conf/assets"
+    filename_ssh_kit_conf="/Users/$(whoami)/wsdkit.conf/assets"
 
     # local -g vars
     # filename_secret_conf="./assets/secrets.txt"

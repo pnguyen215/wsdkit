@@ -20,7 +20,30 @@ function add_suffix_if_needed() {
 }
 
 # wsd_exe_cmd function
-# Function to print and execute a command
+# Execute a command and print it for logging purposes.
+#
+# Usage:
+#   wsd_exe_cmd <command>
+#
+# Parameters:
+#   - <command>: The command to be executed.
+#
+# Description:
+#   The 'wsd_exe_cmd' function executes a command and prints it for logging purposes.
+#   It is designed to display the command before executing it.
+#
+# Options:
+#   None
+#
+# Example usage:
+#   wsd_exe_cmd ls -l
+#
+# Instructions:
+#   1. Use 'wsd_exe_cmd' to execute a command.
+#   2. The command will be printed before execution for logging.
+#
+# Notes:
+#   - This function is useful for logging commands before they are executed.
 function wsd_exe_cmd() {
     local command="$*"
     # Print the command
@@ -31,10 +54,28 @@ function wsd_exe_cmd() {
 }
 
 # wsd_exe_cmd_hook function
-# Print a command
+# Hook to print a command without executing it.
+#
+# Usage:
+#   wsd_exe_cmd_hook <command>
+#
+# Parameters:
+#   - <command>: The command to be printed.
+#
+# Description:
+#   The 'wsd_exe_cmd_hook' function prints a command without executing it.
+#   It is designed as a hook for logging or displaying commands without actual execution.
+#
+# Example usage:
+#   wsd_exe_cmd_hook ls -l
+#
+# Instructions:
+#   1. Use 'wsd_exe_cmd_hook' to print a command without executing it.
+#
+# Notes:
+#   - This function is useful for displaying commands in logs or hooks without execution.
 function wsd_exe_cmd_hook() {
     local command="$*"
-    # Print the command
     echo "👉 use: $command"
 }
 
@@ -98,11 +139,29 @@ function allow_full_perm() {
 alias allowfullperm="allow_full_perm"
 
 # create_file_if_not_exists function
-# Creates a file with administrator privileges if it doesn't exist.
+# Utility function to create a file if it doesn't exist.
+#
+# Usage:
+#   create_file_if_not_exists <filename>
+#
 # Parameters:
-#   $1: File path
-# Returns:
-#   0 on success, 1 on error
+#   - <filename>: The name of the file to be created.
+#
+# Description:
+#   The 'create_file_if_not_exists' function checks if a file exists. If the file
+#   does not exist, it creates the file along with its parent directory with admin
+#   privileges using sudo. It also sets file permissions to allow read and write
+#   access only for the owner and no access for others.
+#
+# Example usage:
+#   create_file_if_not_exists /path/to/file.txt
+#
+# Instructions:
+#   1. Use 'create_file_if_not_exists' to ensure a file exists, creating it if necessary.
+#
+# Notes:
+#   - This function is useful for initializing files within a script or ensuring the existence
+#     of a file before performing operations.
 function create_file_if_not_exists() {
     if [ $# -lt 1 ]; then
         echo "Usage: create_file_if_not_exists <filename>"
@@ -145,11 +204,31 @@ function create_file_if_not_exists() {
     fi
     return 0
 }
+alias createfileifnotexists="create_file_if_not_exists"
 
+# check_port function
+# Utility function to check if a specific port is in use (listening).
+#
+# Usage:
+#   check_port <port>
+#
+# Parameters:
+#   - <port>: The port number to check.
+#
+# Description:
+#   The 'check_port' function checks whether a specified port is in use by
+#   examining the system's open file descriptors using lsof. It specifically
+#   looks for LISTEN status, indicating that a process is actively listening on
+#   the given port.
+#
 # Example usage:
-# create_file_if_not_exists "/Users/arisnguyenit97/wsdkit.conf/assets/secrets.txt"
-
-# Check port running
+#   check_port 8080
+#
+# Instructions:
+#   1. Use 'check_port' to determine if a specific port is already in use.
+#
+# Notes:
+#   - This function is helpful when setting up services to avoid port conflicts.
 function check_port() {
     if [ $# -ne 1 ]; then
         echo "Usage: check_port <port>"
@@ -157,9 +236,34 @@ function check_port() {
     fi
     wsd_exe_cmd lsof -nP -iTCP:"$1" | grep LISTEN
 }
+alias checkport="check_port"
 
-# Kill port running
-# Kill processes using specified ports
+# kill_ports function
+# Utility function to kill processes running on specified ports.
+#
+# Usage:
+#   kill_ports
+#
+# Parameters:
+#   None
+#
+# Description:
+#   The 'kill_ports' function prompts the user to enter one or more port
+#   numbers, identifies the processes running on those ports, and provides the
+#   option to kill those processes.
+#
+# Example usage:
+#   kill_ports
+#
+# Instructions:
+#   1. Run 'kill_ports' to interactively enter and kill processes running on
+#      specified ports.
+#   2. Enter the desired port numbers when prompted.
+#   3. Confirm the process kill operation for each specified port.
+#
+# Notes:
+#   - This function is useful when dealing with port conflicts and needing to
+#     free up ports that are currently in use.
 function kill_ports() {
     echo "Enter the ports you want to kill (separated by spaces): \c"
     read ports
@@ -173,7 +277,7 @@ function kill_ports() {
         fi
 
         # Get the process running on the specified port
-        local process=$(lsof -n -iTCP:$port -sTCP:LISTEN -t)
+        local process=$(wsd_exe_cmd lsof -n -iTCP:$port -sTCP:LISTEN -t)
 
         # Check if any process is running on the specified port
         if [ -z "$process" ]; then
@@ -190,10 +294,11 @@ function kill_ports() {
         fi
 
         # Kill the process using the specified port
-        kill $process
+        wsd_exe_cmd kill $process
         echo "🍺 Process on port $port has been killed."
     done
 }
+alias killports="kill_ports"
 
 # Copy filename by new filename
 function copy_file() {
