@@ -8,8 +8,9 @@ function set_global_variables() {
     filename_secret_bak_conf="/Users/$(whoami)/wsdkit.conf/assets/secrets.txt.bak"
 
     # SSH configs
-    filename_basename_ssh_kit_conf="/Users/$(whoami)/.ssh"
-    filename_ssh_kit_conf="/Users/$(whoami)/wsdkit.conf/assets"
+    filename_ssh_kit_conf="/Users/$(whoami)/.ssh"
+    filename_ssh_base_conf="/Users/$(whoami)/wsdkit.conf/assets"
+    filename_ssh_forward_base_conf="/Users/$(whoami)/wsdkit.conf/sfc"
 
     # local -g vars
     # filename_secret_conf="./assets/secrets.txt"

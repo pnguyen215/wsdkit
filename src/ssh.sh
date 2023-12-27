@@ -74,15 +74,52 @@ function ssh_create_tunnel() {
         echo "Usage: ssh_create_tunnel <filename>"
         return 1
     fi
-    eval "$(ssh-agent -s)"
     local filename="$1"
     read_ssh_conf "$filename"
     echo "🚀 SSH tunnel for '$ssh_name' connecting"
     # Modify this line according to your SSH tunnel requirements
-    wsd_exe_cmd ssh-add -K "$ssh_filename_rsa"
     wsd_exe_cmd ssh -i "$ssh_filename_rsa" -N -L "$local_port:$remote_host:$remote_port" "$ssh_user@$ssh_host" -p "$ssh_port" &
 }
 alias sshcreatetunnel="ssh_create_tunnel"
+
+# ssh_bind_tunnel function
+# Utility function to bind an SSH tunnel using a specified configuration file.
+#
+# Usage:
+#   ssh_bind_tunnel <filename>
+#
+# Parameters:
+#   <filename> - Name of the SSH forward configuration file.
+#
+# Description:
+#   The 'ssh_bind_tunnel' function reads the specified SSH forward configuration
+#   file and binds an SSH tunnel using the provided information. It also adds
+#   the RSA key to the SSH agent.
+#
+# Example usage:
+#   ssh_bind_tunnel my_forward_config.conf
+#
+# Instructions:
+#   1. Run 'ssh_bind_tunnel' with the filename of the SSH forward configuration.
+#   2. The function reads the configuration file and establishes an SSH tunnel.
+#   3. The RSA key associated with the tunnel is added to the SSH agent.
+#
+# Notes:
+#   - This function simplifies the process of binding an SSH tunnel using a
+#     preconfigured configuration file.
+function ssh_bind_tunnel() {
+    if [ $# -lt 1 ]; then
+        echo "Usage: ssh_bind_tunnel <filename>"
+        return 1
+    fi
+    local filename="$1"
+    eval "$(ssh-agent -s)"
+    read_ssh_conf "$filename"
+    echo "🚀 SSH tunnel for '$ssh_name' binding"
+    # Modify this line according to your SSH tunnel requirements
+    wsd_exe_cmd ssh-add -K "$ssh_filename_rsa"
+}
+alias sshbindtunnel="ssh_bind_tunnel"
 
 # ssh_verify_tunnel function
 # Verifies the SSH tunnel connectivity based on the configurations specified in an SSH configuration file.
@@ -167,3 +204,142 @@ function ssh_all_keys() {
     ls_files "$HOME/.ssh/"
 }
 alias sshallkeys="ssh_all_keys"
+
+# ssh_gen_forward_conf function
+# Utility function to generate an SSH forward configuration file.
+#
+# Usage:
+#   ssh_gen_forward_conf <filename.ext>
+#
+# Parameters:
+#   <filename.ext> - Name of the configuration file to be generated.
+#
+# Description:
+#   The 'ssh_gen_forward_conf' function interactively collects information
+#   required for creating an SSH forward configuration file and saves it to
+#   the specified file.
+#
+# Example usage:
+#   ssh_gen_forward_conf my_forward_config.conf
+#
+# Instructions:
+#   1. Run 'ssh_gen_forward_conf' with the desired filename.
+#   2. Enter the necessary information when prompted.
+#
+# Notes:
+#   - This function helps streamline the creation of SSH forward configurations
+#     by guiding the user through the required parameters.
+function ssh_gen_forward_conf() {
+    if [ $# -lt 1 ]; then
+        echo "Usage: ssh_gen_forward_conf <new_filename.ext>"
+        return 1
+    fi
+
+    local filename="$1"
+    local file_rsa=""
+    local ssh_desc=""
+    local ssh_host=""
+    local ssh_port=""
+    local ssh_user=""
+    local local_port=""
+    local remote_host=""
+    local remote_port=""
+
+    # filename SSH rsa
+    while [ -z "$file_rsa" ]; do
+        echo -n "Enter file path's SSH rsa (private): "
+        read file_rsa
+        if [ -z "$file_rsa" ]; then
+            echo "❌ Invalid SSH rsa (private). Please try again."
+        fi
+    done
+
+    # SSH desc
+    while [ -z "$ssh_desc" ]; do
+        echo -n "Enter SSH desc: "
+        read ssh_desc
+        if [ -z "$ssh_desc" ]; then
+            echo "❌ Invalid SSH desc. Please try again."
+        fi
+    done
+
+    # SSH host
+    while [ -z "$ssh_host" ]; do
+        echo -n "Enter SSH host (public): "
+        read ssh_host
+        if [ -z "$ssh_host" ]; then
+            echo "❌ Invalid SSH host. Please try again."
+        fi
+    done
+
+    # SSH port
+    while [ -z "$ssh_port" ]; do
+        echo -n "Enter SSH port (public): "
+        read ssh_port
+        if [ -z "$ssh_port" ]; then
+            echo "❌ Invalid SSH port. Please try again."
+        fi
+    done
+
+    # SSH user
+    while [ -z "$ssh_user" ]; do
+        echo -n "Enter SSH user: "
+        read ssh_user
+        if [ -z "$ssh_user" ]; then
+            echo "❌ Invalid SSH user. Please try again."
+        fi
+    done
+
+    # local port
+    while [ -z "$local_port" ]; do
+        echo -n "Enter local port (binding): "
+        read local_port
+        if [ -z "$local_port" ]; then
+            echo "❌ Invalid local port. Please try again."
+        fi
+    done
+
+    # remote host
+    while [ -z "$remote_host" ]; do
+        echo -n "Enter remote host (server localhost): "
+        read remote_host
+        if [ -z "$remote_host" ]; then
+            echo "❌ Invalid remote host. Please try again."
+        fi
+    done
+
+    # remote port
+    while [ -z "$remote_port" ]; do
+        echo -n "Enter remote port (server localhost): "
+        read remote_port
+        if [ -z "$remote_port" ]; then
+            echo "❌ Invalid remote port. Please try again."
+        fi
+    done
+
+    # added double quotes
+    file_rsa="\"$file_rsa\""
+    ssh_desc="\"$ssh_desc\""
+    ssh_host="\"$ssh_host\""
+    ssh_port="\"$ssh_port\""
+    ssh_user="\"$ssh_user\""
+    local_port="\"$local_port\""
+    remote_host="\"$remote_host\""
+    remote_port="\"$remote_port\""
+
+    #  base file path
+    local base="$filename_ssh_forward_base_conf/$filename"
+    # key/value
+    add_conf "ssh_filename_rsa" "$file_rsa" "$base"
+    add_conf "ssh_name" "$ssh_desc" "$base"
+    add_conf "ssh_host" "$ssh_host" "$base"
+    add_conf "ssh_port" "$ssh_port" "$base"
+    add_conf "ssh_user" "$ssh_user" "$base"
+    add_conf "local_port" "$local_port" "$base"
+    add_conf "remote_host" "$remote_host" "$base"
+    add_conf "remote_port" "$remote_port" "$base"
+
+    # finalize, path file conf
+    echo "🍺 $base"
+}
+alias sshgenforwardconf="ssh_gen_forward_conf"

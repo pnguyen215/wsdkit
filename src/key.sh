@@ -42,6 +42,7 @@ function add_secret() {
 
     # Check if the secret file exists, create it if not
     create_file_if_not_exists "$filename_secret_conf"
+    allow_full_perm "$filename_secret_conf"
 
     # Add or update the secret in the file
     echo "$key=$value" >>"$filename_secret_conf"
@@ -187,6 +188,7 @@ function delete_secret() {
     create_file_if_not_exists "$filename_secret_bak_conf"
     allow_full_perm "$filename_secret_bak_conf"
     allow_full_perm "$filename_secret_conf"
+
     # Check if the secret file exists
     if [ -e "$filename_secret_conf" ]; then
         wsd_exe_cmd sudo sed -i.bak "/^$key=/d" "$filename_secret_conf"
@@ -301,3 +303,76 @@ function read_conf() {
     wsd_exe_cmd source "$filename"
 }
 alias readconf="read_conf"
+
+# add_conf function
+# Utility function to add or update key-value pairs in a configuration file.
+#
+# Usage:
+#   add_conf <key> <value> <filename>
+#
+# Parameters:
+#   <key>      - Key for the configuration entry.
+#   <value>    - Value associated with the key.
+#   <filename> - Path to the configuration file.
+#
+# Description:
+#   The 'add_conf' function allows the user to interactively enter a key,
+#   value, and filename to add or update a key-value pair in a configuration
+#   file.
+#
+# Example usage:
+#   add_conf my_key my_value /path/to/config.conf
+#
+# Instructions:
+#   1. Run 'add_conf' with the desired key, value, and filename.
+#   2. Enter the key when prompted.
+#   3. Enter the value when prompted.
+#   4. Enter the filename when prompted.
+#
+# Notes:
+#   - This function is useful for maintaining configuration files where new
+#     entries need to be added or existing entries updated.
+#
+# Example:
+#   add_conf server_port 8080 /etc/myapp/config.conf
+function add_conf() {
+    if [ $# -lt 3 ]; then
+        echo "Usage: add_conf <key> <value> <filename>"
+        return 1
+    fi
+    local key="$1"
+    local value="$2"
+    local filename="$3"
+
+    # Set key
+    while [ -z "$key" ]; do
+        echo -n "Enter key: "
+        read key
+        if [ -z "$key" ]; then
+            echo "❌ Invalid key. Please try again."
+        fi
+    done
+    # Set value
+    while [ -z "$value" ]; do
+        echo -n "Enter value: "
+        read value
+        if [ -z "$value" ]; then
+            echo "❌ Invalid value. Please try again."
+        fi
+    done
+    # Set filename
+    while [ -z "$filename" ]; do
+        echo -n "Enter filename: "
+        read filename
+        if [ -z "$filename" ]; then
+            echo "❌ Invalid filename. Please try again."
+        fi
+    done
+    # Check if the secret file exists, create it if not
+    create_file_if_not_exists "$filename"
+    allow_full_perm "$filename"
+
+    echo "$key=$value" >>"$filename"
+    echo "🔐 Secret added/updated for key: $key"
+}
+alias addconf="add_conf"

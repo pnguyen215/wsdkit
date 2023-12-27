@@ -103,8 +103,7 @@ function allow_execute_perm() {
         echo "Usage: allow_execute_perm <file/dir>"
         return 1
     fi
-
-    wsd_exe_cmd chmod +x "$1"
+    wsd_exe_cmd sudo chmod +x "$1"
     echo "🍺 Execute permission granted to $1"
 }
 alias allowexecuteperm="allow_execute_perm"
@@ -133,7 +132,8 @@ function allow_full_perm() {
         echo "Usage: allow_full_perm <file/dir>"
         return 1
     fi
-    wsd_exe_cmd sudo chmod 777 "$1"
+
+    wsd_exe_cmd sudo chmod -R 777 "$1"
     echo "🍺 Full permissions granted to $1 (read, write and execute)"
 }
 alias allowfullperm="allow_full_perm"
@@ -196,11 +196,6 @@ function create_file_if_not_exists() {
             echo "❌ Error: Failed to create the file."
             return 1
         fi
-        # the file permissions to allow read and write access only for the owner and no access for others.
-        allow_full_perm "$filename"
-    else
-        # the file permissions to allow read and write access only for the owner and no access for others.
-        allow_full_perm "$filename"
     fi
     return 0
 }
