@@ -32,7 +32,20 @@ echo "🍺 DEBUG: wsdkit working on $wsdkit_wrk"
 # Reload functions
 source "$(dirname "$0")/deps.sh"
 
-# WsdKit installations
+# wsdkit function
+# Main function for managing and executing wsdkit commands.
+#
+# Usage:
+#   wsdkit
+#
+# Description:
+#   The 'wsdkit' function serves as the main entry point for managing and executing wsdkit commands.
+#   It interacts with a configuration file ('usage.json') to display a menu of available options.
+#   Users can select an option, and the corresponding command or action will be executed.
+#
+# Dependencies:
+#   - jq: Required for parsing JSON configuration files.
+#   - fzf: Required for providing an interactive selection menu.
 function wsdkit() {
     ######################
     #### Requirements ####
@@ -114,5 +127,34 @@ function wsdkit() {
     done
 }
 
-# Execute wsdkit to suggest options to install packages
-# wsdkit
+# wsdkit_upgrade function
+# Upgrade wsdkit to the latest version.
+#
+# Usage:
+#   wsdkit_upgrade
+#
+# Description:
+#   The 'wsdkit_upgrade' function upgrades wsdkit to the latest version by removing the existing installation
+#   and installing the latest version from the official repository.
+#
+# Example usage:
+#   wsdkit_upgrade
+#
+# Instructions:
+#   1. Use 'wsdkit_upgrade' to upgrade wsdkit to the latest version.
+#   2. After running the command, restart your terminal or run 'source ~/.zshrc' to apply changes.
+#
+# Notes:
+#   - Ensure that 'curl' is installed on your system for the upgrade process.
+#   - This function removes the existing wsdkit installation and installs the latest version.
+#   - It is recommended to back up any important configuration files before upgrading.
+#
+# Dependencies:
+#   - curl: Required for downloading the latest version of wsdkit.
+function wsdkit_upgrade() {
+    echo "🚀 Upgrading wsdkit..."
+    wsd_exe_cmd sudo rm -rf wsdkit
+    wsd_exe_cmd /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/pnguyen215/wsdkit/master/install.sh)"
+    echo "🍺 wsdkit has been successfully upgraded. Please restart your terminal or run 'source ~/.zshrc' to apply changes."
+}
+alias wsdkitupgrade="wsdkit_upgrade"
