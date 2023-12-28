@@ -602,7 +602,7 @@ function editor() {
         return 1
     fi
     local selected_command
-    selected_command=$(echo "cat;less;more;vim;nano" | tr ';' '\n' | fzf --prompt="Select an action: ")
+    selected_command=$(echo "cat;less;more;vim;nano;rm" | tr ';' '\n' | fzf --prompt="Select an action: ")
     if [ -n "$selected_command" ]; then
         wsd_exe_cmd $selected_command "$selected_file"
     fi

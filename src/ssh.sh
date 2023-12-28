@@ -343,3 +343,36 @@ function ssh_gen_forward_conf() {
     echo "🍺 $base"
 }
 alias sshgenforwardconf="ssh_gen_forward_conf"
+
+# ssh_edit_sfc function
+# Open the directory containing SSH forward configuration files using the 'editor' function.
+#
+# Usage:
+#   ssh_edit_sfc
+#
+# Description:
+#   The 'ssh_edit_sfc' function provides a convenient way to open the directory containing SSH
+#   forward configuration files using the 'editor' function. It uses the 'editor' function, which
+#   allows you to select a file from the specified folder interactively.
+#
+# Options:
+#   None
+#
+# Example usage:
+#   ssh_edit_sfc
+#
+# Instructions:
+#   1. Run the 'ssh_edit_sfc' function.
+#   2. Use 'fzf' to select a configuration file from the SSH forward configuration directory.
+#   3. Choose an action (text editor) to open the selected configuration file.
+#
+# Note:
+#   - Ensure that the 'editor' function and 'fzf' are installed for proper functionality.
+#   - The 'editor' function supports the following text editors: cat, less, more, vim, nano.
+#
+# Dependencies:
+#   - editor function
+function ssh_edit_sfc() {
+    ide "$filename_ssh_forward_base_conf"
+}
+alias ssheditsfc="ssh_edit_sfc"
