@@ -154,7 +154,7 @@ function ssh_verify_tunnel() {
     read_ssh_conf "$filename"
     echo "🚀 SSH tunnel for '$ssh_name' verifying"
     # Modify this line according to your SSH tunnel requirements
-    wsd_exe_cmd ssh "$ssh_user@$ssh_host" -p "$ssh_port" &
+    wsd_exe_cmd ssh -i "$ssh_filename_rsa" "$ssh_user@$ssh_host" -p "$ssh_port"
 }
 alias sshverifytunnel="ssh_verify_tunnel"
 
