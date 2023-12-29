@@ -116,6 +116,12 @@ function wsdkit() {
                 "wsd_uninstall_zsh")
                     uninstall_zsh_if_needed
                     ;;
+                "wsd_install_oh_my_zsh")
+                    install_oh_my_zsh_if_needed
+                    ;;
+                "wsd_uninstall_oh_my_zsh")
+                    uninstall_oh_my_zsh_if_needed
+                    ;;
                 *)
                     echo "❓ Unsupported function."
                     ;;

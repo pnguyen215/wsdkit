@@ -19,6 +19,7 @@ function send_telegram_message_setting() {
     # Use curl to send a POST request to the Telegram Bot API
     curl -s -X POST "https://api.telegram.org/bot$token/sendMessage" -d "chat_id=$chatId&text=$message&parse_mode=markdown" >/dev/null
 }
+alias sendtelegrammessagesetting="send_telegram_message_setting"
 
 # send_telegram_files_setting function
 # Sends documents (files) to a Telegram bot using the Telegram Bot API.
@@ -38,17 +39,18 @@ function send_telegram_files_setting() {
     local chatId="$2"
 
     # Loop through each filename provided as an argument
-    for file_path in "${@:3}"; do
+    for filename in "${@:3}"; do
         # Check if the file exists
-        if [ -f "$file_path" ]; then
+        if [ -f "$filename" ]; then
             # Use curl to send a POST request to the Telegram Bot API for each file
-            curl -s -F chat_id="$chatId" -F document=@"$file_path" "https://api.telegram.org/bot$token/sendDocument" >/dev/null
-            echo "File '$file_path' sent."
+            curl -s -F chat_id="$chatId" -F document=@"$filename" "https://api.telegram.org/bot$token/sendDocument" >/dev/null
+            echo "File '$filename' sent."
         else
-            echo "File '$file_path' not found. Skipping."
+            echo "File '$filename' not found. Skipping."
         fi
     done
 }
+alias sendtelegramfilessetting="send_telegram_files_setting"
 
 # send_telegram_git_activity function
 function send_telegram_git_activity() {
@@ -87,6 +89,7 @@ function send_telegram_git_activity() {
 
     send_telegram_message_setting "$token" "$chatId" "$message"
 }
+alias sendtelegramgitactivity="send_telegram_git_activity"
 
 # send_telegram_guardian function
 # Sends a predefined message and files to a Telegram bot using the Telegram Bot API.
@@ -133,6 +136,86 @@ function send_telegram_guardian() {
     # Send files using send_telegram_files_setting function
     send_telegram_files_setting "$token" "$chatId" "${files[@]}"
 }
+alias sendtelegramguardian="send_telegram_guardian"
 
+# send_telegram_attachment function
+# Send attachments to a Telegram group chat using a Telegram bot.
+#
+# Usage:
+#   send_telegram_attachment <description> [filename_1] [filename_2] [filename_3] ...
+#
+# Description:
+#   The 'send_telegram_attachment' function sends attachments to a specified Telegram group chat
+#   using a Telegram bot. It supports sending multiple files at once, and each file is captioned
+#   with a description and timestamp.
+#
+# Options:
+#   <description>: A description for the attachments.
+#   [filename_1] [filename_2] [filename_3] ...: File paths of the attachments to be sent.
+#
 # Example usage:
-# send_telegram_guardian "/path/to/file1.txt" "/path/to/file2.jpg"
+#   send_telegram_attachment "Logs for today" "/path/to/logfile1.txt" "/path/to/logfile2.txt"
+#
+# Instructions:
+#   1. Run the 'send_telegram_attachment' function with a description and file paths.
+#
+# Notes:
+#   - Ensure that the necessary Telegram bot token and group chat ID are available in the secrets file.
+#   - The function uses the 'curl' command to interact with the Telegram Bot API.
+#   - Timestamps are added to the captions for better identification.
+#
+# Dependencies:
+#   - 'curl' must be installed for API communication.
+#   - The function relies on Telegram bot and chat IDs stored in the secrets file.
+#
+# Example:
+#   send_telegram_attachment "Logs for today" "/path/to/logfile1.txt" "/path/to/logfile2.txt"
+function send_telegram_attachment() {
+    if [ $# -lt 2 ]; then
+        echo "Usage: send_telegram_attachment <description> [filename_1] [filename_2] [filename_3] ..."
+        return 1
+    fi
+
+    local description="$1"
+    local files=("${@:2}")
+
+    # reloading file conf
+    source "$filename_secret_conf"
+    # local variables
+    local token="$JARVIS_TELEGRAM_BOT_TOKEN_1"
+    local chatId="$JARVIS_TELEGRAM_BOT_GROUP_CHAT_ID_2"
+    local timestamp=$(date +"%Y-%m-%d %H:%M:%S")
+
+    # setting token
+    if [[ -n "$token" ]]; then
+        echo "🚀 Processing token"
+    else
+        echo "❌ Key 'JARVIS_TELEGRAM_BOT_TOKEN_1' not found or empty."
+        echo "🚀 Setting key 'JARVIS_TELEGRAM_BOT_TOKEN_1'"
+        add_secret
+        source "$filename_secret_conf"
+        token="$JARVIS_TELEGRAM_BOT_TOKEN_1"
+    fi
+
+    # setting chatId
+    if [[ -n "$chatId" ]]; then
+        echo "🚀 Processing chat_id"
+    else
+        echo "❌ Key 'JARVIS_TELEGRAM_BOT_GROUP_CHAT_ID_2' not found or empty."
+        echo "🚀 Setting key 'JARVIS_TELEGRAM_BOT_GROUP_CHAT_ID_2'"
+        add_secret
+        source "$filename_secret_conf"
+        chatId="$JARVIS_TELEGRAM_BOT_GROUP_CHAT_ID_2"
+    fi
+
+    # sending files to group chatId
+    for filename in "${files[@]}"; do
+        if [ -f "$filename" ]; then
+            curl -s -F chat_id="$chatId" -F document=@"$filename" -F caption="$description ($timestamp)" "https://api.telegram.org/bot$token/sendDocument" >/dev/null
+            echo "🍺 Attachment '$filename' sent."
+        else
+            echo "❌ Attachment '$filename' not found. Skipping."
+        fi
+    done
+}
+alias sendtelegramattachment="send_telegram_attachment"

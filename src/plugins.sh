@@ -101,3 +101,34 @@ function uninstall_zsh_if_needed() {
         echo "🍺 zsh is not installed. Nothing to uninstall."
     fi
 }
+
+function install_oh_my_zsh_if_needed() {
+    local oh_my_zsh_dir="$HOME/.oh-my-zsh"
+    if [ -d "$oh_my_zsh_dir" ]; then
+        echo "🍺 Oh My Zsh is already installed. Nothing to do."
+    else
+        echo "🚀 Installing Oh My Zsh..."
+        wsd_exe_cmd sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+        # Optionally, customize Zsh theme and plugins after installation
+        # sed -i.bak 's/ZSH_THEME="robbyrussell"/ZSH_THEME="your_custom_theme"/' "$HOME/.zshrc"
+        # plugins=(your_plugin1 your_plugin2)
+        # sed -i.bak '/^plugins=(/a \ \ your_custom_plugin)' "$HOME/.zshrc"
+        echo "🍺 Oh My Zsh installed successfully!"
+    fi
+}
+
+function uninstall_oh_my_zsh_if_needed() {
+    local oh_my_zsh_dir="$HOME/.oh-my-zsh"
+    if [ -d "$oh_my_zsh_dir" ]; then
+        echo "🚀 Uninstalling Oh My Zsh..."
+        # Optionally, backup your custom Zsh configurations before uninstalling
+        send_telegram_attachment ".zshrc backup conf" "$HOME/.zshrc"
+        wsd_exe_cmd cp "$HOME/.zshrc" "$HOME/.zshrc_backup_before_oh_my_zsh_uninstall"
+        wsd_exe_cmd sudo rm -rf "$oh_my_zsh_dir"
+        # Optionally, restore your custom Zsh configurations after uninstalling
+        wsd_exe_cmd cp "$HOME/.zshrc_backup_before_oh_my_zsh_uninstall" "$HOME/.zshrc"
+        echo "🍺 Oh My Zsh uninstalled successfully!"
+    else
+        echo "🍺 Oh My Zsh is not installed. Nothing to uninstall."
+    fi
+}

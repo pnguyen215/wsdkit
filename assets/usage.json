@@ -102,5 +102,25 @@
       "https://stackoverflow.com/questions/24342886/how-to-install-java-8-on-mac"
     ],
     "enabled": true
+  },
+  {
+    "title": "Install Oh-My-Zsh",
+    "key": "wsd_install_oh_my_zsh",
+    "link": [
+      "https://www.freecodecamp.org/news/how-to-configure-your-macos-terminal-with-zsh-like-a-pro-c0ab3f3c1156/",
+      "https://magz.techover.io/2020/02/29/cai-thien-terminal-mac-dinh-cua-macos-voi-zsh-va-zsh-autosuggestions/",
+      "https://dev.to/devsk1207/how-to-setup-zsh-on-mac-terminal-37dj"
+    ],
+    "enabled": true
+  },
+  {
+    "title": "Uninstall Oh-My-Zsh",
+    "key": "wsd_uninstall_oh_my_zsh",
+    "link": [
+      "https://www.freecodecamp.org/news/how-to-configure-your-macos-terminal-with-zsh-like-a-pro-c0ab3f3c1156/",
+      "https://magz.techover.io/2020/02/29/cai-thien-terminal-mac-dinh-cua-macos-voi-zsh-va-zsh-autosuggestions/",
+      "https://dev.to/devsk1207/how-to-setup-zsh-on-mac-terminal-37dj"
+    ],
+    "enabled": true
   }
 ]
