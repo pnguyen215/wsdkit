@@ -424,6 +424,41 @@ function rename_file() {
     echo "🍺 File/directory renamed successfully to $new_path"
 }
 
+# remove_file function
+# Remove a file using 'sudo rm' command.
+#
+# Usage:
+#   remove_file <filename>
+#
+# Parameters:
+#   - <filename>: The path to the file to be removed.
+#
+# Description:
+#   The 'remove_file' function removes a file using the 'sudo rm' command. It takes the
+#   path to the file as an argument and uses 'sudo' to ensure proper permissions for file removal.
+#
+# Options:
+#   - <filename>: The path to the file you want to remove.
+#
+# Example usage:
+#   remove_file /path/to/file.txt
+#
+# Instructions:
+#   1. Run the 'remove_file' function with the path to the file you want to remove.
+#   2. Confirm the deletion by entering 'y' when prompted.
+#
+# Notes:
+#   - Exercise caution when using 'sudo rm' as it permanently deletes files.
+#   - Ensure you have the necessary permissions to delete the specified file.
+function remove_file() {
+    if [ -z "$1" ]; then
+        echo "Usage: remove_file <filename>"
+        return 1
+    fi
+    wsd_exe_cmd sudo rm "$1"
+}
+alias removefile="remove_file"
+
 # chmod_info function
 # Provides information about the 'chmod' command, including its usage, options, and modes.
 #
@@ -602,7 +637,7 @@ function editor() {
         return 1
     fi
     local selected_command
-    selected_command=$(echo "cat;less;more;vim;nano;sudo rm" | tr ';' '\n' | fzf --prompt="Select an action: ")
+    selected_command=$(echo "cat;less;more;vim;nano" | tr ';' '\n' | fzf --prompt="Select an action: ")
     if [ -n "$selected_command" ]; then
         wsd_exe_cmd $selected_command "$selected_file"
     fi
