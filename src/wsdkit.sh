@@ -90,7 +90,7 @@ function wsdkit() {
                     wsd_exe_cmd_hook uninstall_homebrew
                     ;;
                 "wsd_list_git_configs")
-                    git_info_global_setting
+                    git_config_global_setting
                     ;;
                 "wsd_add_secret")
                     add_secret
