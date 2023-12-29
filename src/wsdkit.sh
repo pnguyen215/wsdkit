@@ -113,6 +113,9 @@ function wsdkit() {
                 "wsd_bak_secret")
                     backup_key_secrets_if_needed
                     ;;
+                "wsd_uninstall_zsh")
+                    uninstall_zsh_if_needed
+                    ;;
                 *)
                     echo "❓ Unsupported function."
                     ;;

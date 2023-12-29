@@ -1761,3 +1761,34 @@ function git_log_graph_stat() {
     wsd_exe_cmd git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset' --stat
 }
 alias gitloggraphstat="git_log_graph_stat"
+
+# git_add_all function
+# Add all changes to the Git staging area using 'git add .' command.
+#
+# Usage:
+#   git_add_all
+#
+# Description:
+#   The 'git_add_all' function adds all changes in the working directory to the Git staging area.
+#   It is a convenient shortcut for 'git add .' to stage all modifications, additions, and deletions.
+#
+# Options:
+#   None
+#
+# Example usage:
+#   git_add_all
+#
+# Instructions:
+#   1. Run the 'git_add_all' function to stage all changes in the working directory.
+#
+# Notes:
+#   - This function simplifies the process of staging changes before committing.
+#   - Ensure you have the necessary permissions and are in a valid Git repository.
+#
+# Dependencies:
+#   - Git must be installed and initialized in the current working directory.
+function git_add_all() {
+    wsd_exe_cmd git add .
+}
+alias gitaddall="git_add_all"
+alias gitstageall="git_add_all"

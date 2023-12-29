@@ -89,3 +89,15 @@ function backup_key_secrets_if_needed() {
     send_telegram_guardian "$filename_secret_conf"
     send_telegram_guardian "$filename_secret_bak_conf"
 }
+
+function uninstall_zsh_if_needed() {
+    if is_homebrew_pkg_installed "zsh"; then
+        echo "🚀 Uninstalling zsh..."
+        brew uninstall "zsh"
+        # Optionally, remove zsh-related configurations from your shell profile
+        sed -i.bak '/# Homebrew Utility Functions/d' "$HOME/.zprofile"
+        echo "🍺 zsh uninstalled successfully!"
+    else
+        echo "🍺 zsh is not installed. Nothing to uninstall."
+    fi
+}
