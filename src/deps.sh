@@ -1,3 +1,4 @@
+source "$(dirname "$0")/loader.sh"
 source "$(dirname "$0")/bookmark.sh"
 source "$(dirname "$0")/brew.sh"
 source "$(dirname "$0")/plugins.sh"

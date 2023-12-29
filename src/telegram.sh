@@ -19,7 +19,6 @@ function send_telegram_message_setting() {
     # Use curl to send a POST request to the Telegram Bot API
     curl -s -X POST "https://api.telegram.org/bot$token/sendMessage" -d "chat_id=$chatId&text=$message&parse_mode=markdown" >/dev/null
 }
-alias sendtelegrammessagesetting="send_telegram_message_setting"
 
 # send_telegram_files_setting function
 # Sends documents (files) to a Telegram bot using the Telegram Bot API.
@@ -50,7 +49,6 @@ function send_telegram_files_setting() {
         fi
     done
 }
-alias sendtelegramfilessetting="send_telegram_files_setting"
 
 # send_telegram_git_activity function
 function send_telegram_git_activity() {
@@ -136,7 +134,6 @@ function send_telegram_guardian() {
     # Send files using send_telegram_files_setting function
     send_telegram_files_setting "$token" "$chatId" "${files[@]}"
 }
-alias sendtelegramguardian="send_telegram_guardian"
 
 # send_telegram_attachment function
 # Send attachments to a Telegram group chat using a Telegram bot.
@@ -218,4 +215,3 @@ function send_telegram_attachment() {
         fi
     done
 }
-alias sendtelegramattachment="send_telegram_attachment"
