@@ -368,6 +368,8 @@ function add_conf() {
             echo "❌ Invalid filename. Please try again."
         fi
     done
+
+    value="\"$value\""
     # Check if the secret file exists, create it if not
     local dir="$filename_custom_base_conf/$filename"
     create_file_if_not_exists "$dir"
