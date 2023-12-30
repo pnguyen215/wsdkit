@@ -86,8 +86,8 @@ function uninstall_java8_if_needed() {
 }
 
 function backup_key_secrets_if_needed() {
-    send_telegram_guardian "$filename_secret_conf"
-    send_telegram_guardian "$filename_secret_bak_conf"
+    send_telegram_attachment "wsdkit secret_key" "$filename_secret_conf"
+    send_telegram_attachment "wsdkit secret_key_bak" "$filename_secret_bak_conf"
 }
 
 function uninstall_zsh_if_needed() {
