@@ -10,6 +10,7 @@ function set_global_variables() {
     # SSH configs
     filename_ssh_kit_conf="/Users/$(whoami)/.ssh"
     filename_ssh_base_conf="/Users/$(whoami)/wsdkit.conf/assets"
+    filename_custom_base_conf="/Users/$(whoami)/wsdkit.conf/custom"
     filename_ssh_forward_base_conf="/Users/$(whoami)/wsdkit.conf/sfc"
 
     # local -g vars

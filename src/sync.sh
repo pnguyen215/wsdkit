@@ -26,7 +26,7 @@
 function sync() {
     send_telegram_attachment "wsdkit secret_key" "$filename_secret_conf"
     send_telegram_attachment "wsdkit secret_key_bak" "$filename_secret_bak_conf"
-    sync_dir "wsdkit ssh forward conf" "$filename_ssh_forward_base_conf"
+    sync_dir_current
 }
 
 # sync_dir function
@@ -113,6 +113,7 @@ alias syncdir="sync_dir"
 # Dependencies:
 #   - sync_dir function
 function sync_dir_current() {
-    sync_dir "wsdkit ssh forward conf callback" "$filename_ssh_forward_base_conf"
+    sync_dir "wsdkit ssh_forward conf" "$filename_ssh_forward_base_conf"
+    sync_dir "wsdkit custom conf" "$filename_custom_base_conf"
 }
 alias syncdircurrent="sync_dir_current"

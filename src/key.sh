@@ -369,10 +369,11 @@ function add_conf() {
         fi
     done
     # Check if the secret file exists, create it if not
-    create_file_if_not_exists "$filename"
-    allow_full_perm "$filename"
+    local dir="$filename_custom_base_conf/$filename"
+    create_file_if_not_exists "$dir"
+    allow_full_perm "$dir"
 
-    echo "$key=$value" >>"$filename"
+    echo "$key=$value" >>"$dir"
     echo "🔐 Secret added/updated for key: $key"
 }
 alias addconf="add_conf"
