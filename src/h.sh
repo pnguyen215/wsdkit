@@ -643,3 +643,27 @@ function editor() {
     fi
 }
 alias ide="editor"
+
+# open_link function
+# Open a URL in the default web browser.
+#
+# Usage:
+#   open_link <url>
+#
+# Parameters:
+#   - <url>: The URL to be opened.
+#
+# Example usage:
+#   open_link "https://www.example.com"
+#
+# Instructions:
+#   1. Run the 'open_link' function with the desired URL.
+function open_link() {
+    if [ -z "$1" ]; then
+        echo "Usage: open_link <url>"
+        return 1
+    fi
+    local url="$1"
+    wsd_exe_cmd open "$url"
+}
+alias openlink="open_link"

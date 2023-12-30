@@ -122,6 +122,15 @@ function wsdkit() {
                 "wsd_uninstall_oh_my_zsh")
                     uninstall_oh_my_zsh_if_needed
                     ;;
+                "wsd_install_zsh_autosuggestions")
+                    manual_zsh_autosuggestions_if_needed
+                    ;;
+                "wsd_install_zsh_syntax_highlighting")
+                    manual_zsh_syntax_highlighting_if_needed
+                    ;;
+                "wsd_customize_theme_oh_my_zsh")
+                    manual_customize_theme_oh_my_zsh_if_needed
+                    ;;
                 *)
                     echo "❓ Unsupported function."
                     ;;

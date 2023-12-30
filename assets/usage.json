@@ -1,18 +1,18 @@
 [
   {
-    "title": "Install Homebrew",
+    "title": "Homebrew Installation",
     "key": "wsd_install_brew",
     "link": ["https://brew.sh"],
     "enabled": false
   },
   {
-    "title": "Uninstall Homebrew",
+    "title": "Homebrew Uninstallation",
     "key": "wsd_uninstall_brew",
     "link": ["https://brew.sh"],
     "enabled": true
   },
   {
-    "title": "Install Git",
+    "title": "Git Installation",
     "key": "wsd_install_git",
     "link": [
       "https://www.atlassian.com/git/tutorials/install-git#install-the-git-credential-osx"
@@ -20,7 +20,7 @@
     "enabled": true
   },
   {
-    "title": "Configure Git credentials",
+    "title": "Git Credentials Configuration",
     "key": "wsd_install_git_credentials",
     "link": [
       "https://www.atlassian.com/git/tutorials/install-git#install-the-git-credential-osx"
@@ -28,7 +28,7 @@
     "enabled": true
   },
   {
-    "title": "List Git configs (globally)",
+    "title": "List Global Git Configurations",
     "key": "wsd_list_git_configs",
     "link": [
       "https://www.atlassian.com/git/tutorials/install-git#install-the-git-credential-osx"
@@ -36,7 +36,7 @@
     "enabled": true
   },
   {
-    "title": "Install Zsh",
+    "title": "Zsh Installation",
     "key": "wsd_install_zsh",
     "link": [
       "https://www.freecodecamp.org/news/how-to-configure-your-macos-terminal-with-zsh-like-a-pro-c0ab3f3c1156/",
@@ -46,7 +46,7 @@
     "enabled": true
   },
   {
-    "title": "Uninstall Zsh",
+    "title": "Zsh Uninstallation",
     "key": "wsd_uninstall_zsh",
     "link": [
       "https://www.freecodecamp.org/news/how-to-configure-your-macos-terminal-with-zsh-like-a-pro-c0ab3f3c1156/",
@@ -56,37 +56,37 @@
     "enabled": true
   },
   {
-    "title": "Add secret.dev",
+    "title": "Add a Secret to Configuration",
     "key": "wsd_add_secret",
     "link": [],
     "enabled": true
   },
   {
-    "title": "Get secret.dev",
+    "title": "Retrieve a Secret",
     "key": "wsd_get_secret",
     "link": [],
     "enabled": true
   },
   {
-    "title": "Get all secret.dev",
+    "title": "Retrieve All Secrets",
     "key": "wsd_get_all_secret",
     "link": [],
     "enabled": true
   },
   {
-    "title": "Remove secret.dev",
+    "title": "Remove a Secret",
     "key": "wsd_remove_secret",
     "link": [],
     "enabled": true
   },
   {
-    "title": "Backup secret.dev",
+    "title": "Backup Secrets",
     "key": "wsd_bak_secret",
     "link": [],
     "enabled": true
   },
   {
-    "title": "Install Java JDK(8)",
+    "title": "Java JDK(8) Installation",
     "key": "wsd_install_jdk8",
     "link": [
       "https://mkyong.com/java/how-to-install-java-on-mac-osx/#homebrew-install-a-specified-java-adoptopenjdk-on-macos",
@@ -95,7 +95,7 @@
     "enabled": true
   },
   {
-    "title": "Uninstall Java JDK(8)",
+    "title": "Java JDK(8) Uninstallation",
     "key": "wsd_uninstall_jdk8",
     "link": [
       "https://mkyong.com/java/how-to-install-java-on-mac-osx/#homebrew-install-a-specified-java-adoptopenjdk-on-macos",
@@ -104,7 +104,7 @@
     "enabled": true
   },
   {
-    "title": "Install Oh-My-Zsh",
+    "title": "Oh-My-Zsh Installation",
     "key": "wsd_install_oh_my_zsh",
     "link": [
       "https://www.freecodecamp.org/news/how-to-configure-your-macos-terminal-with-zsh-like-a-pro-c0ab3f3c1156/",
@@ -114,8 +114,40 @@
     "enabled": true
   },
   {
-    "title": "Uninstall Oh-My-Zsh",
+    "title": "Oh-My-Zsh Uninstallation",
     "key": "wsd_uninstall_oh_my_zsh",
+    "link": [
+      "https://www.freecodecamp.org/news/how-to-configure-your-macos-terminal-with-zsh-like-a-pro-c0ab3f3c1156/",
+      "https://magz.techover.io/2020/02/29/cai-thien-terminal-mac-dinh-cua-macos-voi-zsh-va-zsh-autosuggestions/",
+      "https://dev.to/devsk1207/how-to-setup-zsh-on-mac-terminal-37dj"
+    ],
+    "enabled": true
+  },
+  {
+    "title": "Zsh Autosuggestions Installation (Optional)",
+    "key": "wsd_install_zsh_autosuggestions",
+    "link": [
+      "https://github.com/zsh-users/zsh-autosuggestions/blob/master/INSTALL.md",
+      "https://www.freecodecamp.org/news/how-to-configure-your-macos-terminal-with-zsh-like-a-pro-c0ab3f3c1156/",
+      "https://magz.techover.io/2020/02/29/cai-thien-terminal-mac-dinh-cua-macos-voi-zsh-va-zsh-autosuggestions/",
+      "https://dev.to/devsk1207/how-to-setup-zsh-on-mac-terminal-37dj"
+    ],
+    "enabled": true
+  },
+  {
+    "title": "Zsh Syntax Highlighting Installation (Optional)",
+    "key": "wsd_install_zsh_syntax_highlighting",
+    "link": [
+      "https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/INSTALL.md",
+      "https://www.freecodecamp.org/news/how-to-configure-your-macos-terminal-with-zsh-like-a-pro-c0ab3f3c1156/",
+      "https://magz.techover.io/2020/02/29/cai-thien-terminal-mac-dinh-cua-macos-voi-zsh-va-zsh-autosuggestions/",
+      "https://dev.to/devsk1207/how-to-setup-zsh-on-mac-terminal-37dj"
+    ],
+    "enabled": true
+  },
+  {
+    "title": "PowerLevel10k Oh-My-Zsh Customization (Optional)",
+    "key": "wsd_customize_theme_oh_my_zsh",
     "link": [
       "https://www.freecodecamp.org/news/how-to-configure-your-macos-terminal-with-zsh-like-a-pro-c0ab3f3c1156/",
       "https://magz.techover.io/2020/02/29/cai-thien-terminal-mac-dinh-cua-macos-voi-zsh-va-zsh-autosuggestions/",

@@ -132,3 +132,20 @@ function uninstall_oh_my_zsh_if_needed() {
         echo "🍺 Oh My Zsh is not installed. Nothing to uninstall."
     fi
 }
+
+function manual_zsh_autosuggestions_if_needed() {
+    loading_spinner 2
+    open_link "https://github.com/zsh-users/zsh-autosuggestions/blob/master/INSTALL.md"
+}
+
+function manual_zsh_syntax_highlighting_if_needed() {
+    loading_spinner 2
+    open_link "https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/INSTALL.md"
+}
+
+function manual_customize_theme_oh_my_zsh_if_needed() {
+    echo "🚀 Clone repository"
+    wsd_exe_cmd_hook git clone https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/themes/powerlevel10k
+    echo "🔧 Edit file .zshrc"
+    wsd_exe_cmd_hook "ZSH_THEME="powerlevel10k/powerlevel10k""
+}
