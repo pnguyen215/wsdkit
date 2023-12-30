@@ -570,6 +570,81 @@ function git_fetch_remote_branch_checkout() {
 }
 alias gitfetchremotebranchcheckout="git_fetch_remote_branch_checkout"
 
+# git_push_branch_remote_force function
+# Force-push a local Git branch to its remote counterpart.
+#
+# Usage:
+#   git_push_branch_remote_force <branch_name>
+#
+# Parameters:
+#   - <branch_name>: The name of the local branch to force-push.
+#
+# Description:
+#   The 'git_push_branch_remote_force' function allows you to force-push a local Git branch
+#   to its remote counterpart on the origin. This can be useful when you need to overwrite
+#   the remote branch with your local changes.
+#
+# Options:
+#   <branch_name>: The name of the local branch you want to force-push.
+#
+# Example usage:
+#   git_push_branch_remote_force feature/my-feature-branch
+#
+# Instructions:
+#   1. Run the 'git_push_branch_remote_force' function with the name of the local branch to force-push.
+#   2. The function will force-push the specified branch to its remote counterpart on the origin.
+#   3. After force-push, the function checks out the original branch you were on before force-pushing.
+#
+# Notes:
+#   - Use with caution, as force-pushing can overwrite remote changes.
+#   - Ensure you have the necessary permissions to force-push to the remote repository.
+#
+# Dependencies:
+#   - git
+function git_push_branch_remote_force() {
+    if [ $# -lt 1 ]; then
+        echo "Usage: git_push_branch_remote_force <branch_name>"
+        return 1
+    fi
+    local current_branch=$(git rev-parse --abbrev-ref HEAD)
+    wsd_exe_cmd git push --set-upstream --force origin "$1"
+    wsd_exe_cmd git checkout "$current_branch"
+}
+alias gitpushbranchremoteforce="git_push_branch_remote_force"
+
+# git_push_branch_remote_force_current function
+# Force-push the current local Git branch to its remote counterpart.
+#
+# Usage:
+#   git_push_branch_remote_force_current
+#
+# Description:
+#   The 'git_push_branch_remote_force_current' function allows you to force-push the current local Git branch
+#   to its remote counterpart on the origin. This is a convenient shortcut to force-push the branch you are currently on.
+#
+# Options:
+#   None
+#
+# Example usage:
+#   git_push_branch_remote_force_current
+#
+# Instructions:
+#   1. Run the 'git_push_branch_remote_force_current' function to force-push the current branch to its remote counterpart.
+#   2. The function will identify the current branch and force-push it to its remote counterpart on the origin.
+#   3. After force-push, the function checks out the original branch you were on before force-pushing.
+#
+# Notes:
+#   - Use with caution, as force-pushing can overwrite remote changes.
+#   - Ensure you have the necessary permissions to force-push to the remote repository.
+#
+# Dependencies:
+#   - git
+function git_push_branch_remote_force_current() {
+    local current_branch=$(git rev-parse --abbrev-ref HEAD)
+    git_push_branch_remote_force "$current_branch"
+}
+alias gitpushbranchremoteforcecurrent="git_push_branch_remote_force_current"
+
 # git_rebase_squash_push_commit function
 # Rebases, squashes commits, and pushes changes to the remote Git repository.
 #
