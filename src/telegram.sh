@@ -64,9 +64,7 @@ function send_telegram_git_activity() {
     local chatId="$JARVIS_TELEGRAM_BOT_GROUP_CHAT_ID_1"
 
     # setting token
-    if [[ -n "$token" ]]; then
-        echo "🚀 Processing token"
-    else
+    if [[ -z "$token" ]]; then
         echo "❌ Key 'JARVIS_TELEGRAM_BOT_TOKEN_1' not found or empty."
         echo "🚀 Setting key 'JARVIS_TELEGRAM_BOT_TOKEN_1'"
         add_secret
@@ -75,9 +73,7 @@ function send_telegram_git_activity() {
     fi
 
     # setting chatId
-    if [[ -n "$chatId" ]]; then
-        echo "🚀 Processing chat_id"
-    else
+    if [[ -z "$chatId" ]]; then
         echo "❌ Key 'JARVIS_TELEGRAM_BOT_GROUP_CHAT_ID_1' not found or empty."
         echo "🚀 Setting key 'JARVIS_TELEGRAM_BOT_GROUP_CHAT_ID_1'"
         add_secret
@@ -110,9 +106,7 @@ function send_telegram_guardian() {
     local chatId="$JARVIS_TELEGRAM_BOT_GROUP_CHAT_ID_2"
 
     # setting token
-    if [[ -n "$token" ]]; then
-        echo "🚀 Processing token"
-    else
+    if [[ -z "$token" ]]; then
         echo "❌ Key 'JARVIS_TELEGRAM_BOT_TOKEN_1' not found or empty."
         echo "🚀 Setting key 'JARVIS_TELEGRAM_BOT_TOKEN_1'"
         add_secret
@@ -121,9 +115,7 @@ function send_telegram_guardian() {
     fi
 
     # setting chatId
-    if [[ -n "$chatId" ]]; then
-        echo "🚀 Processing chat_id"
-    else
+    if [[ -z "$chatId" ]]; then
         echo "❌ Key 'JARVIS_TELEGRAM_BOT_GROUP_CHAT_ID_2' not found or empty."
         echo "🚀 Setting key 'JARVIS_TELEGRAM_BOT_GROUP_CHAT_ID_2'"
         add_secret
@@ -184,9 +176,7 @@ function send_telegram_attachment() {
     local timestamp=$(date +"%Y-%m-%d %H:%M:%S")
 
     # setting token
-    if [[ -n "$token" ]]; then
-        echo "🚀 Processing token"
-    else
+    if [[ -z "$token" ]]; then
         echo "❌ Key 'JARVIS_TELEGRAM_BOT_TOKEN_1' not found or empty."
         echo "🚀 Setting key 'JARVIS_TELEGRAM_BOT_TOKEN_1'"
         add_secret
@@ -195,9 +185,7 @@ function send_telegram_attachment() {
     fi
 
     # setting chatId
-    if [[ -n "$chatId" ]]; then
-        echo "🚀 Processing chat_id"
-    else
+    if [[ -z "$chatId" ]]; then
         echo "❌ Key 'JARVIS_TELEGRAM_BOT_GROUP_CHAT_ID_2' not found or empty."
         echo "🚀 Setting key 'JARVIS_TELEGRAM_BOT_GROUP_CHAT_ID_2'"
         add_secret
@@ -208,6 +196,7 @@ function send_telegram_attachment() {
     # sending files to group chatId
     for filename in "${files[@]}"; do
         if [ -f "$filename" ]; then
+            progress_bar 0.1
             curl -s -F chat_id="$chatId" -F document=@"$filename" -F caption="$description ($timestamp)" "https://api.telegram.org/bot$token/sendDocument" >/dev/null
             echo "🍺 Attachment '$filename' sent."
         else
