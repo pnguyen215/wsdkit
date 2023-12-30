@@ -376,3 +376,40 @@ function ssh_edit_sfc() {
     ide "$filename_ssh_forward_base_conf"
 }
 alias ssheditsfc="ssh_edit_sfc"
+
+# ssh_sync_forward_conf function
+# Synchronize a specified SSH configuration file to the SSH forward configuration directory.
+#
+# Usage:
+#   ssh_sync_forward_conf <filename>
+#
+# Parameters:
+#   - <filename>: The name of the SSH configuration file to synchronize.
+#
+# Description:
+#   The 'ssh_sync_forward_conf' function moves the specified SSH configuration file to the SSH forward
+#   configuration directory. It uses the 'move_file' function to perform the synchronization operation.
+#
+# Options:
+#   - <filename>: The name of the SSH configuration file to be synchronized.
+#
+# Example usage:
+#   ssh_sync_forward_conf example_ssh_config.conf
+#
+# Instructions:
+#   1. Run the 'ssh_sync_forward_conf' function with the name of the SSH configuration file to be synchronized.
+#   2. The function will move the specified file to the SSH forward configuration directory.
+#
+# Notes:
+#   - Ensure that the 'move_file' function is correctly configured and that the specified SSH configuration file exists.
+#
+# Dependencies:
+#   - move_file function
+function ssh_sync_forward_conf() {
+    if [ $# -lt 1 ]; then
+        echo "Usage: ssh_sync_forward_conf <filename>"
+        return 1
+    fi
+    move_file "$1" "$filename_ssh_forward_base_conf"
+}
+alias sshsyncforwardconf="ssh_sync_forward_conf"
