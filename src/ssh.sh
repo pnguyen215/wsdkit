@@ -78,7 +78,7 @@ function ssh_create_tunnel() {
     read_ssh_conf "$filename"
     echo "🚀 SSH tunnel for '$ssh_name' connecting"
     # Modify this line according to your SSH tunnel requirements
-    wsd_exe_cmd ssh -i "$ssh_filename_rsa" -N -L "$local_port:$remote_host:$remote_port" "$ssh_user@$ssh_host" -p "$ssh_port" &
+    wsd_exe_cmd ssh -i "\"$ssh_filename_rsa\"" -N -L "$local_port:$remote_host:$remote_port" "$ssh_user@$ssh_host" -p "$ssh_port" &
 }
 alias sshcreatetunnel="ssh_create_tunnel"
 
@@ -117,7 +117,7 @@ function ssh_bind_tunnel() {
     read_ssh_conf "$filename"
     echo "🚀 SSH tunnel for '$ssh_name' binding"
     # Modify this line according to your SSH tunnel requirements
-    wsd_exe_cmd ssh-add -K "$ssh_filename_rsa"
+    wsd_exe_cmd ssh-add -K "\"$ssh_filename_rsa\""
 }
 alias sshbindtunnel="ssh_bind_tunnel"
 
@@ -154,7 +154,7 @@ function ssh_verify_tunnel() {
     read_ssh_conf "$filename"
     echo "🚀 SSH tunnel for '$ssh_name' verifying"
     # Modify this line according to your SSH tunnel requirements
-    wsd_exe_cmd ssh -i "$ssh_filename_rsa" "$ssh_user@$ssh_host" -p "$ssh_port"
+    wsd_exe_cmd ssh -i "\"$ssh_filename_rsa\"" "$ssh_user@$ssh_host" -p "$ssh_port"
 }
 alias sshverifytunnel="ssh_verify_tunnel"
 
