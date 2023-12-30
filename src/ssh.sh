@@ -413,3 +413,46 @@ function ssh_sync_forward_conf() {
     move_file "$1" "$filename_ssh_forward_base_conf"
 }
 alias sshsyncforwardconf="ssh_sync_forward_conf"
+
+# ssh_select_and_create_tunnel function
+# Select an SSH configuration file from the SSH forward configuration directory and create an SSH tunnel.
+#
+# Usage:
+#   ssh_select_and_create_tunnel
+#
+# Description:
+#   The 'ssh_select_and_create_tunnel' function provides an interactive way to select an SSH configuration
+#   file from the SSH forward configuration directory using 'fzf'. Once selected, it invokes the 'ssh_create_tunnel'
+#   function to create an SSH tunnel using the chosen configuration.
+#
+# Options:
+#   None
+#
+# Example usage:
+#   Run the 'ssh_select_and_create_tunnel' function interactively to choose an SSH configuration and create a tunnel.
+#
+# Instructions:
+#   1. Execute the 'ssh_select_and_create_tunnel' function.
+#   2. Use 'fzf' to select an SSH configuration file from the SSH forward configuration directory.
+#   3. The chosen configuration will be used to create an SSH tunnel using the 'ssh_create_tunnel' function.
+#
+# Notes:
+#   - Ensure that the 'fzf' command-line fuzzy finder is installed for proper functionality.
+#   - The 'ssh_create_tunnel' function is called to establish an SSH tunnel with the selected configuration.
+#
+# Dependencies:
+#   - fzf
+#   - ssh_create_tunnel function
+function ssh_select_and_create_tunnel() {
+    local selected_file
+    selected_file=$(ls "$filename_ssh_forward_base_conf" | fzf --prompt="Select SSH Conf: ")
+
+    if [ -z "$selected_file" ]; then
+        echo "❌ No file selected. Exiting."
+        return 1
+    fi
+
+    echo "🚀 Creating SSH tunnel using selected: $selected_file"
+    ssh_create_tunnel "$filename_ssh_forward_base_conf/$selected_file"
+}
+alias sshselectcreatetunnel="ssh_select_and_create_tunnel"
