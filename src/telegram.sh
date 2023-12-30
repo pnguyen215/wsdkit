@@ -204,3 +204,111 @@ function send_telegram_attachment() {
         fi
     done
 }
+
+# zip_and_send_attachment function
+# Zip all files from a specific folder and send the zip file to a Telegram group chat using a Telegram bot.
+#
+# Usage:
+#   zip_and_send_attachment <folder> <description>
+#
+# Parameters:
+#   <folder>: Path to the folder containing files to be zipped.
+#   <description>: A description for the attachments.
+#
+# Example usage:
+#   zip_and_send_attachment "/path/to/folder" "Logs for today"
+#
+# Instructions:
+#   1. Run the 'zip_and_send_attachment' function with the folder path and a description.
+#
+# Notes:
+#   - Ensure that the necessary Telegram bot token and group chat ID are available in the secrets file.
+#   - The function uses the 'zip' command to compress files and 'curl' to interact with the Telegram Bot API.
+#   - Timestamps are added to the captions for better identification.
+#
+# Dependencies:
+#   - 'zip' and 'curl' must be installed for file compression and API communication.
+#   - The function relies on Telegram bot and chat IDs stored in the secrets file.
+function zip_and_send_attachment() {
+    if [ $# -lt 2 ]; then
+        echo "Usage: zip_and_send_attachment <description> <folder>"
+        return 1
+    fi
+
+    local description="$1"
+    local folder="$2"
+    local timestamp=$(date +"%Y-%m-%d %H:%M:%S")
+    local zip_filename="$folder.zip"
+
+    # Zip all files in the specified folder
+    wsd_exe_cmd sudo zip -r "$zip_filename" "$folder"/*
+    echo "🚀 Zipping folder '$folder'"
+    progress_bar 0.1
+    send_telegram_attachment "$description ($timestamp)" "$zip_filename"
+    allow_full_perm "$zip_filename"
+    # Remove the temporary zip file
+    wsd_exe_cmd sudo rm -rf "$zip_filename"
+}
+
+# zip_selected_and_send_attachment function
+# Interactively select files from a specific folder, zip the selected files, and send the zip file to a Telegram group chat using a Telegram bot.
+#
+# Usage:
+#   zip_selected_and_send_attachment <description> <folder>
+#
+# Parameters:
+#   <description>: A description for the attachments.
+#   <folder>: Path to the folder containing files to be zipped and selected.
+#
+# Example usage:
+#   zip_selected_and_send_attachment "Logs for today" "/path/to/folder"
+#
+# Instructions:
+#   1. Run the 'zip_selected_and_send_attachment' function with a description and the folder path.
+#   2. Use 'fzf' to interactively select files from the specified folder.
+#   3. The selected files will be zipped and sent to the Telegram group chat.
+#
+# Notes:
+#   - Ensure that the necessary Telegram bot token and group chat ID are available in the secrets file.
+#   - The function uses 'fzf', 'zip', and 'curl' commands for file selection, compression, and API communication.
+#   - Timestamps are added to the captions for better identification.
+#
+# Dependencies:
+#   - 'fzf', 'zip', and 'curl' must be installed for file selection, compression, and API communication.
+#   - The function relies on Telegram bot and chat IDs stored in the secrets file.
+function zip_selected_and_send_attachment() {
+    if [ $# -lt 2 ]; then
+        echo "Usage: zip_selected_and_send_attachment <description> <folder>"
+        return 1
+    fi
+
+    local description="$1"
+    local folder="$2"
+    local timestamp=$(date +"%Y-%m-%d %H:%M:%S")
+    local zip_filename="$folder.zip"
+
+    # local selected_files
+    selected_files=$(find "$folder" -type f | fzf --multi --prompt="Select files to zip and send:")
+    # Use 'fzf' to interactively select files from the specified folder
+    # selected_files=$(fd --type file --base-directory "$folder" --print0 | fzf --multi --prompt="Select files to zip and send:" --read0)
+
+    # Check if any files were selected
+    if [ -z "$selected_files" ]; then
+        echo "❌ No files selected. Aborting."
+        return 1
+    fi
+
+    # Zip the selected files
+    wsd_exe_cmd sudo zip -r "$zip_filename" $selected_files
+    echo "🚀 Zipping selected files from '$folder'"
+
+    # Send the zip file to Telegram using send_telegram_attachment function
+    send_telegram_attachment "$description ($timestamp)" "$zip_filename"
+
+    # Allow full permissions to the zip file (modify as needed)
+    allow_full_perm "$zip_filename"
+
+    # Remove the temporary zip file
+    wsd_exe_cmd sudo rm -rf "$zip_filename"
+}
+alias zipselectedsendattachment="zip_selected_and_send_attachment"
