@@ -16,6 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v') # Only run this job when a valid tag is pushed
     steps:
+      - name: Debug GitHub Token
+        run: echo ${{ secrets.GITHUB_TOKEN }}
       - name: Check if tag exists
         id: check_tag
         run: |
@@ -41,5 +43,3 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Debug GitHub Token
-        run: echo ${{ secrets.GITHUB_TOKEN }}
