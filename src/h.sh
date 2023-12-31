@@ -667,3 +667,80 @@ function open_link() {
     wsd_exe_cmd open "$url"
 }
 alias openlink="open_link"
+
+# emojis function
+# Display a list of supported emojis in the terminal.
+#
+# Usage:
+#   emojis
+#
+# Description:
+#   The 'emojis' function prints a list of supported emojis in the terminal, covering a wide range
+#   of Unicode code points. It is a fun way to explore and display emojis within your terminal.
+#
+# Options:
+#   None
+#
+# Example usage:
+#   emojis
+#
+# Instructions:
+#   1. Run the 'emojis' function to display a list of supported emojis in the terminal.
+#
+# Notes:
+#   - This function is purely for entertainment and exploration of emojis within the terminal.
+# function emojis() {
+#     echo "🚀 Supported emojis in terminal:"
+#     for code_point in {128512..128591} {128640..128704} {127744..128317} {9986..10160} {127744..128317}; do
+#         printf "\U$(printf '%x' "$code_point") "
+#     done
+#     echo -e
+# }
+function emojis() {
+    echo "🚀 Supported emojis in terminal:"
+    local -i count=0
+    for code_point in {128512..128591} {128640..128704} {127744..128317} {9986..10160} {127744..128317}; do
+        printf "\U$(printf '%x' "$code_point") "
+        # printf "$(printf '%x' "$code_point") "
+        printf "%s " "\U$(printf '%08x' "$code_point")"
+        # printf "%q " "\U$(printf '%08x' "$code_point")"
+        ((count++))
+        if ((count % 5 == 0)); then
+            echo
+        fi
+    done
+    echo -e
+}
+
+# translate_emojis function
+# Display the Unicode character for a given emoji code point.
+#
+# Usage:
+#   translate_emojis <unicode>
+#
+# Parameters:
+#   - <unicode>: The Unicode code point of the emoji.
+#
+# Description:
+#   The 'translate_emojis' function prints the Unicode character for a given emoji code point.
+#   It allows you to translate emoji codes into the corresponding Unicode characters.
+#
+# Options:
+#   None
+#
+# Example usage:
+#   translate_emojis 1F603
+#
+# Instructions:
+#   1. Run 'translate_emojis' with the Unicode code point of the emoji as a parameter.
+#
+# Notes:
+#   - The Unicode code point should be provided as a hexadecimal value.
+function translate_emojis() {
+    if [ $# -lt 1 ]; then
+        echo "Usage: translate_emojis <unicode>"
+        return 1
+    fi
+    echo -e "$1"
+}
+alias translateemojis="translate_emojis"
