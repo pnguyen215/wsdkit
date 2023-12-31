@@ -41,3 +41,5 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Debug GitHub Token
+        run: echo ${{ secrets.GITHUB_TOKEN }}
