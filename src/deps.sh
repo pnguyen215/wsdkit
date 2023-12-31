@@ -8,5 +8,8 @@ source "$(dirname "$0")/git.sh"
 source "$(dirname "$0")/telegram.sh"
 source "$(dirname "$0")/ssh.sh"
 
+# Languages Developer
+source "$(dirname "$0")/go.sh"
+
 # keep at the bottom line
 source "$(dirname "$0")/sync.sh"

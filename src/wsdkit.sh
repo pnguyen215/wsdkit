@@ -13,6 +13,9 @@ function set_global_variables() {
     filename_custom_base_conf="/Users/$(whoami)/wsdkit.conf/custom"
     filename_ssh_forward_base_conf="/Users/$(whoami)/wsdkit.conf/sfc"
 
+    # Github repositories
+    github_golang_template_repository="https://github.com/sivaosorg/gocell/archive/master.zip"
+
     # local -g vars
     # filename_secret_conf="./assets/secrets.txt"
     # filename_conf="./assets/usage.json"
