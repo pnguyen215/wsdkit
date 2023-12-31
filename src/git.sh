@@ -78,10 +78,47 @@ alias gitconfigglobalsetting="git_config_global_setting"
 # Note: Make sure to set up appropriate aliases or customize the function name based on your preferences.
 function git_log_graph() {
     local options="$@"
-    # Use 'git log' with options for graphical and decorated output
     wsd_exe_cmd git log --graph --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%an%C(reset)%C(bold yellow)%d%C(reset) %C(dim white)- %s%C(reset)' --all $options
 }
 alias gitloggraph="git_log_graph"
+
+# git_log_graph_remote function
+# Display a graph of the commit history with decorations, including remote branches.
+#
+# Usage:
+#   git_log_graph_remote [options]
+#
+# Parameters:
+#   - [options]: Additional options to customize the 'git log' command.
+#
+# Description:
+#   The 'git_log_graph_remote' function displays a concise and visually informative graph of the commit history
+#   using the 'git log' command. It includes decorations for branches, authors, and commit messages.
+#   Additionally, it shows remote branches in the graph.
+#
+# Options:
+#   - [options]: Additional options that can be passed to customize the behavior of the 'git log' command.
+#
+# Example usage:
+#   Run the 'git_log_graph_remote' function to display a graph of the commit history with remote branches.
+#   You can pass additional options to customize the output.
+#
+# Instructions:
+#   1. Execute the 'git_log_graph_remote' function to display the commit history graph.
+#   2. Optionally, provide additional options to customize the 'git log' command behavior.
+#
+# Notes:
+#   - This function enhances the 'git log' output with a concise and visually appealing graph.
+#   - Remote branches are included in the graph for a comprehensive view of the commit history.
+#
+# Example:
+#   git_log_graph_remote
+#   git_log_graph_remote --since="2 weeks ago"
+function git_log_graph_remote() {
+    local options="$@"
+    wsd_exe_cmd git log --oneline --graph --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%an%C(reset)%C(bold yellow)%d%C(reset) %C(dim white)- %s%C(reset)' --all $options
+}
+alias gitloggraphremote="git_log_graph_remote"
 
 # git_tags_released function
 # Lists the released tags in the Git repository along with their creation date and author information.
@@ -1819,9 +1856,40 @@ alias gitconfigdisabledpushautosetupremote="git_config_disabled_push_auto_setup_
 #   The 'git_log_graph_timestamp' function displays a Git log with a graph representing commit history,
 #   commit hash, branch information, commit message, timestamp, and author information.
 function git_log_graph_timestamp() {
-    wsd_exe_cmd git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset'
+    local options="$@"
+    wsd_exe_cmd git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset' $options
 }
 alias gitloggraphtimestamp="git_log_graph_timestamp"
+
+# git_log_graph_timestamp_remote function
+# Display a graph of the commit history with timestamps, including remote branches.
+#
+# Usage:
+#   git_log_graph_timestamp_remote
+#
+# Description:
+#   The 'git_log_graph_timestamp_remote' function displays a concise graph of the commit history
+#   using the 'git log' command. It includes commit timestamps, decorations for branches,
+#   and highlights remote branches in the graph.
+#
+# Options:
+#   None
+#
+# Example usage:
+#   Run the 'git_log_graph_timestamp_remote' function to display a graph of the commit history with timestamps.
+#
+# Instructions:
+#   1. Execute the 'git_log_graph_timestamp_remote' function to visualize the commit history graph.
+#   2. The output includes commit timestamps, branch decorations, and highlights for remote branches.
+#
+# Notes:
+#   - This function enhances the 'git log' output with timestamps, making it more informative.
+#   - Remote branches are highlighted in the graph for better visibility.
+function git_log_graph_timestamp_remote() {
+    local options="$@"
+    wsd_exe_cmd git log --oneline --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset' $options
+}
+alias gitloggraphtimestampremote="git_log_graph_timestamp_remote"
 
 # git_log_graph_stat function
 # Display a decorated Git log with a graph, commit information, timestamp, and file statistics.
@@ -1833,9 +1901,41 @@ alias gitloggraphtimestamp="git_log_graph_timestamp"
 #   The 'git_log_graph_stat' function displays a Git log with a graph representing commit history,
 #   commit hash, branch information, commit message, timestamp, author information, and file statistics.
 function git_log_graph_stat() {
-    wsd_exe_cmd git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset' --stat
+    local options="$@"
+    wsd_exe_cmd git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset' --stat $options
 }
 alias gitloggraphstat="git_log_graph_stat"
+
+# git_log_graph_stat_remote function
+# Display a graph of the commit history with timestamps, including remote branches, and show file stats.
+#
+# Usage:
+#   git_log_graph_stat_remote
+#
+# Description:
+#   The 'git_log_graph_stat_remote' function displays a concise graph of the commit history
+#   using the 'git log' command. It includes commit timestamps, decorations for branches,
+#   and highlights remote branches in the graph. Additionally, file statistics are shown for each commit.
+#
+# Options:
+#   None
+#
+# Example usage:
+#   Run the 'git_log_graph_stat_remote' function to display a graph of the commit history with timestamps and file stats.
+#
+# Instructions:
+#   1. Execute the 'git_log_graph_stat_remote' function to visualize the commit history graph.
+#   2. The output includes commit timestamps, branch decorations, highlights for remote branches, and file statistics.
+#
+# Notes:
+#   - This function enhances the 'git log' output with timestamps, making it more informative.
+#   - Remote branches are highlighted in the graph for better visibility.
+#   - File statistics are displayed to show changes in each commit.
+function git_log_graph_stat_remote() {
+    local options="$@"
+    wsd_exe_cmd git log --oneline --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset' --stat $options
+}
+alias gitloggraphstatremote="git_log_graph_stat_remote"
 
 # git_add_all function
 # Add all changes to the Git staging area using 'git add .' command.
@@ -1867,3 +1967,36 @@ function git_add_all() {
 }
 alias gitaddall="git_add_all"
 alias gitstageall="git_add_all"
+
+# git_remote_set_url function
+# Set the URL of the remote repository for the current Git repository.
+#
+# Usage:
+#   git_remote_set_url <url>
+#
+# Parameters:
+#   - <url>: The new URL to set for the remote repository.
+#
+# Description:
+#   The 'git_remote_set_url' function updates the URL of the remote repository associated
+#   with the current Git repository. It uses the 'git remote set-url' command for this purpose.
+#
+# Options:
+#   - <url>: The new URL to set for the remote repository.
+#
+# Example usage:
+#   git_remote_set_url https://github.com/example/repo.git
+#
+# Instructions:
+#   1. Execute 'git_remote_set_url' with the new URL as a parameter to update the remote repository URL.
+#
+# Notes:
+#   - This function is useful when you need to change the remote repository URL for a Git repository.
+function git_remote_set_url() {
+    if [ $# -lt 1 ]; then
+        echo "Usage: git_remote_set_url <url>"
+        return 1
+    fi
+    wsd_exe_cmd git remote set-url "$1"
+}
+alias gitremoteseturl="git_remote_set_url"
