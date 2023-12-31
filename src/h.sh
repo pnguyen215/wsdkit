@@ -741,6 +741,6 @@ function translate_emojis() {
         echo "Usage: translate_emojis <unicode>"
         return 1
     fi
-    echo -e "$1"
+    wsd_exe_cmd echo -e "$1"
 }
 alias translateemojis="translate_emojis"
