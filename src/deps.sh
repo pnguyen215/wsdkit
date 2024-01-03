@@ -10,6 +10,7 @@ source "$(dirname "$0")/ssh.sh"
 
 # Languages Developer
 source "$(dirname "$0")/go.sh"
+source "$(dirname "$0")/nvm.sh"
 
 # keep at the bottom line
 source "$(dirname "$0")/sync.sh"
