@@ -435,7 +435,7 @@ function telegram_send_message() {
         fi
     done
 
-    read_conf "$filename_telegram_base_conf/$filename"
+    read_conf "$filename"
     echo "🚀 Telegram bot for '$TELEGRAM_BOT_NAME' connecting"
     send_telegram_message_setting "$TELEGRAM_BOT_TOKEN" "$TELEGRAM_BOT_CHAT_ID" "$message"
 }
