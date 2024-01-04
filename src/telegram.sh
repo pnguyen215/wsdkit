@@ -386,9 +386,6 @@ function telegram_gen_bot_conf() {
     done
 
     # added double quotes
-    label="\"$label\""
-    token="\"$token\""
-    chatId="\"$chatId\""
 
     local base="$filename_telegram_base_conf/$filename"
     add_conf "TELEGRAM_BOT_NAME" "$label" "$base"

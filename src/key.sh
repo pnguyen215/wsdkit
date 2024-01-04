@@ -371,7 +371,7 @@ function add_conf() {
 
     value="\"$value\""
     # Check if the secret file exists, create it if not
-    local dir="$filename_custom_base_conf/$filename"
+    local dir="$filename"
     create_file_if_not_exists "$dir"
     allow_full_perm "$dir"
 
