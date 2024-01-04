@@ -113,7 +113,9 @@ alias syncdir="sync_dir"
 # Dependencies:
 #   - sync_dir function
 function sync_dir_current() {
-    sync_dir "wsdkit ssh_forward conf" "$filename_ssh_forward_base_conf"
+    sync_dir "wsdkit assets conf" "$filename_asset_base_conf"
+    sync_dir "wsdkit ssh conf" "$filename_ssh_forward_base_conf"
+    sync_dir "wsdkit telegram bot conf" "$filename_telegram_base_conf"
     sync_dir "wsdkit custom conf" "$filename_custom_base_conf"
 }
 alias syncdircurrent="sync_dir_current"

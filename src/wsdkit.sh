@@ -7,11 +7,12 @@ function set_global_variables() {
     filename_secret_conf="/Users/$(whoami)/wsdkit.conf/assets/secrets.txt"
     filename_secret_bak_conf="/Users/$(whoami)/wsdkit.conf/assets/secrets.txt.bak"
 
-    # SSH configs
+    # Env Configs
     filename_ssh_kit_conf="/Users/$(whoami)/.ssh"
-    filename_ssh_base_conf="/Users/$(whoami)/wsdkit.conf/assets"
+    filename_asset_base_conf="/Users/$(whoami)/wsdkit.conf/assets"
     filename_custom_base_conf="/Users/$(whoami)/wsdkit.conf/custom"
     filename_ssh_forward_base_conf="/Users/$(whoami)/wsdkit.conf/sfc"
+    filename_telegram_base_conf="/Users/$(whoami)/wsdkit.conf/telegram"
 
     # Github repositories
     github_golang_template_repository="https://github.com/sivaosorg/gocell/archive/master.zip"
