@@ -312,3 +312,176 @@ function zip_selected_and_send_attachment() {
     wsd_exe_cmd sudo rm -rf "$zip_filename"
 }
 alias zipselectedsendattachment="zip_selected_and_send_attachment"
+
+# telegram_gen_bot_conf function
+# Generate a Telegram bot configuration file with the specified token and chat ID.
+#
+# Usage:
+#   telegram_gen_bot_conf <new_filename.ext>
+#
+# Description:
+#   The 'telegram_gen_bot_conf' function prompts the user to enter a filename and Telegram bot information,
+#   including the bot token and chat ID. It then generates a configuration file with the provided details.
+#   The generated file is saved in the 'filename_telegram_base_conf' directory.
+#
+# Options:
+#   - <new_filename.ext>: The desired filename for the new configuration file.
+#
+# Example usage:
+#   telegram_gen_bot_conf my_telegram_bot.conf
+#
+# Instructions:
+#   1. Run 'telegram_gen_bot_conf' and provide the requested information.
+#   2. The function generates a configuration file with the specified token and chat ID.
+#   3. The file is saved in the 'filename_telegram_base_conf' directory.
+#
+# Notes:
+#   - Ensure that the 'filename_telegram_base_conf' directory exists before running this function.
+#   - The generated file includes the TELEGRAM_BOT_TOKEN and TELEGRAM_BOT_CHAT_ID keys.
+function telegram_gen_bot_conf() {
+    if [ $# -lt 1 ]; then
+        echo "Usage: telegram_gen_conf <new_filename.ext>"
+        return 1
+    fi
+
+    local filename="$1"
+    local token=""
+    local chatId=""
+    local label=""
+
+    # label
+    while [ -z "$label" ]; do
+        echo -n "Enter bot name: "
+        read label
+        if [ -z "$label" ]; then
+            echo "❌ Invalid bot name. Please try again."
+        fi
+    done
+
+    # filename
+    while [ -z "$filename" ]; do
+        echo -n "Enter filename: "
+        read filename
+        if [ -z "$filename" ]; then
+            echo "❌ Invalid filename. Please try again."
+        fi
+    done
+
+    # token
+    while [ -z "$token" ]; do
+        echo -n "Enter token: "
+        read token
+        if [ -z "$token" ]; then
+            echo "❌ Invalid token. Please try again."
+        fi
+    done
+
+    # chatId
+    while [ -z "$chatId" ]; do
+        echo -n "Enter chatId: "
+        read chatId
+        if [ -z "$chatId" ]; then
+            echo "❌ Invalid chatId. Please try again."
+        fi
+    done
+
+    # added double quotes
+    label="\"$label\""
+    token="\"$token\""
+    chatId="\"$chatId\""
+
+    local base="$filename_telegram_base_conf/$filename"
+    add_conf "TELEGRAM_BOT_NAME" "$label" "$base"
+    add_conf "TELEGRAM_BOT_TOKEN" "$token" "$base"
+    add_conf "TELEGRAM_BOT_CHAT_ID" "$chatId" "$base"
+    echo "🍺 $base"
+}
+alias telegramgenbotconf="telegram_gen_bot_conf"
+
+# telegram_send_message function
+# Send a message using a Telegram bot configuration file.
+#
+# Usage:
+#   telegram_send_message <filename> <message>
+#
+# Description:
+#   The 'telegram_send_message' function sends a specified message using a Telegram bot configured
+#   with the provided configuration file. The message is sent to the specified chat ID associated with the bot.
+#
+# Options:
+#   - <filename>: The filename of the Telegram bot configuration file.
+#   - <message>: The message to be sent using the Telegram bot.
+#
+# Example usage:
+#   telegram_send_message my_telegram_bot.conf "Hello, world!"
+#
+# Instructions:
+#   1. Run 'telegram_send_message' with the filename of the Telegram bot configuration file and the desired message.
+#   2. The function sends the specified message using the configured Telegram bot.
+#
+# Notes:
+#   - Ensure that the specified configuration file exists in the 'filename_telegram_base_conf' directory.
+function telegram_send_message() {
+    if [ $# -lt 2 ]; then
+        echo "Usage: telegram_send_message <filename> <message>"
+        return 1
+    fi
+    local filename="$1"
+    local message="$2"
+
+    # filename
+    while [ -z "$filename" ]; do
+        echo -n "Enter filename: "
+        read filename
+        if [ -z "$filename" ]; then
+            echo "❌ Invalid filename. Please try again."
+        fi
+    done
+
+    read_conf "$filename_telegram_base_conf/$filename"
+    echo "🚀 Telegram bot for '$TELEGRAM_BOT_NAME' connecting"
+    send_telegram_message_setting "$TELEGRAM_BOT_TOKEN" "$TELEGRAM_BOT_CHAT_ID" "$message"
+}
+alias telegramsendmessage="telegram_send_message"
+
+# telegram_select_and_send_message function
+# Select a Telegram bot configuration file and send a message using the selected configuration.
+#
+# Usage:
+#   telegram_select_and_send_message <message>
+#
+# Description:
+#   The 'telegram_select_and_send_message' function provides an interactive way to select a Telegram bot
+#   configuration file and send a specified message using the chosen configuration. The user is prompted to
+#   choose a configuration file from the 'filename_telegram_base_conf' directory.
+#
+# Options:
+#   - <message>: The message to be sent using the selected Telegram bot configuration.
+#
+# Example usage:
+#   telegram_select_and_send_message "Hello, world!"
+#
+# Instructions:
+#   1. Run 'telegram_select_and_send_message' with the desired message.
+#   2. Use 'fzf' to select a Telegram bot configuration file.
+#   3. The function sends the specified message using the selected Telegram bot configuration.
+#
+# Notes:
+#   - Ensure that the specified configuration file exists in the 'filename_telegram_base_conf' directory.
+function telegram_select_and_send_message() {
+    if [ $# -lt 1 ]; then
+        echo "Usage: telegram_select_and_send_message <message>"
+        return 1
+    fi
+    local message="$1"
+    local selected_file
+    selected_file=$(ls "$filename_telegram_base_conf" | fzf --prompt="Select Telegram Conf: ")
+    if [ -z "$selected_file" ]; then
+        echo "❌ No file selected. Exiting."
+        return 1
+    fi
+
+    echo "🚀 Creating Telegram Bot connection using selected: $selected_file"
+    telegram_send_message "$filename_telegram_base_conf/$selected_file" "$message"
+}
+alias telegramselectsendmessage="telegram_select_and_send_message"
