@@ -482,3 +482,120 @@ function telegram_select_and_send_message() {
     telegram_send_message "$filename_telegram_base_conf/$selected_file" "$message"
 }
 alias telegramselectsendmessage="telegram_select_and_send_message"
+
+# telegram_send_attachment function
+# Send message with attachments using a specified Telegram bot configuration.
+#
+# Usage:
+#   telegram_send_attachment <telegram_filename_conf.ext> <message> [filename_1] [filename_2] [filename_3] ...
+#
+# Description:
+#   The 'telegram_send_attachment' function sends a message with attachments using a specified Telegram bot
+#   configuration. The user needs to provide the Telegram bot configuration filename, a message, and a list of
+#   filenames representing the attachments to be sent. The function sends the attachments to the configured
+#   Telegram group chat using the specified bot configuration.
+#
+# Options:
+#   - <telegram_filename_conf.ext>: The filename of the Telegram bot configuration file.
+#   - <message>: The message to be sent along with the attachments.
+#   - [filename_1], [filename_2], ...: The filenames of the attachments to be sent.
+#
+# Example usage:
+#   telegram_send_attachment "telegram_bot.conf" "Check out this file!" "file1.txt" "file2.png"
+#
+# Instructions:
+#   1. Run 'telegram_send_attachment' with the Telegram bot configuration filename, message, and attachment filenames.
+#   2. The function sends the specified message along with the attachments to the Telegram group chat.
+#
+# Notes:
+#   - Ensure that the specified configuration file exists in the 'filename_telegram_base_conf' directory.
+#   - Attachments must be specified as additional arguments after the message.
+function telegram_send_attachment() {
+    if [ $# -lt 3 ]; then
+        echo "Usage: telegram_send_attachment <telegram_filename_conf.ext> <message> [filename_1] [filename_2] [filename_3] ..."
+        return 1
+    fi
+    local filename="$1"
+    local message="$2"
+    local files=("${@:3}")
+    local timestamp=$(date +"%Y-%m-%d %H:%M:%S")
+
+    # filename
+    while [ -z "$filename" ]; do
+        echo -n "Enter filename: "
+        read filename
+        if [ -z "$filename" ]; then
+            echo "❌ Invalid filename. Please try again."
+        fi
+    done
+
+    # message
+    while [ -z "$message" ]; do
+        echo -n "Enter message: "
+        read message
+        if [ -z "$message" ]; then
+            echo "❌ Invalid message. Please try again."
+        fi
+    done
+
+    read_conf "$filename"
+    echo "🚀 Telegram bot for '$TELEGRAM_BOT_NAME' connecting"
+
+    # sending files to group chatId
+    for file in "${files[@]}"; do
+        if [ -f "$file" ]; then
+            progress_bar 0.1
+            curl -s -F chat_id="$TELEGRAM_BOT_CHAT_ID" -F document=@"$file" -F caption="$message ($timestamp)" "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendDocument" >/dev/null
+            echo "🍺 Attachment '$file' sent."
+        else
+            echo "❌ Attachment '$file' not found. Skipping."
+        fi
+    done
+}
+alias telegramsendattachment="telegram_send_attachment"
+
+# telegram_select_and_send_attachment function
+# Select a Telegram bot configuration and send a message with attachments.
+#
+# Usage:
+#   telegram_select_and_send_attachment <message> [filename_1] [filename_2] [filename_3] ...
+#
+# Description:
+#   The 'telegram_select_and_send_attachment' function prompts the user to select a Telegram bot configuration file
+#   using FZF. Once the configuration file is selected, the user can provide a message and a list of filenames
+#   representing the attachments to be sent. The function then sends the attachments to the configured Telegram group
+#   chat using the selected bot configuration.
+#
+# Options:
+#   - <message>: The message to be sent along with the attachments.
+#   - [filename_1], [filename_2], ...: The filenames of the attachments to be sent.
+#
+# Example usage:
+#   telegram_select_and_send_attachment "Check out this file!" "file1.txt" "file2.png"
+#
+# Instructions:
+#   1. Run 'telegram_select_and_send_attachment' with the message and attachment filenames.
+#   2. Select a Telegram bot configuration file using FZF.
+#   3. The function sends the specified message along with the attachments to the Telegram group chat.
+#
+# Notes:
+#   - Ensure that the specified configuration file exists in the 'filename_telegram_base_conf' directory.
+#   - Attachments must be specified as additional arguments after the message.
+function telegram_select_and_send_attachment() {
+    if [ $# -lt 2 ]; then
+        echo "Usage: telegram_select_and_send_attachment <message> [filename_1] [filename_2] [filename_3] ..."
+        return 1
+    fi
+    local message="$1"
+    local files=("${@:2}")
+    local selected_file
+    selected_file=$(ls "$filename_telegram_base_conf" | fzf --prompt="Select Telegram Conf: ")
+    if [ -z "$selected_file" ]; then
+        echo "❌ No file selected. Exiting."
+        return 1
+    fi
+
+    echo "🚀 Creating Telegram Bot connection using selected: $selected_file"
+    telegram_send_attachment "$filename_telegram_base_conf/$selected_file" "$message" "${files[@]}"
+}
+alias telegramselectsendattachment="telegram_select_and_send_attachment"

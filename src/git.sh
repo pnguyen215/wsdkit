@@ -1967,6 +1967,8 @@ function git_add_all() {
 }
 alias gitaddall="git_add_all"
 alias gitstageall="git_add_all"
+alias gaa="git_add_all"
+alias ga="git_add_all"
 
 # git_remote_set_url function
 # Set the URL of the remote repository for the current Git repository.
