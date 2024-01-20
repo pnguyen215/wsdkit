@@ -17,3 +17,4 @@ source "$(dirname "$0")/sync.sh"
 
 # devops functions
 source "$(dirname "$0")/devops/github_go_ci.sh"
+source "$(dirname "$0")/devops/github_ci.sh"
