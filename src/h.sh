@@ -775,9 +775,20 @@ function download_file() {
         echo "Usage: download_file <filename_with_extension> <download_link>"
         return 1
     fi
+
     local filename="$1"
     local link="$2"
-    create_file_if_not_exists "$filename"
+
+    # Extract the directory path from the filename
+    local directory="$(dirname "$filename")"
+
+    # Check if the directory exists, create it if not
+    create_file_if_not_exists "$directory"
+
+    # Change to the directory to download the file
+    cd "$directory" || return 1
+
+    # Download the file
     wsd_exe_cmd curl -O "$link" -o "$filename"
 
     if [ $? -eq 0 ]; then
@@ -785,4 +796,7 @@ function download_file() {
     else
         echo "❌ Error: Failed to download: $link"
     fi
+
+    # Return to the original directory
+    cd - >/dev/null || return 1
 }
