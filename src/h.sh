@@ -784,7 +784,6 @@ function download_file() {
 
     # Check if the directory exists, create it if not
     create_file_if_not_exists "$directory"
-    create_file_if_not_exists "$filename"
 
     # Change to the directory to download the file
     cd "$directory" || return 1
@@ -809,8 +808,7 @@ function download_file() {
     fi
 
     # Download the file
-    # wsd_exe_cmd curl -O "$link" -o "$filename"
-    wsd_exe_cmd curl -o "$filename" "$link"
+    wsd_exe_cmd curl -O "$link" -o "$filename"
 
     if [ $? -eq 0 ]; then
         echo "🍺 Downloaded successfully: $filename"
