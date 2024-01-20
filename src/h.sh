@@ -791,8 +791,14 @@ function download_file() {
     # Check if the file already exists
     if [ -e "$filename" ]; then
         local confirm=""
-        # Ask for confirmation to overwrite the existing file
-        read -p "File '$filename' already exists. ❓ Wanna to overwrite? (y/n): " confirm
+        while [ -z "$confirm" ]; do
+            echo -n "❓ Wanna to overwrite? (y/n): "
+            read confirm
+            if [ -z "$confirm" ]; then
+                echo "❌ Invalid confirm. Please try again."
+            fi
+        done
+
         if [ "$confirm" != "y" ]; then
             echo "🍌 Download canceled. File already exists."
             return 1

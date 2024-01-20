@@ -25,6 +25,7 @@
 function add_github_go_ci() {
     local filename_ci="$github_workflow_conf/ci.yml"
     local filename_changelog="git_changelog.sh"
-    download_file "$filename_ci" "https://raw.githubusercontent.com/pnguyen215/wsdkit.keys/master/devops/github_go_workflow.yml"
+    download_file "$filename_ci" https://raw.githubusercontent.com/pnguyen215/wsdkit.keys/master/devops/github_go_workflow.yml
     download_file "$filename_changelog" "https://raw.githubusercontent.com/pnguyen215/wsdkit.keys/master/sh/git_changelog.sh"
 }
+alias addgithubgoci="add_github_go_ci"
