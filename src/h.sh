@@ -784,6 +784,7 @@ function download_file() {
 
     # Check if the directory exists, create it if not
     create_file_if_not_exists "$directory"
+    create_file_if_not_exists "$filename"
 
     # Change to the directory to download the file
     cd "$directory" || return 1
