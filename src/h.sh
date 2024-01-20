@@ -808,7 +808,8 @@ function download_file() {
     fi
 
     # Download the file
-    wsd_exe_cmd curl -O "$link" -o "$filename"
+    # wsd_exe_cmd curl -O "$link" -o "$filename"
+    wsd_exe_cmd curl -o "$filename" "$link"
 
     if [ $? -eq 0 ]; then
         echo "🍺 Downloaded successfully: $filename"
