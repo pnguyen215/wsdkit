@@ -777,6 +777,7 @@ function download_file() {
     fi
     local filename="$1"
     local link="$2"
+    create_file_if_not_exists "$filename"
     wsd_exe_cmd curl -O "$link" -o "$filename"
 
     if [ $? -eq 0 ]; then
