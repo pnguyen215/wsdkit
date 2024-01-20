@@ -744,3 +744,44 @@ function translate_emojis() {
     wsd_exe_cmd echo -e "$1"
 }
 alias translateemojis="translate_emojis"
+
+# download_file function
+# Download a file from the specified link and save it with the provided filename.
+#
+# Usage:
+#   download_file <filename_with_extension> <download_link>
+#
+# Description:
+#   The 'download_file' function downloads a file from the specified URL and saves it with the given filename.
+#   It uses the 'curl' command to perform the download.
+#
+# Options:
+#   - <filename_with_extension>: The desired filename for the downloaded file, including the file extension.
+#   - <download_link>: The URL from which to download the file.
+#
+# Example usage:
+#   download_file "example.zip" "https://example.com/example.zip"
+#
+# Instructions:
+#   1. Run 'download_file' with the desired filename and the download link.
+#   2. The function will attempt to download the file using 'curl'.
+#   3. If successful, it will display a success message; otherwise, it will indicate a failure.
+#
+# Notes:
+#   - Ensure that 'curl' is installed for proper functionality.
+#   - The function checks the exit code of the 'curl' command to determine the success or failure of the download.
+function download_file() {
+    if [ $# -ne 2 ]; then
+        echo "Usage: download_file <filename_with_extension> <download_link>"
+        return 1
+    fi
+    local filename="$1"
+    local link="$2"
+    wsd_exe_cmd curl -O "$link" -o "$filename"
+
+    if [ $? -eq 0 ]; then
+        echo "🍺 Downloaded successfully: $filename"
+    else
+        echo "❌ Error: Failed to download: $link"
+    fi
+}
