@@ -26,4 +26,4 @@ function github_add_go_ci() {
     download_file ".github/workflows/ci.yml" "https://raw.githubusercontent.com/pnguyen215/wsdkit.keys/master/devops/github_workflow/ci.yml"
     download_file "git_changelog.sh" "https://raw.githubusercontent.com/pnguyen215/wsdkit.keys/master/sh/git_changelog.sh"
 }
-alias addgithubgoci="github_add_go_ci"
+alias githubaddgoci="github_add_go_ci"
