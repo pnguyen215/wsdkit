@@ -8,9 +8,12 @@ source "$(dirname "$0")/git.sh"
 source "$(dirname "$0")/telegram.sh"
 source "$(dirname "$0")/ssh.sh"
 
-# Languages Developer
+# languages programming
 source "$(dirname "$0")/go.sh"
 source "$(dirname "$0")/nvm.sh"
 
 # keep at the bottom line
 source "$(dirname "$0")/sync.sh"
+
+# devops functions
+source "$(dirname "$0")/devops/github_go_ci.sh"
