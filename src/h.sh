@@ -788,8 +788,9 @@ function download_file() {
     # Change to the directory to download the file
     cd "$directory" || return 1
 
+    local base="$directory/$filename"
     # Check if the file already exists
-    if [ -e "$filename" ]; then
+    if [ -e "$base" ]; then
         local confirm=""
         while [ -z "$confirm" ]; do
             echo -n "❓ Wanna to overwrite? (y/n): "
@@ -804,11 +805,12 @@ function download_file() {
             return 1
         fi
         # Remove the existing file before downloading
-        sudo rm "$filename"
+        wsd_exe_cmd sudo rm "$base"
     fi
 
     # Download the file
-    wsd_exe_cmd curl -O "$link" -o "$filename"
+    # wsd_exe_cmd curl -O "$link" -o "$filename"
+    wsd_exe_cmd curl -LJ "$link" -o "$filename"
 
     if [ $? -eq 0 ]; then
         echo "🍺 Downloaded successfully: $filename"
