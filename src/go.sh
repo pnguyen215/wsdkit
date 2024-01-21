@@ -120,6 +120,8 @@ function go_gen_app() {
 
     # Create a new Go module
     wsd_exe_cmd go mod init $app_name
+    gitignore_go_gen
+    github_add_go_ci
     echo "Go application $app_name created with go mod tidy!"
 }
 alias gogenapp="go_gen_app"
