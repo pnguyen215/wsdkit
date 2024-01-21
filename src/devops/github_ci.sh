@@ -46,6 +46,6 @@ alias githubaddci="github_add_ci"
 #   - Ensure that 'curl' is installed for proper functionality.
 #   - The URL points to the specific 'ci_notify.yml' file in the 'wsdkit.keys' repository on GitHub.
 function github_add_ci_notify() {
-    download_file ".github/workflows/ci_notify.yml" "https://raw.githubusercontent.com/pnguyen215/wsdkit.keys/master/devops/github_workflow/ci_notify.yaml"
+    download_file ".github/workflows/ci_notify.yml" "https://raw.githubusercontent.com/pnguyen215/wsdkit.keys/master/devops/github_workflow/ci_notify.yml"
 }
 alias githubaddcinotify="github_add_ci_notify"
