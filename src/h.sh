@@ -808,6 +808,9 @@ function download_file() {
         wsd_exe_cmd sudo rm "$base"
     fi
 
+    # Return to the original directory
+    cd - >/dev/null || return 1
+
     # Download the file
     # wsd_exe_cmd curl -O "$link" -o "$filename"
     wsd_exe_cmd curl -LJ "$link" -o "$filename"
@@ -817,7 +820,4 @@ function download_file() {
     else
         echo "❌ Error: Failed to download: $link"
     fi
-
-    # Return to the original directory
-    cd - >/dev/null || return 1
 }
