@@ -124,6 +124,7 @@ function go_gen_app() {
     create_file_if_not_exists ".github/workflows/.gitkeep"
     create_file_if_not_exists ".github/workflows/ci.yml"
     allow_full_perm ".github/workflows/ci.yml"
+    allow_full_perm ".gitignore"
     gitignore_go_gen
     github_add_go_ci
     echo "Go application $app_name created with go mod tidy!"
