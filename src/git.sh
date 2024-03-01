@@ -2002,3 +2002,68 @@ function git_remote_set_url() {
     wsd_exe_cmd git remote set-url "$1"
 }
 alias gitremoteseturl="git_remote_set_url"
+
+function git_whatchanged() {
+    wsd_exe_cmd git whatchanged -p --abbrev-commit --pretty=medium
+}
+# Aliases
+# (sorted alphabetically)
+# https://gist.github.com/mkczyk/646b69f85f0214f813d3a3da951d7df2
+alias gs="git status"
+alias gsb='git status -sb'
+alias gss='git status -s'
+alias gwch="git_whatchanged"
+alias gitwhatchangedmedium="gwch"
+alias grba='git rebase --abort'
+alias gitrebaseabort="grba"
+alias grbc='git rebase --continue'
+alias gitrebasecontinue="grbc"
+alias grv='git remote -v'
+alias gitremoteversion="grv"
+alias ggsup='git branch --set-upstream-to=origin/$(git_current_branch)'
+alias gitbranchsetupstreamorgincurrent="ggsup"
+alias gpsup='git push --set-upstream origin $(git_current_branch)'
+alias gitpushsetupstreamorigincurrent="gpsup"
+alias ggpull='git pull origin "$(git_current_branch)"'
+alias gitpullorigincurrent="ggpull"
+alias ggpush='git push origin "$(git_current_branch)"'
+alias gitpushorigincurrent="ggpush"
+alias gcp='git cherry-pick'
+alias gitcherrypick="gcp"
+alias gcpa='git cherry-pick --abort'
+alias gitcherrypickabort="gcpa"
+alias gcpc='git cherry-pick --continue'
+alias gitcherrypickcontinue="gcpc"
+alias gcam="git commit -a -m $@" # Add all new files and commit changes with message description.
+alias gitcommitmessage="gcam"
+
+# git_select_cherry_pick function
+# Select and cherry-pick commits from the Git history.
+#
+# Usage:
+#   git_select_cherry_pick
+#
+# Description:
+#   The 'git_select_cherry_pick' function allows interactive selection of commits from the Git history
+#   using 'fzf'. Selected commits are then cherry-picked into the current branch.
+#
+# Instructions:
+#   1. Run 'git_select_cherry_pick'.
+#   2. Use 'fzf' to select one or more commits from the Git history.
+#   3. The selected commits will be cherry-picked into the current branch.
+#
+# Notes:
+#   - Ensure that 'fzf' is installed for proper functionality.
+#   - Uncomment the 'wsd_exe_cmd git cherry-pick $commit' line within the loop to actually cherry-pick the selected commits.
+function git_select_cherry_pick() {
+    local commits=$(git log --graph --decorate --format=format:'%C(bold blue)%H%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%an%C(reset)%C(bold yellow)%d%C(reset) %C(dim white)- %s%C(reset)' --all | fzf -m --reverse)
+    if [ -n "$commits" ]; then
+        local commit_hashes=$(echo "$commits" | awk '{print $1}')
+        for commit in $commit_hashes; do
+            echo $commit
+            # wsd_exe_cmd git cherry-pick $commit
+        done
+    fi
+}
+alias gscp="git_select_cherry_pick"
+alias gitselectcherrypick="git_select_cherry_pick"
