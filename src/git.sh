@@ -2058,7 +2058,7 @@ alias gitcommitmessage="gcam"
 function git_select_cherry_pick() {
     local commits=$(git log --graph --decorate --format=format:'%C(bold blue)%H%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%an%C(reset)%C(bold yellow)%d%C(reset) %C(dim white)- %s%C(reset)' --all | fzf -m --reverse)
     if [ -n "$commits" ]; then
-        local commit_hashes=$(echo "$commits" | awk '{print $1}')
+        local commit_hashes=$(echo "$commits" | awk '{print $2}')
         for commit in $commit_hashes; do
             echo "$commit"
             # wsd_exe_cmd git cherry-pick $commit
