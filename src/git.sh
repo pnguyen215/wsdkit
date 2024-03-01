@@ -2058,7 +2058,7 @@ alias gitcommitmessage="gcam"
 function git_select_cherry_pick_local() {
     local commits=$(git log --format=format:'%C(bold blue)%H%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%an%C(reset)%C(bold yellow)%d%C(reset) %C(dim white)- %s%C(reset)' | fzf -m --reverse)
     if [ -n "$commits" ]; then
-        local commit_hashes=$(echo "$commits" | awk '{print $2}')
+        local commit_hashes=$(echo "$commits" | awk '{print $1}')
         for commit in $commit_hashes; do
             echo "$commit"
             wsd_exe_cmd git cherry-pick $commit
@@ -2071,7 +2071,7 @@ alias gitselectcherrypicklocal="git_select_cherry_pick_local"
 function git_select_cherry_pick_remote() {
     local commits=$(git log --oneline --format=format:'%C(bold blue)%H%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%an%C(reset)%C(bold yellow)%d%C(reset) %C(dim white)- %s%C(reset)' | fzf -m --reverse)
     if [ -n "$commits" ]; then
-        local commit_hashes=$(echo "$commits" | awk '{print $2}')
+        local commit_hashes=$(echo "$commits" | awk '{print $1}')
         for commit in $commit_hashes; do
             echo "$commit"
             wsd_exe_cmd git cherry-pick $commit
