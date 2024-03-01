@@ -2060,7 +2060,7 @@ function git_select_cherry_pick() {
     if [ -n "$commits" ]; then
         local commit_hashes=$(echo "$commits" | awk '{print $1}')
         for commit in $commit_hashes; do
-            echo $commit
+            echo "$commit"
             # wsd_exe_cmd git cherry-pick $commit
         done
     fi
