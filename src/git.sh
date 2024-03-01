@@ -78,7 +78,7 @@ alias gitconfigglobalsetting="git_config_global_setting"
 # Note: Make sure to set up appropriate aliases or customize the function name based on your preferences.
 function git_log_graph() {
     local options="$@"
-    wsd_exe_cmd git log --graph --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%an%C(reset)%C(bold yellow)%d%C(reset) %C(dim white)- %s%C(reset)' --all $options
+    wsd_exe_cmd git log --graph --decorate --format=format:'%C(bold blue)%H (%h) %C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%an%C(reset)%C(bold yellow)%d%C(reset) %C(dim white)- %s%C(reset)' --all $options
 }
 alias gitloggraph="git_log_graph"
 
@@ -116,7 +116,7 @@ alias gitloggraph="git_log_graph"
 #   git_log_graph_remote --since="2 weeks ago"
 function git_log_graph_remote() {
     local options="$@"
-    wsd_exe_cmd git log --oneline --graph --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%an%C(reset)%C(bold yellow)%d%C(reset) %C(dim white)- %s%C(reset)' --all $options
+    wsd_exe_cmd git log --oneline --graph --decorate --format=format:'%C(bold blue)%H (%h)%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%an%C(reset)%C(bold yellow)%d%C(reset) %C(dim white)- %s%C(reset)' --all $options
 }
 alias gitloggraphremote="git_log_graph_remote"
 
@@ -2037,33 +2037,46 @@ alias gitcherrypickcontinue="gcpc"
 alias gcam="git commit -a -m $@" # Add all new files and commit changes with message description.
 alias gitcommitmessage="gcam"
 
-# git_select_cherry_pick function
+# git_select_cherry_pick_local function
 # Select and cherry-pick commits from the Git history.
 #
 # Usage:
-#   git_select_cherry_pick
+#   git_select_cherry_pick_local
 #
 # Description:
-#   The 'git_select_cherry_pick' function allows interactive selection of commits from the Git history
+#   The 'git_select_cherry_pick_local' function allows interactive selection of commits from the Git history
 #   using 'fzf'. Selected commits are then cherry-picked into the current branch.
 #
 # Instructions:
-#   1. Run 'git_select_cherry_pick'.
+#   1. Run 'git_select_cherry_pick_local'.
 #   2. Use 'fzf' to select one or more commits from the Git history.
 #   3. The selected commits will be cherry-picked into the current branch.
 #
 # Notes:
 #   - Ensure that 'fzf' is installed for proper functionality.
 #   - Uncomment the 'wsd_exe_cmd git cherry-pick $commit' line within the loop to actually cherry-pick the selected commits.
-function git_select_cherry_pick() {
+function git_select_cherry_pick_local() {
     local commits=$(git log --graph --decorate --format=format:'%C(bold blue)%H%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%an%C(reset)%C(bold yellow)%d%C(reset) %C(dim white)- %s%C(reset)' --all | fzf -m --reverse)
     if [ -n "$commits" ]; then
         local commit_hashes=$(echo "$commits" | awk '{print $2}')
         for commit in $commit_hashes; do
             echo "$commit"
-            # wsd_exe_cmd git cherry-pick $commit
+            wsd_exe_cmd git cherry-pick $commit
         done
     fi
 }
-alias gscp="git_select_cherry_pick"
-alias gitselectcherrypick="git_select_cherry_pick"
+alias gscplc="git_select_cherry_pick_local"
+alias gitselectcherrypicklocal="git_select_cherry_pick_local"
+
+function git_select_cherry_pick_remote() {
+    local commits=$(git log --oneline --graph --decorate --format=format:'%C(bold blue)%H%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%an%C(reset)%C(bold yellow)%d%C(reset) %C(dim white)- %s%C(reset)' --all | fzf -m --reverse)
+    if [ -n "$commits" ]; then
+        local commit_hashes=$(echo "$commits" | awk '{print $2}')
+        for commit in $commit_hashes; do
+            echo "$commit"
+            wsd_exe_cmd git cherry-pick $commit
+        done
+    fi
+}
+alias gscpr="git_select_cherry_pick_remote"
+alias gitselectcherrypickremote="git_select_cherry_pick_remote"
