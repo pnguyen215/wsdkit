@@ -2056,7 +2056,7 @@ alias gitcommitmessage="gcam"
 #   - Ensure that 'fzf' is installed for proper functionality.
 #   - Uncomment the 'wsd_exe_cmd git cherry-pick $commit' line within the loop to actually cherry-pick the selected commits.
 function git_select_cherry_pick_local() {
-    local commits=$(git log --graph --decorate --format=format:'%C(bold blue)%H%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%an%C(reset)%C(bold yellow)%d%C(reset) %C(dim white)- %s%C(reset)' | fzf -m --reverse)
+    local commits=$(git log --format=format:'%C(bold blue)%H%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%an%C(reset)%C(bold yellow)%d%C(reset) %C(dim white)- %s%C(reset)' | fzf -m --reverse)
     if [ -n "$commits" ]; then
         local commit_hashes=$(echo "$commits" | awk '{print $2}')
         for commit in $commit_hashes; do
@@ -2069,7 +2069,7 @@ alias gscplc="git_select_cherry_pick_local"
 alias gitselectcherrypicklocal="git_select_cherry_pick_local"
 
 function git_select_cherry_pick_remote() {
-    local commits=$(git log --oneline --graph --decorate --format=format:'%C(bold blue)%H%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%an%C(reset)%C(bold yellow)%d%C(reset) %C(dim white)- %s%C(reset)' | fzf -m --reverse)
+    local commits=$(git log --oneline --format=format:'%C(bold blue)%H%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%an%C(reset)%C(bold yellow)%d%C(reset) %C(dim white)- %s%C(reset)' | fzf -m --reverse)
     if [ -n "$commits" ]; then
         local commit_hashes=$(echo "$commits" | awk '{print $2}')
         for commit in $commit_hashes; do
