@@ -456,3 +456,40 @@ function ssh_select_and_create_tunnel() {
     ssh_create_tunnel "$filename_ssh_forward_base_conf/$selected_file"
 }
 alias sshselectcreatetunnel="ssh_select_and_create_tunnel"
+
+# ssh_select_and_verify_tunnel function
+# Select an SSH configuration file and verify the SSH tunnel.
+#
+# Usage:
+#   ssh_select_and_verify_tunnel
+#
+# Description:
+#   The 'ssh_select_and_verify_tunnel' function allows you to select an SSH configuration file using 'fzf'
+#   and then verifies the SSH tunnel using the selected configuration.
+#
+# Options:
+#   None
+#
+# Instructions:
+#   1. Run 'ssh_select_and_verify_tunnel'.
+#   2. Use 'fzf' to select an SSH configuration file from the specified directory.
+#   3. The selected configuration file will be used to verify the SSH tunnel.
+#
+# Dependencies:
+#   - 'fzf' for interactive file selection.
+#   - 'ssh_verify_tunnel' function for verifying the SSH tunnel.
+#
+# Notes:
+#   - Ensure that 'fzf' is installed for proper functionality.
+#   - The SSH tunnel is verified using the 'ssh_verify_tunnel' function with the selected configuration file.
+function ssh_select_and_verify_tunnel() {
+    local selected_file
+    selected_file=$(ls "$filename_ssh_forward_base_conf" | fzf --prompt="Select SSH Conf: ")
+    if [ -z "$selected_file" ]; then
+        echo "❌ No file selected. Exiting."
+        return 1
+    fi
+    echo "🚀 Verifying SSH tunnel using selected: $selected_file"
+    ssh_verify_tunnel "$filename_ssh_forward_base_conf/$selected_file"
+}
+alias sshselectverifytunnel="ssh_select_and_verify_tunnel"
