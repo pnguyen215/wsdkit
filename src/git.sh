@@ -2056,7 +2056,9 @@ alias gitcommitmessage="gcam"
 #   - Ensure that 'fzf' is installed for proper functionality.
 #   - Uncomment the 'wsd_exe_cmd git cherry-pick $commit' line within the loop to actually cherry-pick the selected commits.
 function git_select_cherry_pick_local() {
-    local commits=$(git log --format=format:'%C(bold blue)%H%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%an%C(reset)%C(bold yellow)%d%C(reset) %C(dim white)- %s%C(reset)' | fzf -m --reverse)
+    local options="$@"
+    local commits=$(git log --format=format:'%C(bold blue)%H%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%an%C(reset)%C(bold yellow)%d%C(reset) %C(dim white)- %s%C(reset)' --all $options | fzf -m --reverse)
+    wsd_exe_cmd_hook "$commits"
     if [ -n "$commits" ]; then
         local commit_hashes=$(echo "$commits" | awk '{print $1}')
         for commit in $commit_hashes; do
@@ -2069,7 +2071,9 @@ alias gscplc="git_select_cherry_pick_local"
 alias gitselectcherrypicklocal="git_select_cherry_pick_local"
 
 function git_select_cherry_pick_remote() {
-    local commits=$(git log --oneline --format=format:'%C(bold blue)%H%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%an%C(reset)%C(bold yellow)%d%C(reset) %C(dim white)- %s%C(reset)' | fzf -m --reverse)
+    local options="$@"
+    local commits=$(git log --oneline --format=format:'%C(bold blue)%H%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%an%C(reset)%C(bold yellow)%d%C(reset) %C(dim white)- %s%C(reset)' --all $options | fzf -m --reverse)
+    wsd_exe_cmd_hook "$commits"
     if [ -n "$commits" ]; then
         local commit_hashes=$(echo "$commits" | awk '{print $1}')
         for commit in $commit_hashes; do
@@ -2080,3 +2084,76 @@ function git_select_cherry_pick_remote() {
 }
 alias gscpr="git_select_cherry_pick_remote"
 alias gitselectcherrypickremote="git_select_cherry_pick_remote"
+
+# git_select_remove_branch function
+# Select and remove branches from the local or remote Git repository.
+#
+# Usage:
+#   git_select_remove_branch
+#
+# Description:
+#   The 'git_select_remove_branch' function provides an interactive way to select and remove branches
+#   from the local or remote Git repository. It uses 'fzf' for interactive branch selection.
+#
+# Instructions:
+#   1. Run 'git_select_remove_branch'.
+#   2. Use 'fzf' to select one or more branches to remove.
+#   3. The selected branches will be removed from the repository.
+#
+# Notes:
+#   - Ensure that 'fzf' is installed for proper functionality.
+#   - This function removes branches from both local and remote repositories.
+#   - The 'git_fetch_branch_current' function is called to ensure that the local branch information is up to date.
+function git_select_remove_branch() {
+    git_fetch_branch_current
+    local branches=$(git branch -a | fzf -m --reverse)
+    if [ -n "$branches" ]; then
+        local values=$(echo "$branches" | awk '{print $1}')
+        for branch in $values; do
+            local branch_name=${branch#remotes/origin/}
+            git_remove_branch "$branch_name"
+        done
+    fi
+}
+alias gitselectremovebranch="git_select_remove_branch"
+
+# git_select_commit_hash function
+# Select commit hashes and messages from the Git log and send them to Telegram.
+#
+# Usage:
+#   git_select_commit_hash
+#
+# Description:
+#   The 'git_select_commit_hash' function provides an interactive way to select commit hashes and their corresponding messages
+#   from the Git log and send them to Telegram. It uses 'fzf' for interactive commit selection.
+#
+# Options:
+#   None
+#
+# Instructions:
+#   1. Run 'git_select_commit_hash'.
+#   2. Use 'fzf' to select one or more commits from the Git log.
+#   3. The selected commit hashes and messages will be sent to Telegram.
+#
+# Dependencies:
+#   - 'fzf' for interactive commit selection.
+#   - 'send_telegram_git_activity' function for sending messages to Telegram.
+#
+# Notes:
+#   - Ensure that 'fzf' is installed for proper functionality.
+#   - The selected commit hashes and messages are sent to Telegram using the 'send_telegram_git_activity' function.
+function git_select_commit_hash() {
+    local options="$@"
+    local repository=$(git rev-parse --show-toplevel)
+    local commits=$(git log --oneline --format=format:'%C(bold blue)%H%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%an%C(reset)%C(bold yellow)%d%C(reset) %C(dim white)- %s%C(reset)' --all $options | fzf -m --reverse)
+    wsd_exe_cmd_hook "$commits"
+    if [ -n "$commits" ]; then
+        local commit_lines=$(echo "$commits")
+        for line in $commit_lines; do
+            local commit_hash=$(echo "$line" | awk '{print $1}')
+            local commit_message=$(echo "$line" | cut -d' ' -f2-)
+            send_telegram_git_activity "🍺 Hash: \`$commit_hash\` (\`$repository\`)"
+        done
+    fi
+}
+alias gitselectcommithash="git_select_commit_hash"
