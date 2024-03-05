@@ -985,24 +985,24 @@ function git_commit_with_format() {
 }
 alias gitcommitwithformat="git_commit_with_format"
 
-# git_revert_branch_current function
+# git_revert_current function
 # Creates a new branch and reverts the current branch to its state, creating a clean slate for further development.
 
 # Usage:
-#   git_revert_branch_current
+#   git_revert_current
 
 # Description:
-#   The 'git_revert_branch_current' function creates a new branch with a timestamp in its name and reverts the current branch to its state.
+#   The 'git_revert_current' function creates a new branch with a timestamp in its name and reverts the current branch to its state.
 #   This operation is useful when you want to start fresh with a clean slate on your current development branch.
 #   The newly created branch can be used for experimental changes or isolating specific features.
 
 # Example:
-#   git_revert_branch_current
+#   git_revert_current
 
 # Recommendations:
 #   - Use this function when you want to create a clean branch for experimental changes or isolating specific features.
 #   - The new branch name includes a timestamp and the name of the current branch, providing a unique identifier.
-function git_revert_branch_current() {
+function git_revert_current() {
     local current_branch=$(git rev-parse --abbrev-ref HEAD)
 
     # Check if the current branch is a valid commit hash or branch name
@@ -1028,7 +1028,7 @@ function git_revert_branch_current() {
     echo "🍺 Branch $branch_name pushed to origin."
     send_telegram_git_activity "$msg"
 }
-alias gitrevertbranchcurrent="git_revert_branch_current"
+alias gitrevertcurrent="git_revert_current"
 
 # git_backup_branch function
 # Creates a backup branch by creating a new branch and checking out a specific commit or branch.
@@ -1091,29 +1091,29 @@ function git_backup_branch_current() {
 }
 alias gitbackupbranchcurrent="git_backup_branch_current"
 
-# git_revert_branch_local function
+# git_revert_local function
 # Reverts to a specific commit or branch by creating a new branch and checking out the target commit or branch on the local repository.
 #
 # Usage:
-#   git_revert_branch_local <commit/branch>
+#   git_revert_local <commit/branch>
 #
 # Parameters:
 #   <commit/branch>: The commit hash or branch name to revert to.
 #
 # Description:
-#   The 'git_revert_branch_local' function creates a new branch and checks out a specific commit or branch,
+#   The 'git_revert_local' function creates a new branch and checks out a specific commit or branch,
 #   effectively reverting the local repository to the specified state.
 #   The newly created branch includes a timestamp in its name for easy identification.
 #
 # Example:
-#   git_revert_branch_local main
+#   git_revert_local main
 #
 # Recommendations:
 #   - Use this function when you want to revert the local repository to a specific commit or branch.
 #   - The revert operation is performed by creating a new branch, leaving the current branch unchanged.
-function git_revert_branch_local() {
+function git_revert_local() {
     if [ $# -lt 1 ]; then
-        echo "Usage: git_revert_branch_local <commit/branch>"
+        echo "Usage: git_revert_local <commit/branch>"
         return 1
     fi
 
@@ -1139,13 +1139,13 @@ function git_revert_branch_local() {
     echo "$msg"
     send_telegram_git_activity "$msg"
 }
-alias gitrevertbranchlocal="git_revert_branch_local"
+alias gitrevertlocal="git_revert_local"
 
-function git_revert_branch_local_current() {
+function git_revert_local_current() {
     local current_branch=$(git rev-parse --abbrev-ref HEAD)
-    git_revert_branch_local "$current_branch"
+    git_revert_local "$current_branch"
 }
-alias gitrevertbranchlocalcurrent="git_revert_branch_local_current"
+alias gitrevertlocalcurrent="git_revert_local_current"
 
 # git_backup_branch_local function
 # Creates a backup of a specific commit or branch by creating a new branch and checking out the target commit or branch on the local repository.
@@ -2117,21 +2117,21 @@ function git_select_remove_branch() {
 }
 alias gitselectremovebranch="git_select_remove_branch"
 
-# git_select_commit_hash function
+# git_select_commit function
 # Select commit hashes and messages from the Git log and send them to Telegram.
 #
 # Usage:
-#   git_select_commit_hash
+#   git_select_commit
 #
 # Description:
-#   The 'git_select_commit_hash' function provides an interactive way to select commit hashes and their corresponding messages
+#   The 'git_select_commit' function provides an interactive way to select commit hashes and their corresponding messages
 #   from the Git log and send them to Telegram. It uses 'fzf' for interactive commit selection.
 #
 # Options:
 #   None
 #
 # Instructions:
-#   1. Run 'git_select_commit_hash'.
+#   1. Run 'git_select_commit'.
 #   2. Use 'fzf' to select one or more commits from the Git log.
 #   3. The selected commit hashes and messages will be sent to Telegram.
 #
@@ -2142,7 +2142,7 @@ alias gitselectremovebranch="git_select_remove_branch"
 # Notes:
 #   - Ensure that 'fzf' is installed for proper functionality.
 #   - The selected commit hashes and messages are sent to Telegram using the 'send_telegram_git_activity' function.
-function git_select_commit_hash() {
+function git_select_commit() {
     local options="$@"
     local repository=$(git rev-parse --show-toplevel)
     local commits=$(git log --oneline --format=format:'%C(bold blue)%H%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%an%C(reset)%C(bold yellow)%d%C(reset) %C(dim white)- %s%C(reset)' --all $options | fzf -m --reverse)
@@ -2156,4 +2156,51 @@ function git_select_commit_hash() {
         done
     fi
 }
-alias gitselectcommithash="git_select_commit_hash"
+alias gitselectcommit="git_select_commit"
+
+# git_select_revert_commit function
+# Select and revert commits in a Git repository.
+#
+# Usage:
+#   git_select_revert_commit [options]
+#
+# Description:
+#   The 'git_select_revert_commit' function allows you to select one or more commits from a Git repository
+#   and revert them. It utilizes 'fzf' for interactive commit selection.
+#
+# Options:
+#   [options]: Additional options to customize the log output, such as '--since', '--author', etc.
+#
+# Example usage:
+#   git_select_revert_commit --since="3 days ago"
+#
+# Instructions:
+#   1. Run 'git_select_revert_commit' with optional filtering options.
+#   2. Use 'fzf' to select one or more commits to revert.
+#   3. The selected commits will be reverted one by one.
+#
+# Dependencies:
+#   - 'fzf' for interactive commit selection.
+#   - 'git_revert_local' function for reverting commits locally.
+#
+# Notes:
+#   - Ensure that 'fzf' is installed for proper functionality.
+#   - This function provides an interactive way to revert commits, useful for undoing changes selectively.
+#
+# Example:
+#   git_select_revert_commit --since="1 week ago"
+function git_select_revert_commit() {
+    local options="$@"
+    local repository=$(git rev-parse --show-toplevel)
+    local commits=$(git log --oneline --format=format:'%C(bold blue)%H%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%an%C(reset)%C(bold yellow)%d%C(reset) %C(dim white)- %s%C(reset)' --all $options | fzf -m --reverse)
+    wsd_exe_cmd_hook "$commits"
+    if [ -n "$commits" ]; then
+        local commit_lines=$(echo "$commits")
+        for line in $commit_lines; do
+            local commit_hash=$(echo "$line" | awk '{print $1}')
+            local commit_message=$(echo "$line" | cut -d' ' -f2-)
+            git_revert_local "$commit_hash"
+        done
+    fi
+}
+alias gitselectrevertcommit="git_select_revert_commit"
