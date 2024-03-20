@@ -821,3 +821,32 @@ function download_file() {
         echo "❌ Error: Failed to download: $link"
     fi
 }
+
+# leak function
+# Detect memory leaks by monitoring processes with high memory usage.
+#
+# Usage:
+#   leak
+#
+# Description:
+#   The 'leak' function is used to detect memory leaks on the system by monitoring processes with high memory usage.
+#   It provides different commands based on the operating system to list processes consuming significant memory.
+#
+# Instructions:
+#   - Run the 'leak' function to identify processes with high memory usage.
+#   - It displays the PID (Process ID) and the corresponding application name for processes exceeding a certain memory threshold.
+#
+# Dependencies:
+#   - For macOS (Darwin): 'top' command for monitoring processes.
+#   - For Linux: 'ps' command for listing processes.
+# Notes:
+#   - The function provides platform-specific commands for detecting memory leaks.
+#   - Adjust the memory threshold as needed for more accurate results.
+function leak() {
+    if [[ "$(uname)" == "Darwin" ]]; then
+        wsd_exe_cmd top -o RSIZE -n 10 -l 1 | grep -E '^\s*[0-9]+ (root|[^r])' | awk '{if ($3 >= 100) print "PID: " $1 ", Application: " $2 "" }'
+    elif [[ "$(uname)" == "Linux" ]]; then
+        wsd_exe_cmd ps -axo pid,user,%mem,command --sort=-%mem | head -n 11 | tail -n +2
+    fi
+}
+alias lk="leak"
