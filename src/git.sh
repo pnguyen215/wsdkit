@@ -2204,3 +2204,43 @@ function git_select_revert_commit() {
     fi
 }
 alias gitselectrevertcommit="git_select_revert_commit"
+
+# git_select_switch_branch function
+# Switch to selected remote branch.
+#
+# Usage:
+#   git_select_switch_branch
+#
+# Description:
+#   The 'git_select_switch_branch' function allows switching to a selected remote branch interactively.
+#
+# Options:
+#   None
+#
+# Example usage:
+#   git_select_switch_branch
+#
+# Instructions:
+#   - Run the 'git_select_switch_branch' function.
+#   - It presents a list of remote branches.
+#   - Select one or more branches to switch to.
+#   - The function fetches the selected branch(es) and switches to them.
+#
+# Dependencies:
+#   - 'git' command-line tool for version control.
+#   - 'fzf' for interactive selection.
+#
+# Notes:
+#   - This function works with remote branches only.
+#   - Ensure you have the necessary permissions to switch branches.
+function git_select_switch_branch() {
+    local branches=$(git branch -a | fzf -m --reverse)
+    if [ -n "$branches" ]; then
+        local values=$(echo "$branches" | awk '{print $1}')
+        for branch in $values; do
+            local branch_name=${branch#remotes/origin/}
+            gitfetchbranch "$branch_name"
+        done
+    fi
+}
+alias gitselectswitchbranch="git_select_switch_branch"
