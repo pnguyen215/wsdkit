@@ -2158,6 +2158,22 @@ function git_select_commit() {
 }
 alias gitselectcommit="git_select_commit"
 
+function git_select_multi_commit() {
+    local options="$@"
+    local repository=$(git rev-parse --show-toplevel)
+    local commits=$(git log --oneline --format=format:'%C(bold blue)%H%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%an%C(reset)%C(bold yellow)%d%C(reset) %C(dim white)- %s%C(reset)' --all $options --reverse --color=always | fzf --ansi --multi --header="Select commits (press TAB to select multiple)")
+    echo "$commits"
+    if [ -n "$commits" ]; then
+        local commit_lines=$(echo "$commits")
+        for line in $commit_lines; do
+            local commit_hash=$(echo "$line" | awk '{print $1}')
+            local commit_message=$(echo "$line" | cut -d' ' -f2-)
+            send_telegram_git_activity "🍺 Hash: \`$commit_hash\` * \`$commit_message\` * (\`$repository\`)"
+        done
+    fi
+}
+alias gitselectmulticommit="git_select_multi_commit"
+
 # git_select_revert_commit function
 # Select and revert commits in a Git repository.
 #
