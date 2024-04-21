@@ -109,3 +109,27 @@ function gitignore_nodejs_gen() {
     download_file ".gitignore" "https://raw.githubusercontent.com/pnguyen215/wsdkit.keys/master/gitignores/node.js_gitignore.txt"
 }
 alias gitignorenodejsgen="gitignore_nodejs_gen"
+
+# gitignore_python_gen function
+# Generate a .gitignore file for Python projects.
+#
+# Usage:
+#   gitignore_python_gen
+#
+# Description:
+#   The 'gitignore_python_gen' function downloads a .gitignore template specifically tailored for Python projects.
+# Instructions:
+#   - Run the 'gitignore_python_gen' function.
+#   - It automatically downloads the Python-specific .gitignore file.
+#   - The generated .gitignore file will be placed in the current directory.
+#
+# Dependencies:
+#   - 'curl' command-line tool for downloading files.
+#
+# Notes:
+#   - Ensure you have write permissions in the current directory.
+#   - The generated .gitignore file is suitable for Python projects.
+function gitignore_python_gen() {
+    download_file ".gitignore" "https://raw.githubusercontent.com/pnguyen215/wsdkit.keys/master/gitignores/python3_gitignore.txt"
+}
+alias gitignorepythongen="gitignore_python_gen"
