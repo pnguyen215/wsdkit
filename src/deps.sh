@@ -11,6 +11,7 @@ source "$(dirname "$0")/ssh.sh"
 # languages programming
 source "$(dirname "$0")/go.sh"
 source "$(dirname "$0")/nvm.sh"
+source "$(dirname "$0")/java.sh"
 
 # keep at the bottom line
 source "$(dirname "$0")/sync.sh"
