@@ -493,3 +493,38 @@ function ssh_select_and_verify_tunnel() {
     ssh_verify_tunnel "$filename_ssh_forward_base_conf/$selected_file"
 }
 alias sshselectverifytunnel="ssh_select_and_verify_tunnel"
+
+# ssh_kill_all_forwarding function
+# Kills all active SSH tunnel forwarding sessions.
+#
+# Usage:
+#   ssh_kill_all_forwarding
+#
+# Description:
+#   The 'ssh_kill_all_forwarding' function terminates all active SSH tunnel forwarding processes.
+#   It retrieves the list of SSH processes with port forwarding options (-L, -R, -D) using 'ps aux' and filters them.
+#   The PIDs of the filtered processes are extracted and terminated using the 'kill' command.
+#
+# Parameters:
+#   - None
+#
+# Example:
+#   ssh_kill_all_forwarding
+#
+# Recommendations:
+#   - Use this function to quickly terminate all SSH tunnel forwarding sessions.
+#
+# Dependencies:
+#   - None
+function ssh_kill_all_forwarding() {
+    local pids=$(
+        ps aux | grep ssh | grep -v grep | grep -E '\-L|\-R|\-D' | awk '{print $2}'
+    )
+    if [[ -n $pids ]]; then
+        echo "$pids" | xargs kill -9
+        echo "Killed all SSH tunnel forwarding processes: $pids"
+    else
+        echo "No SSH tunnel forwarding processes found."
+    fi
+}
+alias ksshall="ssh_kill_all_forwarding"

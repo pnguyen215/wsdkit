@@ -984,6 +984,7 @@ function git_commit_with_format() {
     fi
 }
 alias gitcommitwithformat="git_commit_with_format"
+alias gcf="git_commit_with_format"
 
 # git_revert_current function
 # Creates a new branch and reverts the current branch to its state, creating a clean slate for further development.
