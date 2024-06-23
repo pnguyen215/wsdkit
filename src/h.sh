@@ -850,3 +850,4 @@ function leak() {
     fi
 }
 alias lk="leak"
+alias c="clear"
