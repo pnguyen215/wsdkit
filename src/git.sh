@@ -508,6 +508,7 @@ function git_create_branch() {
     send_telegram_git_activity "Pushed branch \`$1\` to remote =)"
 }
 alias gitcreatebranch="git_create_branch"
+alias gcb="git_create_branch"
 
 # git_fetch_branch function
 # Checks out a Git branch and fetches the latest changes from the remote repository.
@@ -810,6 +811,7 @@ function git_merge_push() {
     wsd_exe_cmd git checkout "$current_branch"
 }
 alias gitmergepush="git_merge_push"
+alias gmp="git_merge_push"
 
 # git_revert_branch function
 # Creates a new branch reverting changes from a specified commit or branch and pushes the new branch to the remote repository.
@@ -1461,6 +1463,7 @@ function git_create_branches() {
     wsd_exe_cmd git checkout "$current_branch"
 }
 alias gitcreatebranches="git_create_branches"
+alias gcbs="git_create_branches"
 
 # git_fetch_branches function
 # Checks out and fetches specified Git branches from the remote repository.
