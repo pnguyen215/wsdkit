@@ -155,6 +155,7 @@ function git_tags_released() {
         done
 }
 alias gittagsreleased="git_tags_released"
+alias gtr="git_tags_released"
 
 # git_create_tag function
 # Sets an alias to create a new Git tag with an annotated message for release.
@@ -188,6 +189,7 @@ function git_create_tag() {
     wsd_exe_cmd git tag -a "$1" -m ":gem: release: $1 created successfully"
 }
 alias gitcreatetag="git_create_tag"
+alias gct="git_create_tag"
 
 # git_push_tag function
 # Sets an alias to push a specific Git tag to the remote repository.
@@ -450,6 +452,7 @@ function git_remove_tag() {
     send_telegram_git_activity "Removed tag \`$1\` on remote =)"
 }
 alias gitremovetag="git_remove_tag"
+alias grmt="git_remove_tag"
 
 # git_remove_branch function
 # Removes a Git branch both locally and on the remote repository.
@@ -479,6 +482,7 @@ function git_remove_branch() {
     send_telegram_git_activity "Removed branch \`$1\` on remote =)"
 }
 alias gitremovebranch="git_remove_branch"
+alias grmb="git_remove_branch"
 
 # git_create_branch function
 # Creates a new Git branch and switches to it, then pushes the branch to the remote repository.
@@ -546,6 +550,7 @@ function git_fetch_branch() {
     wsd_exe_cmd git pull -f
 }
 alias gitfetchbranch="git_fetch_branch"
+alias gfb="git_fetch_branch"
 
 # git_fetch_branch_current function
 # Fetches the latest changes for the currently checked-out Git branch from the remote repository.
@@ -574,6 +579,7 @@ function git_fetch_branch_current() {
     wsd_exe_cmd git pull -f
 }
 alias gitfetchbranchcurrent="git_fetch_branch_current"
+alias gfbc="git_fetch_branch_current"
 
 # git_fetch_remote_branch_checkout function
 # Fetches a remote Git branch and checks it out locally.
@@ -605,8 +611,11 @@ function git_fetch_remote_branch_checkout() {
     fi
     wsd_exe_cmd git fetch origin "$1":"$1"
     wsd_exe_cmd git checkout "$1"
+    wsd_exe_cmd git fetch --all --tags
+    wsd_exe_cmd git pull -f
 }
-alias gitfetchremotebranchcheckout="git_fetch_remote_branch_checkout"
+alias gitfetchbranchremotecheckout="git_fetch_remote_branch_checkout"
+alias gfbr="git_fetch_remote_branch_checkout"
 
 # git_push_branch_remote_force function
 # Force-push a local Git branch to its remote counterpart.
