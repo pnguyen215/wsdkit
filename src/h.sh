@@ -107,6 +107,7 @@ function allow_execute_perm() {
     echo "🍺 Execute permission granted to $1"
 }
 alias allowexecuteperm="allow_execute_perm"
+alias aep="allow_execute_perm"
 
 # allow_full_perm function
 # Grants full permissions (read, write, and execute) to the specified file or directory.
@@ -137,6 +138,7 @@ function allow_full_perm() {
     echo "🍺 Full permissions granted to $1 (read, write and execute)"
 }
 alias allowfullperm="allow_full_perm"
+alias afp="allow_full_perm"
 
 # create_file_if_not_exists function
 # Utility function to create a file if it doesn't exist.
@@ -232,6 +234,7 @@ function check_port() {
     wsd_exe_cmd lsof -nP -iTCP:"$1" | grep LISTEN
 }
 alias checkport="check_port"
+alias chckp="check_port"
 
 # kill_ports function
 # Utility function to kill processes running on specified ports.
@@ -458,6 +461,16 @@ function remove_file() {
     wsd_exe_cmd sudo rm "$1"
 }
 alias removefile="remove_file"
+alias rf="remove_file"
+
+function remove_fd() {
+    if [ -z "$1" ]; then
+        echo "Usage: remove_fd <filename/dir>"
+        return 1
+    fi
+    wsd_exe_cmd sudo rm -rf "$1"
+}
+alias rd="remove_fd"
 
 # chmod_info function
 # Provides information about the 'chmod' command, including its usage, options, and modes.
@@ -575,6 +588,7 @@ function ls_files() {
     wsd_exe_cmd ls -all "$folder"
 }
 alias lsfiles="ls_files"
+alias lsall="ls_files"
 
 # editor function
 # Open a selected file from a specified folder using a chosen text editor.
