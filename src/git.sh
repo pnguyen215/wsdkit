@@ -1665,6 +1665,7 @@ function git_commit_tempory() {
     wsd_exe_cmd git commit -m ":ok_hand: chore: pin committion tempory"
 }
 alias gitcommittempory="git_commit_tempory"
+alias gctmp="git_commit_tempory"
 
 # git_remove_except_local_and_remote_branches function
 # Removes local and remote branches except the specified ones.
