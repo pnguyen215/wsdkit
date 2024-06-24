@@ -2020,6 +2020,7 @@ alias gitremoteseturl="git_remote_set_url"
 function git_whatchanged() {
     wsd_exe_cmd git whatchanged -p --abbrev-commit --pretty=medium
 }
+alias gwc="git_whatchanged"
 # Aliases
 # (sorted alphabetically)
 # https://gist.github.com/mkczyk/646b69f85f0214f813d3a3da951d7df2
