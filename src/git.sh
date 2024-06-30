@@ -2275,3 +2275,15 @@ function git_select_switch_branch() {
     fi
 }
 alias gitselectswitchbranch="git_select_switch_branch"
+
+function git_stash() {
+    wsd_exe_cmd git stash
+}
+alias gitstash="git_stash"
+alias gsh="git_stash"
+
+function git_stash_clear() {
+    wsd_exe_cmd git stash clear
+}
+alias gitstashclear="git_stash_clear"
+alias gshc="git_stash_clear"
