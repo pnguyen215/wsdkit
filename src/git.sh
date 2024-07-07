@@ -1,3 +1,6 @@
+# https://www.w3docs.com/snippets/git/how-to-generate-ssh-key-for-git.html
+####
+
 # git_user_info_setting function
 # This function prompts the user to enter their Git username and email, and updates the global Git configuration accordingly.
 #
@@ -1750,7 +1753,8 @@ alias gitfetchrepository="git_fetch_repository"
 
 # git_push_force function
 function git_push_force() {
-    wsd_exe_cmd git push -f
+    local current_branch=$(git rev-parse --abbrev-ref HEAD)
+    wsd_exe_cmd git push --force-with-lease origin "$current_branch"
 }
 alias gpf="git_push_force"
 alias gitpushforce="git_push_force"
@@ -2287,3 +2291,531 @@ function git_stash_clear() {
 }
 alias gitstashclear="git_stash_clear"
 alias gshc="git_stash_clear"
+
+# git_select_empty_commit_message function
+# Select and create empty commits with pre-defined messages categorized by type.
+#
+# Usage:
+#   git_select_empty_commit_message
+#
+# Description:
+#   The 'git_select_empty_commit_message' function guides the user to select a category of
+#   pre-defined empty commit messages, then prompts for selection of a specific message
+#   within that category. It allows for creating an empty commit with the chosen message.
+#
+# Categories and Messages:
+#   - CI/CD Pipeline Triggers:
+#     - ":rocket: chore: trigger CI build to test configuration changes"
+#     - ":rocket: chore: deploy latest version to production environment"
+#     - ":white_check_mark: test: force re-run of test suite for validation purposes"
+#
+#   - Documentation and Non-Code Changes:
+#     - ":books: docs: document recent architectural decisions and trade-offs"
+#     - ":books: docs: add notes from the latest team meeting"
+#     - ":package: dependency: document dependency updates in README.md"
+#
+#   - Workflow and Repository Maintenance:
+#     - ":recycle: chore: refresh stale pull request to resolve merge conflicts"
+#     - ":recycle: chore: sync with main branch to keep feature branch up-to-date"
+#     - ":sparkles: feat: initialize new feature branch setup"
+#
+#   - Project and Team Communication:
+#     - ":tada: chore: announce upcoming team building event"
+#     - ":warning: chore: notify team about planned server maintenance downtime"
+#     - ":bookmark: docs: share details about achieving a key project milestone"
+#
+#   - Experimental and Research Purposes:
+#     - ":alien: experimental: start working on experimental feature for research purposes"
+#     - ":chart_with_upwards_trend: perf: log results of recent performance testing"
+#     - ":books: docs: document feedback from recent user testing session"
+#
+#   - Miscellaneous:
+#     - ":busts_in_silhouette: chore: add new contributor to the project"
+#     - ":memo: docs: record internal decision about project direction"
+#     - ":bookmark: docs: mark completion of project milestone"
+#
+# Instructions:
+#   1. Run 'git_select_empty_commit_message' to start the process.
+#   2. Select a category of commit messages.
+#   3. Choose a specific message within the selected category.
+#   4. Confirm the selection to create an empty commit with the chosen message.
+#
+# Notes:
+#   - This function is useful for standardizing commit messages for routine or non-code changes.
+#   - Ensure proper selection and confirmation before proceeding with the commit.
+#
+# Dependencies:
+#   - 'fzf' for interactive selection of categories and messages.
+#   - 'wsd_exe_cmd' for executing Git commands safely.
+# https://www.w3docs.com/snippets/git/how-to-push-an-empty-commit-in-git.html
+function git_select_empty_commit_message() {
+    local categories=(
+        "CI/CD Pipeline Triggers"
+        "Documentation and Non-Code Changes"
+        "Workflow and Repository Maintenance"
+        "Project and Team Communication"
+        "Experimental and Research Purposes"
+        "Miscellaneous"
+    )
+    local ci_cd_messages=(
+        ":rocket: chore: trigger CI build to test configuration changes"
+        ":rocket: chore: deploy latest version to production environment"
+        ":white_check_mark: test: force re-run of test suite for validation purposes"
+    )
+    local docs_non_code_messages=(
+        ":books: docs: document recent architectural decisions and trade-offs"
+        ":books: docs: add notes from the latest team meeting"
+        ":package: dependency: document dependency updates in README.md"
+    )
+    local workflow_maintenance_messages=(
+        ":recycle: chore: refresh stale pull request to resolve merge conflicts"
+        ":recycle: chore: sync with main branch to keep feature branch up-to-date"
+        ":sparkles: feat: initialize new feature branch setup"
+    )
+    local team_communication_messages=(
+        ":tada: chore: announce upcoming team building event"
+        ":warning: chore: notify team about planned server maintenance downtime"
+        ":bookmark: docs: share details about achieving a key project milestone"
+    )
+    local experimental_research_messages=(
+        ":alien: experimental: start working on experimental feature for research purposes"
+        ":chart_with_upwards_trend: perf: log results of recent performance testing"
+        ":books: docs: document feedback from recent user testing session"
+    )
+    local miscellaneous_messages=(
+        ":busts_in_silhouette: chore: add new contributor to the project"
+        ":memo: docs: record internal decision about project direction"
+        ":bookmark: docs: mark completion of project milestone"
+    )
+    echo "Select a category:"
+    select category in "${categories[@]}"; do
+        if [ -n "$category" ]; then
+            break
+        else
+            echo "Invalid selection. Please try again."
+        fi
+    done
+
+    case $category in
+    "CI/CD Pipeline Triggers")
+        messages=("${ci_cd_messages[@]}")
+        ;;
+    "Documentation and Non-Code Changes")
+        messages=("${docs_non_code_messages[@]}")
+        ;;
+    "Workflow and Repository Maintenance")
+        messages=("${workflow_maintenance_messages[@]}")
+        ;;
+    "Project and Team Communication")
+        messages=("${team_communication_messages[@]}")
+        ;;
+    "Experimental and Research Purposes")
+        messages=("${experimental_research_messages[@]}")
+        ;;
+    "Miscellaneous")
+        messages=("${miscellaneous_messages[@]}")
+        ;;
+    *)
+        echo "Invalid category. Exiting."
+        return
+        ;;
+    esac
+
+    echo "Select a pre-defined empty commit message from the category '$category':"
+    select message in "${messages[@]}"; do
+        if [ -n "$message" ]; then
+            break
+        else
+            echo "Invalid selection. Please try again."
+        fi
+    done
+
+    echo "Selected commit message: $message"
+    echo "❓ Do you want to proceed with this commit message? (y/n): "
+    read confirm
+    while [[ ! "$confirm" =~ ^(y|yes|Yes|YES|n|no|No|NO)$ ]]; do
+        echo "❌ Invalid input. Please enter a valid response (y/n): "
+        read confirm
+    done
+
+    if [[ "$confirm" =~ ^(y|yes|Yes|YES)$ ]]; then
+        wsd_exe_cmd git commit --allow-empty -m "$message"
+        echo "🍺 The commit has been created successfully."
+    else
+        echo "🍌 Commit aborted."
+    fi
+}
+alias gcem="git_select_empty_commit_message"
+alias gscem="git_select_empty_commit_message"
+
+# git_stash_apply_fzf function
+# Apply a selected git stash entry interactively.
+#
+# Usage:
+#   git_stash_apply_fzf
+#
+# Description:
+#   The 'git_stash_apply_fzf' function allows applying a selected git stash entry interactively.
+#
+# Options:
+#   None
+#
+# Example usage:
+#   git_stash_apply_fzf
+#
+# Instructions:
+#   - Run the 'git_stash_apply_fzf' function.
+#   - It presents a list of stash entries.
+#   - Select a stash entry to apply.
+#   - The function applies the selected stash entry.
+#
+# Dependencies:
+#   - 'git' command-line tool for version control.
+#   - 'fzf' for interactive selection.
+#
+# Notes:
+#   - Ensure you have stashed changes before running this function.
+#   - If no stash entry is selected, the function will indicate that no stash was applied.
+function git_stash_apply_fzf() {
+    local stash=$(git stash list | fzf --height 40% --border --ansi --preview 'git stash show -p {1}')
+    if [ -n "$stash" ]; then
+        local stash_ref=$(echo "$stash" | awk '{print $1}')
+        wsd_exe_cmd git stash apply "$stash_ref"
+        echo "🟢 Applied stash $stash_ref"
+    else
+        echo "🟡 No stash selected."
+    fi
+}
+alias gsa="git_stash_apply_fzf"
+alias gsafzf="git_stash_apply_fzf"
+
+# git_stash_pop_fzf function
+# Pop a selected git stash entry interactively.
+#
+# Usage:
+#   git_stash_pop_fzf
+#
+# Description:
+#   The 'git_stash_pop_fzf' function allows popping a selected git stash entry interactively.
+#
+# Options:
+#   None
+#
+# Example usage:
+#   git_stash_pop_fzf
+#
+# Instructions:
+#   - Run the 'git_stash_pop_fzf' function.
+#   - It presents a list of stash entries.
+#   - Select a stash entry to pop.
+#   - The function pops the selected stash entry.
+#
+# Dependencies:
+#   - 'git' command-line tool for version control.
+#   - 'fzf' for interactive selection.
+#   - 'wsd_exe_cmd' for executing the git stash pop command.
+#
+# Notes:
+#   - Ensure you have stashed changes before running this function.
+#   - If no stash entry is selected, the function will indicate that no stash was popped.
+function git_stash_pop_fzf() {
+    local stash=$(git stash list | fzf --height 40% --border --ansi --preview 'git stash show -p {1}')
+    if [ -n "$stash" ]; then
+        local stash_ref=$(echo "$stash" | awk '{print $1}')
+        wsd_exe_cmd git stash pop "$stash_ref"
+        echo "🟢 Popped stash $stash_ref"
+    else
+        echo "🟡 No stash selected."
+    fi
+}
+alias gsp="git_stash_pop_fzf"
+alias gspfzf="git_stash_pop_fzf"
+
+# git_stash_drop_fzf function
+# Drop a selected git stash entry interactively.
+#
+# Usage:
+#   git_stash_drop_fzf
+#
+# Description:
+#   The 'git_stash_drop_fzf' function allows dropping a selected git stash entry interactively.
+#
+# Options:
+#   None
+#
+# Example usage:
+#   git_stash_drop_fzf
+#
+# Instructions:
+#   - Run the 'git_stash_drop_fzf' function.
+#   - It presents a list of stash entries.
+#   - Select a stash entry to drop.
+#   - The function drops the selected stash entry.
+#
+# Dependencies:
+#   - 'git' command-line tool for version control.
+#   - 'fzf' for interactive selection.
+#   - 'wsd_exe_cmd' for executing the git stash drop command.
+#
+# Notes:
+#   - Ensure you have stashed changes before running this function.
+#   - If no stash entry is selected, the function will indicate that no stash was dropped.
+function git_stash_drop_fzf() {
+    local stash=$(git stash list | fzf --height 40% --border --ansi --preview 'git stash show -p {1}')
+    if [ -n "$stash" ]; then
+        local stash_ref=$(echo "$stash" | awk '{print $1}')
+        wsd_exe_cmd git stash drop "$stash_ref"
+        echo "🟢 Dropped stash $stash_ref"
+    else
+        echo "🟡 No stash selected."
+    fi
+}
+alias gsd="git_stash_drop_fzf"
+alias gsdfzf="git_stash_drop_fzf"
+
+# git_stash_show_fzf function
+# Show details of a selected git stash entry interactively.
+#
+# Usage:
+#   git_stash_show_fzf
+#
+# Description:
+#   The 'git_stash_show_fzf' function allows showing details of a selected git stash entry interactively.
+#
+# Options:
+#   None
+#
+# Example usage:
+#   git_stash_show_fzf
+#
+# Instructions:
+#   - Run the 'git_stash_show_fzf' function.
+#   - It presents a list of stash entries.
+#   - Select a stash entry to view its details.
+#   - The function shows the details of the selected stash entry.
+#
+# Dependencies:
+#   - 'git' command-line tool for version control.
+#   - 'fzf' for interactive selection.
+#   - 'wsd_exe_cmd' for executing the git stash show command.
+#
+# Notes:
+#   - Ensure you have stashed changes before running this function.
+#   - If no stash entry is selected, the function will indicate that no stash was shown.
+function git_stash_show_fzf() {
+    local stash=$(git stash list | fzf --height 40% --border --ansi)
+    if [ -n "$stash" ]; then
+        local stash_ref=$(echo "$stash" | awk '{print $1}')
+        wsd_exe_cmd git stash show -p "$stash_ref"
+    else
+        echo "🟡 No stash selected."
+    fi
+}
+alias gshs="git_stash_show_fzf"
+alias gshsfzf="git_stash_show_fzf"
+
+# git_stash_branch_from_fzf function
+# Create a new branch from a selected git stash entry interactively.
+#
+# Usage:
+#   git_stash_branch_from_fzf
+#
+# Description:
+#   The 'git_stash_branch_from_fzf' function allows creating a new branch from a selected git stash entry interactively.
+#
+# Options:
+#   None
+#
+# Example usage:
+#   git_stash_branch_from_fzf
+#
+# Instructions:
+#   - Run the 'git_stash_branch_from_fzf' function.
+#   - It presents a list of stash entries.
+#   - Select a stash entry from which to create a new branch.
+#   - Enter the name of the new branch when prompted.
+#   - The function creates a new branch from the selected stash entry.
+#
+# Dependencies:
+#   - 'git' command-line tool for version control.
+#   - 'fzf' for interactive selection.
+#   - 'wsd_exe_cmd' for executing the git stash branch command.
+#
+# Notes:
+#   - Ensure you have stashed changes before running this function.
+#   - If no stash entry is selected or the branch name is empty, appropriate messages will be displayed.
+function git_stash_branch_from_fzf() {
+    local stash=$(git stash list | fzf --height 40% --border --ansi --preview 'git stash show -p {1}')
+    if [ -n "$stash" ]; then
+        local stash_ref=$(echo "$stash" | awk '{print $1}')
+        echo "Enter the name of the new branch:"
+        read branch_name
+        if [ -n "$branch_name" ]; then
+            wsd_exe_cmd git stash branch "$branch_name" "$stash_ref"
+            echo "🟢 Created branch '$branch_name' from stash $stash_ref"
+        else
+            echo "🟡 Branch name cannot be empty."
+        fi
+    else
+        echo "🟡 No stash selected."
+    fi
+}
+alias gshb="git_stash_branch_from_fzf"
+alias gshbfzf="git_stash_branch_from_fzf"
+
+# git_stash_pop_multiple_fzf function
+# Pop multiple selected git stash entries interactively.
+#
+# Usage:
+#   git_stash_pop_multiple_fzf
+#
+# Description:
+#   The 'git_stash_pop_multiple_fzf' function allows popping multiple selected git stash entries interactively.
+#
+# Options:
+#   None
+#
+# Example usage:
+#   git_stash_pop_multiple_fzf
+#
+# Instructions:
+#   - Run the 'git_stash_pop_multiple_fzf' function.
+#   - It presents a list of stash entries.
+#   - Select one or more stash entries to pop.
+#   - The function pops each selected stash entry.
+#
+# Dependencies:
+#   - 'git' command-line tool for version control.
+#   - 'fzf' for interactive selection.
+#   - 'wsd_exe_cmd' for executing the git stash pop command.
+#
+# Notes:
+#   - Ensure you have stashed changes before running this function.
+#   - If no stash entries are selected, the function will indicate that no stashes were popped.
+function git_stash_pop_multiple_fzf() {
+    local stashes=$(git stash list | fzf -m --height 40% --border --ansi --preview 'git stash show -p {1}')
+    if [ -n "$stashes" ]; then
+        local stash_refs=$(echo "$stashes" | awk '{print $1}')
+        for stash_ref in $stash_refs; do
+            wsd_exe_cmd git stash pop "$stash_ref"
+            echo "🟢 Popped stash $stash_ref"
+        done
+    else
+        echo "🟡 No stashes selected."
+    fi
+}
+alias gspm="git_stash_pop_multiple_fzf"
+alias gspmfzf="git_stash_pop_multiple_fzf"
+
+# git_stash_drop_multiple_fzf function
+# Drop multiple selected git stash entries interactively.
+#
+# Usage:
+#   git_stash_drop_multiple_fzf
+#
+# Description:
+#   The 'git_stash_drop_multiple_fzf' function allows dropping multiple selected git stash entries interactively.
+#
+# Options:
+#   None
+#
+# Example usage:
+#   git_stash_drop_multiple_fzf
+#
+# Instructions:
+#   - Run the 'git_stash_drop_multiple_fzf' function.
+#   - It presents a list of stash entries.
+#   - Select one or more stash entries to drop.
+#   - The function drops each selected stash entry.
+#
+# Dependencies:
+#   - 'git' command-line tool for version control.
+#   - 'fzf' for interactive selection.
+#   - 'wsd_exe_cmd' for executing the git stash drop command.
+#
+# Notes:
+#   - Ensure you have stashed changes before running this function.
+#   - If no stash entries are selected, the function will indicate that no stashes were dropped.
+function git_stash_drop_multiple_fzf() {
+    local stashes=$(git stash list | fzf -m --height 40% --border --ansi --preview 'git stash show -p {1}')
+    if [ -n "$stashes" ]; then
+        local stash_refs=$(echo "$stashes" | awk '{print $1}')
+        for stash_ref in $stash_refs; do
+            wsd_exe_cmd git stash drop "$stash_ref"
+            echo "🟢 Dropped stash $stash_ref"
+        done
+    else
+        echo "🟡 No stashes selected."
+    fi
+}
+alias gsdm="git_stash_drop_multiple_fzf"
+alias gsdmfzf="git_stash_drop_multiple_fzf"
+
+# git_stash_all function
+# Stash all uncommitted changes with a message indicating work in progress.
+#
+# Usage:
+#   git_stash_all
+#
+# Description:
+#   The 'git_stash_all' function stashes all uncommitted changes with a message indicating work in progress.
+#
+# Options:
+#   None
+#
+# Example usage:
+#   git_stash_all
+#
+# Instructions:
+#   - Run the 'git_stash_all' function.
+#   - It stashes all changes that have not been committed.
+#   - The stash message includes the current branch name and the current date.
+#
+# Dependencies:
+#   - 'git' command-line tool for version control.
+#   - 'wsd_exe_cmd' for executing the git stash save command.
+#
+# Notes:
+#   - This function is useful for temporarily saving your work while switching tasks or branches.
+#   - The stash can be later applied or dropped using other git stash related functions.
+function git_stash_all() {
+    wsd_exe_cmd git stash save ":construction: WIP on $(git rev-parse --abbrev-ref HEAD): $(date +%Y-%m-%d)"
+    echo "🟢 Stashed all uncommitted changes."
+}
+alias gitstashall="git_stash_all"
+
+# git_stash_all_including_untracked function
+# Stash all uncommitted changes, including untracked files, with a message indicating work in progress.
+#
+# Usage:
+#   git_stash_all_including_untracked
+#
+# Description:
+#   The 'git_stash_all_including_untracked' function stashes all uncommitted changes,
+#   including untracked files, with a message indicating work in progress.
+#
+# Options:
+#   None
+#
+# Example usage:
+#   git_stash_all_including_untracked
+#
+# Instructions:
+#   - Run the 'git_stash_all_including_untracked' function.
+#   - It stashes all changes, including untracked files, that have not been committed.
+#   - The stash message includes the current branch name and the current date.
+#
+# Dependencies:
+#   - 'git' command-line tool for version control.
+#   - 'wsd_exe_cmd' for executing the git stash save command.
+#
+# Notes:
+#   - Use this function when you want to temporarily save all changes, including new files,
+#     while you switch tasks or branches.
+#   - The stash can be later applied or dropped using other git stash related functions.
+function git_stash_all_including_untracked() {
+    wsd_exe_cmd git stash save --include-untracked ":construction: WIP on $(git rev-parse --abbrev-ref HEAD): $(date +%Y-%m-%d)"
+    echo "🟢 Stashed all uncommitted changes including untracked files."
+}
+alias gitstashforce="git_stash_all_including_untracked"
+alias gsau="git_stash_all_including_untracked"

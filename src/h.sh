@@ -297,6 +297,7 @@ function kill_ports() {
     done
 }
 alias killports="kill_ports"
+alias kp="kill_ports"
 
 # Copy filename by new filename
 function copy_file() {
