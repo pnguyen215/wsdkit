@@ -2477,9 +2477,8 @@ alias gscem="git_select_empty_commit_message"
 #   - Ensure you have stashed changes before running this function.
 #   - If no stash entry is selected, the function will indicate that no stash was applied.
 function git_stash_apply_fzf() {
-    local stash=$(git stash list | fzf --height 40% --border --ansi --preview 'git stash show -p {1}')
+    local stash=$(git stash list | fzf --height 60% --border --ansi --preview 'git stash show -p')
     if [ -n "$stash" ]; then
-        # local stash_ref=$(echo "$stash" | awk '{print $1}')
         local stash_ref=$(echo "$stash" | grep -o "stash@{[0-9]*}")
         if wsd_exe_cmd git stash apply "$stash_ref"; then
             echo "🟢 Applied stash $stash_ref"
@@ -2523,9 +2522,8 @@ alias gsafzf="git_stash_apply_fzf"
 #   - Ensure you have stashed changes before running this function.
 #   - If no stash entry is selected, the function will indicate that no stash was popped.
 function git_stash_pop_fzf() {
-    local stash=$(git stash list | fzf --height 40% --border --ansi --preview 'git stash show -p {1}')
+    local stash=$(git stash list | fzf --height 60% --border --ansi --preview 'git stash show -p')
     if [ -n "$stash" ]; then
-        # local stash_ref=$(echo "$stash" | awk '{print $1}')
         local stash_ref=$(echo "$stash" | grep -o "stash@{[0-9]*}")
         wsd_exe_cmd git stash pop "$stash_ref"
         echo "🟢 Popped stash $stash_ref"
@@ -2566,9 +2564,8 @@ alias gspfzf="git_stash_pop_fzf"
 #   - Ensure you have stashed changes before running this function.
 #   - If no stash entry is selected, the function will indicate that no stash was dropped.
 function git_stash_drop_fzf() {
-    local stash=$(git stash list | fzf --height 40% --border --ansi --preview 'git stash show -p {1}')
+    local stash=$(git stash list | fzf --height 60% --border --ansi --preview 'git stash show -p')
     if [ -n "$stash" ]; then
-        # local stash_ref=$(echo "$stash" | awk '{print $1}')
         local stash_ref=$(echo "$stash" | grep -o "stash@{[0-9]*}")
         wsd_exe_cmd git stash drop "$stash_ref"
         echo "🟢 Dropped stash $stash_ref"
@@ -2609,9 +2606,8 @@ alias gsdfzf="git_stash_drop_fzf"
 #   - Ensure you have stashed changes before running this function.
 #   - If no stash entry is selected, the function will indicate that no stash was shown.
 function git_stash_show_fzf() {
-    local stash=$(git stash list | fzf --height 40% --border --ansi)
+    local stash=$(git stash list | fzf --height 60% --border --ansi)
     if [ -n "$stash" ]; then
-        # local stash_ref=$(echo "$stash" | awk '{print $1}')
         local stash_ref=$(echo "$stash" | grep -o "stash@{[0-9]*}")
         wsd_exe_cmd git stash show -p "$stash_ref"
     else
@@ -2652,9 +2648,8 @@ alias gshsfzf="git_stash_show_fzf"
 #   - Ensure you have stashed changes before running this function.
 #   - If no stash entry is selected or the branch name is empty, appropriate messages will be displayed.
 function git_stash_branch_from_fzf() {
-    local stash=$(git stash list | fzf --height 40% --border --ansi --preview 'git stash show -p {1}')
+    local stash=$(git stash list | fzf --height 60% --border --ansi --preview 'git stash show -p')
     if [ -n "$stash" ]; then
-        # local stash_ref=$(echo "$stash" | awk '{print $1}')
         local stash_ref=$(echo "$stash" | grep -o "stash@{[0-9]*}")
         echo "Enter the name of the new branch:"
         read branch_name
@@ -2701,9 +2696,8 @@ alias gshbfzf="git_stash_branch_from_fzf"
 #   - Ensure you have stashed changes before running this function.
 #   - If no stash entries are selected, the function will indicate that no stashes were popped.
 function git_stash_pop_multiple_fzf() {
-    local stashes=$(git stash list | fzf -m --height 40% --border --ansi --preview 'git stash show -p {1}')
+    local stashes=$(git stash list | fzf -m --height 60% --border --ansi --preview 'git stash show -p')
     if [ -n "$stashes" ]; then
-        # local stash_refs=$(echo "$stashes" | awk '{print $1}')
         local stash_ref=$(echo "$stash" | grep -o "stash@{[0-9]*}")
         for stash_ref in $stash_refs; do
             wsd_exe_cmd git stash pop "$stash_ref"
@@ -2746,9 +2740,8 @@ alias gspmfzf="git_stash_pop_multiple_fzf"
 #   - Ensure you have stashed changes before running this function.
 #   - If no stash entries are selected, the function will indicate that no stashes were dropped.
 function git_stash_drop_multiple_fzf() {
-    local stashes=$(git stash list | fzf -m --height 40% --border --ansi --preview 'git stash show -p {1}')
+    local stashes=$(git stash list | fzf -m --height 60% --border --ansi --preview 'git stash show -p')
     if [ -n "$stashes" ]; then
-        # local stash_refs=$(echo "$stashes" | awk '{print $1}')
         local stash_ref=$(echo "$stash" | grep -o "stash@{[0-9]*}")
         for stash_ref in $stash_refs; do
             wsd_exe_cmd git stash drop "$stash_ref"
