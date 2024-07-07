@@ -2479,7 +2479,8 @@ alias gscem="git_select_empty_commit_message"
 function git_stash_apply_fzf() {
     local stash=$(git stash list | fzf --height 40% --border --ansi --preview 'git stash show -p {1}')
     if [ -n "$stash" ]; then
-        local stash_ref=$(echo "$stash" | awk '{print $1}')
+        # local stash_ref=$(echo "$stash" | awk '{print $1}')
+        local stash_ref=$(echo "$stash" | grep -o "stash@{[0-9]*}")
         if wsd_exe_cmd git stash apply "$stash_ref"; then
             echo "🟢 Applied stash $stash_ref"
         else
@@ -2524,7 +2525,8 @@ alias gsafzf="git_stash_apply_fzf"
 function git_stash_pop_fzf() {
     local stash=$(git stash list | fzf --height 40% --border --ansi --preview 'git stash show -p {1}')
     if [ -n "$stash" ]; then
-        local stash_ref=$(echo "$stash" | awk '{print $1}')
+        # local stash_ref=$(echo "$stash" | awk '{print $1}')
+        local stash_ref=$(echo "$stash" | grep -o "stash@{[0-9]*}")
         wsd_exe_cmd git stash pop "$stash_ref"
         echo "🟢 Popped stash $stash_ref"
     else
@@ -2566,7 +2568,8 @@ alias gspfzf="git_stash_pop_fzf"
 function git_stash_drop_fzf() {
     local stash=$(git stash list | fzf --height 40% --border --ansi --preview 'git stash show -p {1}')
     if [ -n "$stash" ]; then
-        local stash_ref=$(echo "$stash" | awk '{print $1}')
+        # local stash_ref=$(echo "$stash" | awk '{print $1}')
+        local stash_ref=$(echo "$stash" | grep -o "stash@{[0-9]*}")
         wsd_exe_cmd git stash drop "$stash_ref"
         echo "🟢 Dropped stash $stash_ref"
     else
@@ -2608,7 +2611,8 @@ alias gsdfzf="git_stash_drop_fzf"
 function git_stash_show_fzf() {
     local stash=$(git stash list | fzf --height 40% --border --ansi)
     if [ -n "$stash" ]; then
-        local stash_ref=$(echo "$stash" | awk '{print $1}')
+        # local stash_ref=$(echo "$stash" | awk '{print $1}')
+        local stash_ref=$(echo "$stash" | grep -o "stash@{[0-9]*}")
         wsd_exe_cmd git stash show -p "$stash_ref"
     else
         echo "🟡 No stash selected."
@@ -2650,7 +2654,8 @@ alias gshsfzf="git_stash_show_fzf"
 function git_stash_branch_from_fzf() {
     local stash=$(git stash list | fzf --height 40% --border --ansi --preview 'git stash show -p {1}')
     if [ -n "$stash" ]; then
-        local stash_ref=$(echo "$stash" | awk '{print $1}')
+        # local stash_ref=$(echo "$stash" | awk '{print $1}')
+        local stash_ref=$(echo "$stash" | grep -o "stash@{[0-9]*}")
         echo "Enter the name of the new branch:"
         read branch_name
         if [ -n "$branch_name" ]; then
@@ -2698,7 +2703,8 @@ alias gshbfzf="git_stash_branch_from_fzf"
 function git_stash_pop_multiple_fzf() {
     local stashes=$(git stash list | fzf -m --height 40% --border --ansi --preview 'git stash show -p {1}')
     if [ -n "$stashes" ]; then
-        local stash_refs=$(echo "$stashes" | awk '{print $1}')
+        # local stash_refs=$(echo "$stashes" | awk '{print $1}')
+        local stash_ref=$(echo "$stash" | grep -o "stash@{[0-9]*}")
         for stash_ref in $stash_refs; do
             wsd_exe_cmd git stash pop "$stash_ref"
             echo "🟢 Popped stash $stash_ref"
@@ -2742,7 +2748,8 @@ alias gspmfzf="git_stash_pop_multiple_fzf"
 function git_stash_drop_multiple_fzf() {
     local stashes=$(git stash list | fzf -m --height 40% --border --ansi --preview 'git stash show -p {1}')
     if [ -n "$stashes" ]; then
-        local stash_refs=$(echo "$stashes" | awk '{print $1}')
+        # local stash_refs=$(echo "$stashes" | awk '{print $1}')
+        local stash_ref=$(echo "$stash" | grep -o "stash@{[0-9]*}")
         for stash_ref in $stash_refs; do
             wsd_exe_cmd git stash drop "$stash_ref"
             echo "🟢 Dropped stash $stash_ref"
@@ -2782,7 +2789,8 @@ alias gsdmfzf="git_stash_drop_multiple_fzf"
 #   - This function is useful for temporarily saving your work while switching tasks or branches.
 #   - The stash can be later applied or dropped using other git stash related functions.
 function git_stash_all() {
-    wsd_exe_cmd git stash save "WIP on $(git rev-parse --abbrev-ref HEAD): $(date +%Y-%m-%d)"
+    local message="${1:-$(date +%Y-%m-%d)}"
+    wsd_exe_cmd git stash save "WIP on $(git rev-parse --abbrev-ref HEAD): $message"
     echo "🟢 Stashed all uncommitted changes."
 }
 alias gitstashall="git_stash_all"
@@ -2817,7 +2825,8 @@ alias gitstashall="git_stash_all"
 #     while you switch tasks or branches.
 #   - The stash can be later applied or dropped using other git stash related functions.
 function git_stash_all_including_untracked() {
-    wsd_exe_cmd git stash save --include-untracked "WIP on $(git rev-parse --abbrev-ref HEAD): $(date +%Y-%m-%d)"
+    local message="${1:-$(date +%Y-%m-%d)}"
+    wsd_exe_cmd git stash save --include-untracked "WIP on $(git rev-parse --abbrev-ref HEAD): $message"
     echo "🟢 Stashed all uncommitted changes including untracked files."
 }
 alias gitstashforce="git_stash_all_including_untracked"
