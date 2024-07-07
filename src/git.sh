@@ -2480,8 +2480,11 @@ function git_stash_apply_fzf() {
     local stash=$(git stash list | fzf --height 40% --border --ansi --preview 'git stash show -p {1}')
     if [ -n "$stash" ]; then
         local stash_ref=$(echo "$stash" | awk '{print $1}')
-        wsd_exe_cmd git stash apply "$stash_ref"
-        echo "🟢 Applied stash $stash_ref"
+        if wsd_exe_cmd git stash apply "$stash_ref"; then
+            echo "🟢 Applied stash $stash_ref"
+        else
+            echo "🔴 Failed to apply stash $stash_ref"
+        fi
     else
         echo "🟡 No stash selected."
     fi
@@ -2779,7 +2782,7 @@ alias gsdmfzf="git_stash_drop_multiple_fzf"
 #   - This function is useful for temporarily saving your work while switching tasks or branches.
 #   - The stash can be later applied or dropped using other git stash related functions.
 function git_stash_all() {
-    wsd_exe_cmd git stash save ":construction: WIP on $(git rev-parse --abbrev-ref HEAD): $(date +%Y-%m-%d)"
+    wsd_exe_cmd git stash save "WIP on $(git rev-parse --abbrev-ref HEAD): $(date +%Y-%m-%d)"
     echo "🟢 Stashed all uncommitted changes."
 }
 alias gitstashall="git_stash_all"
@@ -2814,7 +2817,7 @@ alias gitstashall="git_stash_all"
 #     while you switch tasks or branches.
 #   - The stash can be later applied or dropped using other git stash related functions.
 function git_stash_all_including_untracked() {
-    wsd_exe_cmd git stash save --include-untracked ":construction: WIP on $(git rev-parse --abbrev-ref HEAD): $(date +%Y-%m-%d)"
+    wsd_exe_cmd git stash save --include-untracked "WIP on $(git rev-parse --abbrev-ref HEAD): $(date +%Y-%m-%d)"
     echo "🟢 Stashed all uncommitted changes including untracked files."
 }
 alias gitstashforce="git_stash_all_including_untracked"
