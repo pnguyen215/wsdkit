@@ -1754,10 +1754,17 @@ alias gitfetchrepository="git_fetch_repository"
 # git_push_force function
 function git_push_force() {
     local current_branch=$(git rev-parse --abbrev-ref HEAD)
-    wsd_exe_cmd git push --force-with-lease origin "$current_branch"
+    wsd_exe_cmd git push origin "$current_branch"
 }
 alias gpf="git_push_force"
 alias gitpushforce="git_push_force"
+
+function git_push_force_with_lease() {
+    local current_branch=$(git rev-parse --abbrev-ref HEAD)
+    wsd_exe_cmd git push --force-with-lease origin "$current_branch"
+}
+alias gpfwl="git_push_force_with_lease"
+alias gitpushforcewithlease="git_push_force_with_lease"
 
 # git_remove_remote_branches_except function
 # Removes remote branches except those specified to keep.
