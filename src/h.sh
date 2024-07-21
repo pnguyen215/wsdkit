@@ -235,6 +235,7 @@ function check_port() {
 }
 alias checkport="check_port"
 alias chckp="check_port"
+alias ccp="check_port"
 
 # kill_ports function
 # Utility function to kill processes running on specified ports.
@@ -310,7 +311,7 @@ function kill_ports() {
             echo "🟢 Killing processes on port $port: $pids"
             # Kill each process ID
             for pid in $pids; do
-                kill -9 "$pid"
+                wsd_exe_cmd kill -9 "$pid"
             done
         else
             echo "🟠 No processes found on port $port"
@@ -887,3 +888,77 @@ function leak() {
 }
 alias lk="leak"
 alias c="clear"
+
+# list_ports
+# Function to list all ports used by specified types of applications
+# This function lists all ports that are currently being used by applications
+# matching the given process names. It uses `lsof` to find listening ports and
+# filters them based on known application types.
+#
+# Usage:
+#   list_ports java node next react angular python go
+#
+# Arguments:
+#   A list of application types to search for. Supported values include:
+#   - java
+#   - node
+#   - next
+#   - react
+#   - angular
+#   - python
+#   - go
+#
+# Example:
+#   list_ports java node python
+#   This will list all ports used by Java, Node.js, and Python applications.
+#
+# Notes:
+#   - The function uses `lsof` to find processes and their listening ports.
+#   - The application names should be specified as common identifiers for the processes.
+function list_ports() {
+    if [ "$#" -eq 0 ]; then
+        echo "🟡 No application types specified. Usage: list_ports java node next react angular python go"
+        return 1
+    fi
+
+    echo "🚀 Listing ports for specified applications: $@"
+    for app in "$@"; do
+        case $app in
+        java)
+            process_name="java"
+            ;;
+        node)
+            process_name="node"
+            ;;
+        next)
+            process_name="next"
+            ;;
+        react)
+            process_name="react"
+            ;;
+        angular)
+            process_name="ng" # Angular CLI commonly uses 'ng'
+            ;;
+        python)
+            process_name="python"
+            ;;
+        go)
+            process_name="go"
+            ;;
+        *)
+            echo "🔴 Unsupported application type: $app"
+            continue
+            ;;
+        esac
+
+        ports=$(lsof -i -P -n | grep "$process_name" | awk '{print $9}' | cut -d: -f2 | sort -n | uniq)
+
+        if [ -n "$ports" ]; then
+            echo "🟢 Ports used by $process_name: $ports"
+        else
+            echo "🟠 No ports found for $process_name"
+        fi
+    done
+}
+alias listports="list_ports"
+alias lsp="list_ports"
