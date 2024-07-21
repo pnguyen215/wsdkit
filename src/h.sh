@@ -262,38 +262,59 @@ alias chckp="check_port"
 # Notes:
 #   - This function is useful when dealing with port conflicts and needing to
 #     free up ports that are currently in use.
+# function kill_ports() {
+#     echo "Enter the ports you want to kill (separated by spaces): \c"
+#     read ports
+
+#     # Loop through each port in the input
+#     for port in $ports; do
+#         # Check if the port is valid
+#         if ! [[ "$port" =~ ^[0-9]+$ ]]; then
+#             echo "❌ Invalid port number: $port. Skipping..."
+#             continue
+#         fi
+
+#         # Get the process running on the specified port
+#         local process=$(wsd_exe_cmd lsof -n -iTCP:$port -sTCP:LISTEN -t)
+
+#         # Check if any process is running on the specified port
+#         if [ -z "$process" ]; then
+#             echo "No process is using port $port. Skipping..."
+#             continue
+#         fi
+
+#         # Ask for confirmation before killing the process
+#         echo -n "Are you sure you want to kill the process running on port $port? (y/n) "
+#         read confirm
+#         if [ "$confirm" != "y" ]; then
+#             echo "Process kill operation canceled for port $port."
+#             continue
+#         fi
+
+#         # Kill the process using the specified port
+#         wsd_exe_cmd kill $process
+#         echo "🍺 Process on port $port has been killed."
+#     done
+# }
 function kill_ports() {
-    echo "Enter the ports you want to kill (separated by spaces): \c"
-    read ports
+    if [ "$#" -eq 0 ]; then
+        echo "🟡 No ports specified. Usage: kill_ports PORT [PORT...]"
+        return 1
+    fi
 
-    # Loop through each port in the input
-    for port in $ports; do
-        # Check if the port is valid
-        if ! [[ "$port" =~ ^[0-9]+$ ]]; then
-            echo "❌ Invalid port number: $port. Skipping..."
-            continue
+    for port in "$@"; do
+        # Find the PIDs of processes listening on the specified port
+        pids=$(lsof -ti :"$port")
+
+        if [ -n "$pids" ]; then
+            echo "🟢 Killing processes on port $port: $pids"
+            # Kill each process ID
+            for pid in $pids; do
+                kill -9 "$pid"
+            done
+        else
+            echo "🟠 No processes found on port $port"
         fi
-
-        # Get the process running on the specified port
-        local process=$(wsd_exe_cmd lsof -n -iTCP:$port -sTCP:LISTEN -t)
-
-        # Check if any process is running on the specified port
-        if [ -z "$process" ]; then
-            echo "No process is using port $port. Skipping..."
-            continue
-        fi
-
-        # Ask for confirmation before killing the process
-        echo -n "Are you sure you want to kill the process running on port $port? (y/n) "
-        read confirm
-        if [ "$confirm" != "y" ]; then
-            echo "Process kill operation canceled for port $port."
-            continue
-        fi
-
-        # Kill the process using the specified port
-        wsd_exe_cmd kill $process
-        echo "🍺 Process on port $port has been killed."
     done
 }
 alias killports="kill_ports"
