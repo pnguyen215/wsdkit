@@ -47,7 +47,7 @@ function add_suffix_if_needed() {
 function wsd_exe_cmd() {
     local command="$*"
     # Print the command
-    echo "🖥️: $command"
+    echo "🟣: $command"
     # Execute the command without using eval
     "$@"
     # eval "$command"
