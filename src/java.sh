@@ -62,6 +62,7 @@ function java_make_gradle_plugin() {
     wsd_exe_cmd ls -all
 }
 alias javamakegradleplugin="java_make_gradle_plugin"
+alias jvlib="java_make_gradle_plugin"
 
 # java_make_gradle_suit function
 #
@@ -127,3 +128,71 @@ function java_make_gradle_suit() {
     wsd_exe_cmd ls -all
 }
 alias javamakegradlesuit="java_make_gradle_suit"
+alias jvsuit="java_make_gradle_suit"
+
+# java_make_gradle_sdk function
+#
+# Downloads a Java Gradle SDK template from a specified GitHub repository,
+# extracts it to a temporary directory, and moves it to a target directory
+# named after the provided application name. This process includes downloading
+# the SDK, extracting it, and cleaning up temporary files.
+#
+# Usage:
+#   java_make_gradle_sdk <app_name>
+#
+# Parameters:
+#   <app_name>: The name of the application for which the SDK template is being created.
+#               This parameter is mandatory and will be used as the name of the target directory.
+#
+# Dependencies:
+#   - curl: Used to download the SDK template ZIP file from the given URL.
+#   - unzip: Used to extract the contents of the downloaded ZIP file.
+#   - mktemp: Used to create a temporary directory for the extraction process.
+#
+# Global Variables Used:
+#   - $github_java_gradle_sdk_template_repository:
+#       The URL pointing to the GitHub repository containing the Java Gradle SDK template.
+#       Ensure this variable is set with the correct repository URL before invoking the function.
+#
+# Returns:
+#   0: If the operation completes successfully.
+#   1: If the <app_name> parameter is not provided.
+#
+# Output:
+#   - Status messages indicating the progress of downloading, extracting, and cleaning up.
+#   - The final location of the downloaded and extracted SDK template directory.
+#
+# Note:
+#   - This function assumes the presence of necessary utilities (curl, unzip, mktemp) on the system.
+#   - It relies on the $github_java_gradle_sdk_template_repository variable being set appropriately.
+#   - Uses 'wsd_exe_cmd' to execute commands, which may include additional debugging or error handling features.
+function java_make_gradle_sdk() {
+    if [ -z "$1" ]; then
+        echo "Usage: java_make_gradle_sdk <app_name>"
+        return 1
+    fi
+
+    local app_name="$1"
+    local zip_url="$github_java_gradle_sdk_template_repository"
+    local zip_file="${app_name}_wizards2s4j.zip"
+    local temp_dir=$(mktemp -d)
+
+    echo "🚀 Downloading $app_name from $zip_url..."
+    wsd_exe_cmd curl -L -o "$zip_file" "$zip_url"
+
+    echo "🚀 Extracting $zip_file to $temp_dir..."
+    wsd_exe_cmd unzip "$zip_file" -d "$temp_dir"
+
+    local target_dir="$(pwd)/$app_name"
+    wsd_exe_cmd mv "$temp_dir/wizards2s4j-master" "$target_dir"
+
+    echo "🚀 Cleaning up..."
+    wsd_exe_cmd rm "$zip_file"
+    wsd_exe_cmd rmdir "$temp_dir"
+
+    echo "🍺 Downloaded $app_name to $target_dir"
+    wsd_exe_cmd cd "$target_dir"
+    wsd_exe_cmd ls -all
+}
+alias javamakegradlesdk="java_make_gradle_sdk"
+alias jvsdk="java_make_gradle_sdk"

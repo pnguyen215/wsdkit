@@ -17,6 +17,7 @@ function set_global_variables() {
     # Github repositories
     github_golang_template_repository="https://github.com/sivaosorg/gocell/archive/master.zip"
     github_java_gradle_plugin_template_repository="https://github.com/sivaosorg/wizard4j/archive/master.zip"
+    github_java_gradle_sdk_template_repository="https://github.com/sivaosorg/wizards2s4j/archive/master.zip"
     github_java_gradle_suit_template_repository="https://github.com/sivaosorg/suit4j/archive/master.zip"
 
     # Devops
