@@ -1,6 +1,7 @@
 # bash functions
 source "$(dirname "$0")/loader.sh"
 source "$(dirname "$0")/bookmark.sh"
+source "$(dirname "$0")/bookmark_v2.sh"
 source "$(dirname "$0")/brew.sh"
 source "$(dirname "$0")/plugins.sh"
 source "$(dirname "$0")/key.sh"

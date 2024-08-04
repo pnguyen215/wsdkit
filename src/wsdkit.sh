@@ -1,3 +1,4 @@
+#!/bin/bash
 # Define the global variable
 function set_global_variables() {
     # Usage configs
