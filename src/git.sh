@@ -1100,7 +1100,7 @@ function git_backup_branch() {
         return 1
     fi
 
-    timestamp=$(date +"%Y%m%d.%H%M%S")
+    local timestamp=$(date +"%Y%m%d.%H%M%S")
     local current_branch=$(git rev-parse --abbrev-ref HEAD)
     echo "🍉 Pre. newly branch: $timestamp"
     branch_name="backup/$timestamp"."$target"
@@ -1117,15 +1117,24 @@ function git_backup_branch() {
     wsd_exe_cmd git push origin "$branch_name"
     echo "🍺 Branch $branch_name pushed to origin."
     wsd_exe_cmd git checkout "$current_branch"
-    send_telegram_git_activity "$msg"
+
+    timestamp=$(date "+%Y-%m-%d %H:%M:%S")
+    local repository_path=$(git rev-parse --show-toplevel)
+    local repository_name=$(basename "$repository_path")
+    local git_username=$(git config user.name)
+    local github_remote_username=$(git config --get remote.origin.url | sed -n 's/.*:\/\/github.com\/\([^\/]*\)\/.*/\1/p')
+    local server_remote_url=$(git config --get remote.origin.url)
+    send_telegram_git_activity "💾 *AWA - Branch Backup Successfully* \n 👉 *branch (backup)*: \`$target\` \n 👉 *new branch*: \`$branch_name\` \n 👉 *timestamp*: \`$timestamp\`\n 👉 *repository*: [$repository_name]($server_remote_url) \n 👉 *path*: \`$repository_path\` \n 👉 *username*: \`$git_username\`"
 }
 alias gitbackupbranch="git_backup_branch"
+alias gbk="git_backup_branch"
 
 function git_backup_branch_current() {
     local current_branch=$(git rev-parse --abbrev-ref HEAD)
     git_backup_branch "$current_branch"
 }
 alias gitbackupbranchcurrent="git_backup_branch_current"
+alias gbkc="git_backup_branch_current"
 
 # git_revert_local function
 # Reverts to a specific commit or branch by creating a new branch and checking out the target commit or branch on the local repository.
