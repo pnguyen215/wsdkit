@@ -35,13 +35,13 @@ jobs:
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           format: markdown
           message: |
-            🚀 CI Commit
-            🔯 `${{ github.actor }}` created commit:
-            - message: `${{ github.event.commits[0].message }}`
-            - hash: `${{ github.sha }}`
-            - repository: `${{ github.repository }}`
-            - head: `${{ github.event.head_commit.message }}`
-            🍀 See changes: `https://github.com/${{ github.repository }}/commit/${{github.sha}}`
+            🚀 *AI Workflow Administrator (AWA)*
+            - *username*: `${{ github.actor }}`
+            - *message*: `${{ github.event.commits[0].message }}`
+            - *hash*: `${{ github.sha }}`
+            - *repository*: `${{ github.repository }}`
+            - *head*: `${{ github.event.head_commit.message }}`
+            🍀 *See changes*: `https://github.com/${{ github.repository }}/commit/${{github.sha}}`
 
   deploy:
     runs-on: ubuntu-latest
