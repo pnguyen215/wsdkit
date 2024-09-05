@@ -105,7 +105,6 @@ jobs:
             🚀 *AI Workflow Administrator (AWA)*
             - *latest tag*: *${{ env.TAG }}*
             - *username*: `${{ github.actor }}`
-            - *message*: `${{ github.event.commits[0].message }}`
             - *hash*: `${{ github.sha }}`
             - *repository*: `${{ github.repository }}`
             - *head*: `${{ github.event.head_commit.message }}`
