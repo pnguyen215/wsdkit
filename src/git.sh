@@ -995,8 +995,9 @@ function git_commit_with_format() {
         local commit_hash=$(git rev-parse HEAD)
         local repository_path=$(git rev-parse --show-toplevel)
         local repository_name=$(basename "$repository_path")
+        local timestamp=$(date "+%Y-%m-%d %H:%M:%S")
         # send_telegram_git_activity "\`$commit_message\`"
-        send_telegram_git_activity "🚀 *AI Workflow Administrator* \n🔯 *username*: *$git_username* \n - *repository*: $repository_name\n - *branch*: \`$current_branch\` \n - *hash*: \`$commit_hash\` \n - *message*: \`$commit_message\`"
+        send_telegram_git_activity "🚀 *AI Workflow Administrator* \n *username*: *$git_username* \n - *repository*: $repository_name\n - *branch*: \`$current_branch\` \n - *hash*: \`$commit_hash\` \n - *message*: \`$commit_message\` \n\n - *timestamp*: \`$timestamp\`"
 
         wsd_exe_cmd git push -f
         echo "🍺 The commit pushed successfully to origin."
