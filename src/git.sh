@@ -482,7 +482,14 @@ function git_remove_branch() {
 
     echo "🗑️ Removing branch $1 on remote..."
     wsd_exe_cmd git push origin --delete "$1"
-    send_telegram_git_activity "Removed branch \`$1\` on remote =)"
+
+    local timestamp=$(date "+%Y-%m-%d %H:%M:%S")
+    local repository_path=$(git rev-parse --show-toplevel)
+    local repository_name=$(basename "$repository_path")
+    local git_username=$(git config user.name)
+    local github_remote_username=$(git config --get remote.origin.url | sed -n 's/.*:\/\/github.com\/\([^\/]*\)\/.*/\1/p')
+    local server_remote_url=$(git config --get remote.origin.url)
+    send_telegram_git_activity "🚫 *AWA - Branch Removed Successfully* \n 👉 *branch*: \`$1\`\n 👉 *timestamp*: \`$timestamp\`\n 👉 *repository*: [$repository_name]($server_remote_url) \n 👉 *path*: \`$repository_path\` \n 👉 *username*: \`$git_username\`"
 }
 alias gitremovebranch="git_remove_branch"
 alias grmb="git_remove_branch"
