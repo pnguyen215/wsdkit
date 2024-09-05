@@ -516,7 +516,9 @@ function git_create_branch() {
     local repository_path=$(git rev-parse --show-toplevel)
     local repository_name=$(basename "$repository_path")
     local git_username=$(git config user.name)
-    send_telegram_git_activity "🚀 *AWA - Branch Successfully Deployed* \n- *branch*: \`$1\`\n- *timestamp*: \`$timestamp\`\n- *repository*: [$repository_name](https://github.com/\\$repository_name) \n- *path*: \`$repository_path\` \n- *username*: \`$git_username\`"
+    local github_remote_username=$(git config --get remote.origin.url | sed -n 's/.*:\/\/github.com\/\([^\/]*\)\/.*/\1/p')
+    local server_remote_url=$(git config --get remote.origin.url)
+    send_telegram_git_activity "🌾 *AWA - Branch Pushed Successfully* \n 👉 *branch*: \`$1\`\n 👉 *timestamp*: \`$timestamp\`\n 👉 *repository*: [$repository_name]($server_remote_url) \n 👉 *path*: \`$repository_path\` \n 👉 *username*: \`$git_username\`"
 }
 alias gitcreatebranch="git_create_branch"
 alias gcb="git_create_branch"
