@@ -407,11 +407,11 @@ function git_publish_tag_branch() {
     commit_date=$(git log -1 --format='%ad' --date=format:'%Y-%m-%d %H:%M:%S')
 
     # Construct the release message
-    release_message=":gem: release: $2\n\n"
-    release_message+="**Branch:** $1\n"
-    release_message+="**Latest Commit:** $current_commit\n"
-    release_message+="**Commit Author:** $commit_author\n"
-    release_message+="**Commit Date:** $commit_date\n"
+    release_message="🚀 *AI Workflow Administrator* \n"
+    release_message+="📌 *Branch:* \`$1\`\n"
+    release_message+="📌 *Latest Commit*: \`$current_commit\`\n"
+    release_message+="📌 *Commit Author*: \`$commit_author\`\n"
+    release_message+="📌 *Date of Commit*: \`$commit_date\`\n"
 
     # Create and push the tag
     if git tag -a "$2" -m "$release_message" && git push origin "$2"; then
@@ -423,7 +423,7 @@ function git_publish_tag_branch() {
 
     # Switch back to the original branch
     wsd_exe_cmd git checkout "$current_branch"
-    send_telegram_git_activity "$release_message \n\n Tag \`$2\` created and pushed successfully"
+    send_telegram_git_activity "$release_message \n 🌟 *Tag* \`$2\` *has been successfully created and pushed.*"
 }
 alias gitpublishtagbranch="git_publish_tag_branch"
 
