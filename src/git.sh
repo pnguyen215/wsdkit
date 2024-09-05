@@ -512,7 +512,11 @@ function git_create_branch() {
 
     echo "🚀 Pushing branch $1 to remote..."
     wsd_exe_cmd git push -u origin "$1"
-    send_telegram_git_activity "Pushed branch \`$1\` to remote =)"
+    local timestamp=$(date "+%Y-%m-%d %H:%M:%S")
+    local repository_path=$(git rev-parse --show-toplevel)
+    local repository_name=$(basename "$repository_path")
+    local git_username=$(git config user.name)
+    send_telegram_git_activity "🚀 *AWA - Branch Successfully Deployed* \n- *branch*: \`$1\`\n- *timestamp*: \`$timestamp\`\n- *repository*: [$repository_name](https://github.com/\\$repository_name) \n- *path*: \`$repository_path\` \n- *username*: \`$git_username\`"
 }
 alias gitcreatebranch="git_create_branch"
 alias gcb="git_create_branch"
