@@ -1226,7 +1226,7 @@ function git_backup_branch_local() {
         return 1
     fi
 
-    timestamp=$(date +"%Y%m%d.%H%M%S")
+    local timestamp=$(date +"%Y%m%d.%H%M%S")
     local current_branch=$(git rev-parse --abbrev-ref HEAD)
     echo "🍉 Pre. newly branch: $timestamp"
     branch_name="backup/$timestamp"."$target"
@@ -1240,15 +1240,24 @@ function git_backup_branch_local() {
     echo "$msg"
 
     wsd_exe_cmd git checkout "$current_branch"
-    send_telegram_git_activity "$msg"
+
+    timestamp=$(date "+%Y-%m-%d %H:%M:%S")
+    local repository_path=$(git rev-parse --show-toplevel)
+    local repository_name=$(basename "$repository_path")
+    local git_username=$(git config user.name)
+    local github_remote_username=$(git config --get remote.origin.url | sed -n 's/.*:\/\/github.com\/\([^\/]*\)\/.*/\1/p')
+    local server_remote_url=$(git config --get remote.origin.url)
+    send_telegram_git_activity "💾 *AWA - Branch Backup Successfully (Locally)* \n 👉 *branch (backup)*: \`$target\` \n 👉 *new branch*: \`$branch_name\` \n 👉 *timestamp*: \`$timestamp\`\n 👉 *repository*: [$repository_name]($server_remote_url) \n 👉 *path*: \`$repository_path\` \n 👉 *username*: \`$git_username\`"
 }
 alias gitbackupbranchlocal="git_backup_branch_local"
+alias gbkl="git_backup_branch_local"
 
 function git_backup_branch_local_current() {
     local current_branch=$(git rev-parse --abbrev-ref HEAD)
     git_backup_branch_local "$current_branch"
 }
 alias gitbackupbranchlocalcurrent="git_backup_branch_local_current"
+alias gbklc="git_backup_branch_local_current"
 
 # git_remove_branch_local function
 # Removes a local branch from the Git repository.
@@ -1334,9 +1343,17 @@ function git_rename_branch() {
     msg="Branch '$old_name' renamed to \`$new_name\` both locally and remotely."
     echo "$msg"
     wsd_exe_cmd git checkout "$current_branch"
-    send_telegram_git_activity "$msg"
+
+    local timestamp=$(date "+%Y-%m-%d %H:%M:%S")
+    local repository_path=$(git rev-parse --show-toplevel)
+    local repository_name=$(basename "$repository_path")
+    local git_username=$(git config user.name)
+    local github_remote_username=$(git config --get remote.origin.url | sed -n 's/.*:\/\/github.com\/\([^\/]*\)\/.*/\1/p')
+    local server_remote_url=$(git config --get remote.origin.url)
+    send_telegram_git_activity "🔧 *AWA - Branch Renamed Successfully* \n 👉 *branch (old)*: \`$old_name\`\n 👉 *branch (new)*: \`$new_name\`\n 👉 *timestamp*: \`$timestamp\`\n 👉 *repository*: [$repository_name]($server_remote_url) \n 👉 *path*: \`$repository_path\` \n 👉 *username*: \`$git_username\`"
 }
 alias gitrenamebranch="git_rename_branch"
+alias grnb="git_rename_branch"
 
 # git_all_branch function
 # Lists all local and remote Git branches.
