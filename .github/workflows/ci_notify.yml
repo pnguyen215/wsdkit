@@ -102,7 +102,7 @@ jobs:
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           format: markdown
           message: |
-          🚀 *AI Workflow Administrator (AWA)*
+            🚀 *AI Workflow Administrator (AWA)*
             - *latest tag*: *${{ env.TAG }}*
             - *username*: `${{ github.actor }}`
             - *message*: `${{ github.event.commits[0].message }}`
@@ -110,5 +110,5 @@ jobs:
             - *repository*: `${{ github.repository }}`
             - *head*: `${{ github.event.head_commit.message }}`
             🍀 *See changes*: `https://github.com/${{ github.repository }}/releases/tag/${{ env.TAG }}`
-          📜 *Changelog*:
+            📜 *Changelog*:
             `${{ steps.changelog.outputs.changelog }}`
