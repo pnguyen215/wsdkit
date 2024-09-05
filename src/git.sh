@@ -990,7 +990,14 @@ function git_commit_with_format() {
 
     if [[ "$confirm" =~ ^(y|yes|Yes|YES)$ ]]; then
         wsd_exe_cmd git commit -m "$commit_message"
-        send_telegram_git_activity "\`$commit_message\`"
+        # send_telegram_git_activity "\`$commit_message\`"
+        local git_username=$(git config user.name)
+        local current_branch=$(git rev-parse --abbrev-ref HEAD)
+        local commit_hash=$(git rev-parse HEAD)
+        local repository_path=$(git rev-parse --show-toplevel)
+        local repository_name=$(basename "$repository_path")
+        send_telegram_git_activity "🚀 Bot Assistant Commit\n🔯 '$git_username' created commit:\n- repository: '$repository_name'\n- branch: '$current_branch'\n- hash: $commit_hash\n- message: $commit_message"
+
         wsd_exe_cmd git push -f
         echo "🍺 The commit pushed successfully to origin."
     else

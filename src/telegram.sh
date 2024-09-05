@@ -15,9 +15,10 @@ function send_telegram_message_setting() {
     local token="$1"
     local chatId="$2"
     local message="$3"
-
+    # URL-encode the message
+    local PARSED_MESSAGE=$(echo -e "$message" | sed 's/ /%20/g' | sed ':a;N;$!ba;s/\n/%0A/g')
     # Use curl to send a POST request to the Telegram Bot API
-    curl -s -X POST "https://api.telegram.org/bot$token/sendMessage" -d "chat_id=$chatId&text=$message&parse_mode=markdown" >/dev/null
+    curl -s -X POST "https://api.telegram.org/bot$token/sendMessage" -d "chat_id=$chatId&text=$PARSED_MESSAGE&parse_mode=markdown" >/dev/null
 }
 
 # send_telegram_files_setting function
