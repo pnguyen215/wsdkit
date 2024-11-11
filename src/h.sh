@@ -47,7 +47,7 @@ function add_suffix_if_needed() {
 function wsd_exe_cmd() {
     local command="$*"
     # Print the command
-    cecho "🐞 $command" 2
+    cecho "🐞 $command" 6
     # Execute the command without using eval
     "$@"
     # eval "$command"
@@ -76,7 +76,7 @@ function wsd_exe_cmd() {
 #   - This function is useful for displaying commands in logs or hooks without execution.
 function wsd_exe_cmd_hook() {
     local command="$*"
-    cecho "🐝 use: $command" 5
+    cecho "🐝 use: $command" 3
 }
 
 # allow_execute_perm function
