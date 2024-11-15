@@ -1094,6 +1094,8 @@ function git_push_with_format() {
         cecho "🍌 Command execution aborted." 3
     fi
 }
+alias gitpushwithformat="git_push_with_format"
+alias gpwf="git_push_with_format"
 
 # git_revert_current function
 # Creates a new branch and reverts the current branch to its state, creating a clean slate for further development.
