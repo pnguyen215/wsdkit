@@ -1012,7 +1012,7 @@ function git_commit_with_format() {
         local timestamp=$(date "+%Y-%m-%d %H:%M:%S")
         send_telegram_git_activity "🚀 *AI Workflow Administrator* \n - *username*: *$git_username* \n - *repository*: [$repository_name]($server_remote_url)\n - *branch*: \`$current_branch\` \n - *hash*: \`$commit_hash\` \n - *message*: \`$commit_message\` \n\n ⏰ *timestamp*: \`$timestamp\`"
 
-        wsd_exe_cmd git push -f
+        git_push_with_format "$current_branch"
         echo "🍺 The commit pushed successfully to origin."
     else
         echo "🍌 Commit aborted."
@@ -1020,6 +1020,80 @@ function git_commit_with_format() {
 }
 alias gitcommitwithformat="git_commit_with_format"
 alias gcf="git_commit_with_format"
+
+# git_push_with_format function
+# Simplifies the process of selecting and executing Git push commands with dynamic options using `fzf`.
+# Accepts a branch name as an argument to customize the push command.
+
+# Usage:
+#   git_push_with_format <branch_name>
+#
+# Description:
+#   The 'git_push_with_format' function guides the user in selecting and executing a Git push command.
+#   It uses `fzf` for interactive selection and customizes the command based on the provided branch name.
+#   Once the command is selected, it replaces `wsd_exe_cmd git push -f` with the chosen command and executes it.
+function git_push_with_format() {
+    if [[ -z "$1" ]]; then
+        echo "❌ Usage: git_push_with_format <branch_name>"
+        return 1
+    fi
+
+    # Branch name argument
+    local branch_name="$1"
+
+    # List of Git push options
+    push_commands=(
+        "git push -u origin $branch_name        # Set upstream tracking for the branch"
+        "git push --all origin                 # Push all branches to the remote"
+        "git push --tags origin                # Push all tags to the remote"
+        "git push --force origin $branch_name  # Force-push the branch to overwrite remote"
+        "git push --force-with-lease origin $branch_name # Force-push only if no remote changes exist since the last fetch"
+        "git push --delete origin $branch_name # Delete a branch from the remote"
+        "git push --mirror origin              # Mirror the local repository (all branches, tags) to the remote"
+        "git push --dry-run origin $branch_name # Simulate the push without making changes"
+        "git push -o ci.skip origin $branch_name # Push with CI skip option"
+        "git push --prune origin               # Prune deleted branches from the remote"
+        "git push --signed origin $branch_name # Push with GPG signing for verification"
+    )
+
+    # Use `fzf` to interactively select a Git push command
+    echo "Select a Git push command for branch '$branch_name':"
+    selected_command=$(printf "%s\n" "${push_commands[@]}" | fzf --prompt="Choose a push option: " --height=15 --border)
+
+    # Check if a command was selected
+    if [[ -z "$selected_command" ]]; then
+        echo "❌ No command selected. Aborting."
+        return 1
+    fi
+
+    # Extract the actual Git command (everything before the comment #)
+    git_command=$(echo "$selected_command" | cut -d'#' -f1 | xargs)
+
+    # Replace placeholder <branch> with the actual branch name if present
+    git_command=$(echo "$git_command" | sed "s/<branch>/$branch_name/g")
+
+    # Confirm the selected command
+    echo "🚀 Selected Git push command:"
+    echo "$git_command"
+
+    # Ask for confirmation
+    echo "❓ Do you want to execute this command? (y/n): "
+    read confirm
+
+    # Validate user input for confirmation
+    while [[ ! "$confirm" =~ ^(y|yes|Yes|YES|n|no|No|NO)$ ]]; do
+        echo "❌ Invalid input. Please enter a valid response (y/n): "
+        read confirm
+    done
+
+    # Execute the command if confirmed
+    if [[ "$confirm" =~ ^(y|yes|Yes|YES)$ ]]; then
+        wsd_exe_cmd $git_command
+        cecho "🍺 The command executed successfully." 2
+    else
+        cecho "🍌 Command execution aborted." 3
+    fi
+}
 
 # git_revert_current function
 # Creates a new branch and reverts the current branch to its state, creating a clean slate for further development.
