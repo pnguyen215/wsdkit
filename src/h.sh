@@ -50,7 +50,14 @@ function wsd_exe_cmd() {
     cecho "🐞 $command" 6
     # Execute the command without using eval
     "$@"
-    # eval "$command"
+}
+
+function wsd_exe_cmd_eval() {
+    local command="$*"
+    # Print the command
+    cecho "🐞 $command" 6
+    # Execute the command without using eval
+    eval "$command"
 }
 
 # wsd_exe_cmd_hook function

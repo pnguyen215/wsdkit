@@ -1088,7 +1088,7 @@ function git_push_with_format() {
 
     # Execute the command if confirmed
     if [[ "$confirm" =~ ^(y|yes|Yes|YES)$ ]]; then
-        wsd_exe_cmd $git_command
+        wsd_exe_cmd_eval "$git_command"
         cecho "🍺 The command executed successfully." 2
     else
         cecho "🍌 Command execution aborted." 3
