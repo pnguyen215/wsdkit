@@ -1013,9 +1013,9 @@ function git_commit_with_format() {
         send_telegram_git_activity "🚀 *AI Workflow Administrator* \n - *username*: *$git_username* \n - *repository*: [$repository_name]($server_remote_url)\n - *branch*: \`$current_branch\` \n - *hash*: \`$commit_hash\` \n - *message*: \`$commit_message\` \n\n ⏰ *timestamp*: \`$timestamp\`"
 
         git_push_with_format "$current_branch"
-        echo "🍺 The commit pushed successfully to origin."
+        cecho "🍺 The commit pushed successfully to origin." 10
     else
-        echo "🍌 Commit aborted."
+        cecho "🍌 Commit aborted." 11
     fi
 }
 alias gitcommitwithformat="git_commit_with_format"
@@ -1089,9 +1089,9 @@ function git_push_with_format() {
     # Execute the command if confirmed
     if [[ "$confirm" =~ ^(y|yes|Yes|YES)$ ]]; then
         wsd_exe_cmd_eval "$git_command"
-        cecho "🍺 The command executed successfully." 2
+        cecho "🍺 The command executed successfully." 10
     else
-        cecho "🍌 Command execution aborted." 3
+        cecho "🍌 Command execution aborted." 11
     fi
 }
 alias gitpushwithformat="git_push_with_format"

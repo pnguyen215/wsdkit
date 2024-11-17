@@ -30,63 +30,6 @@ uplink() {
     fi
 }
 
-# cecho function
-# Prints colored text to the terminal.
-#
-# Usage:
-#   cecho <text> <color code>
-#
-# Description:
-#   The 'cecho' function outputs text in the terminal with the specified color.
-#   Color codes are optional and default to blue if not specified.
-#
-# Dependencies:
-#   - The 'tput' command for terminal control.
-cecho() {
-    arg=$1
-    arg2=$2
-    if [[ -z $arg2 ]]; then
-        color=$(tput setaf 4)
-    else
-        while [ $2 -gt 0 ]; do
-            case $arg2 in
-            "1") #red
-                color=$(tput setaf 1)
-                break
-                ;;
-
-            "2") #green
-                color=$(tput setaf 2)
-                break
-                ;;
-
-            "3") #yellow
-                color=$(tput setaf 3)
-                break
-                ;;
-
-            "4") #blue
-                color=$(tput setaf 4)
-                break
-                ;;
-
-            "5") #magenta
-                color=$(tput setaf 5)
-                break
-                ;;
-
-            "6") #cyan
-                color=$(tput setaf 6)
-                break
-                ;;
-            esac
-        done
-    fi
-    bold=$(tput bold)
-    reset=$(tput sgr0)
-    echo $bold$color$arg$reset
-}
-
 # opent function
 # Opens the specified directory in a new Finder tab (Mac OS only).
 #

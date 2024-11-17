@@ -19,6 +19,185 @@ function add_suffix_if_needed() {
     echo "$path"
 }
 
+# cecho function
+# Prints text to the terminal with customizable colors using `tput`.
+#
+# Usage:
+#   cecho <message> [color_code]
+#
+# Parameters:
+#   - <message>: The text message to display.
+#   - [color_code]: (Optional) A number from 0 to 15 representing the color of the text.
+#       - 0: Black
+#       - 1: Red
+#       - 2: Green
+#       - 3: Yellow
+#       - 4: Blue (default)
+#       - 5: Magenta
+#       - 6: Cyan
+#       - 7: White
+#       - 8: Bright Black (Gray)
+#       - 9: Bright Red
+#       - 10: Bright Green
+#       - 11: Bright Yellow
+#       - 12: Bright Blue
+#       - 13: Bright Magenta
+#       - 14: Bright Cyan
+#       - 15: Bright White
+#
+# Description:
+#   The `cecho` function prints a message in bold and in a specific color, if a valid color code is provided.
+#   It uses `tput` to set the text color and attributes. If no color code is specified, the default is blue (color code 4).
+#
+# Options:
+#   None
+#
+# Example usage:
+#   cecho "Hello, World!"       # Prints "Hello, World!" in blue (default).
+#   cecho "Error occurred" 1    # Prints "Error occurred" in red.
+#   cecho "Success!" 10         # Prints "Success!" in bright green.
+#   cecho "Warning!" 11         # Prints "Warning!" in bright yellow.
+#
+# Notes:
+#   - The function resets the terminal color attributes after printing.
+#   - It uses `tput` for color manipulation, which requires terminal support for ANSI colors.
+cecho() {
+    local arg=$1
+    local arg2=$2
+
+    # Default to blue if no color is provided
+    if [[ -z $arg2 ]]; then
+        color=$(tput setaf 4) # Default: Blue
+    else
+        # Set color based on provided code
+        while [ $2 -ge 0 ]; do
+            case $arg2 in
+            "0") # Black
+                color=$(tput setaf 0)
+                break
+                ;;
+            "1") # Red
+                color=$(tput setaf 1)
+                break
+                ;;
+            "2") # Green
+                color=$(tput setaf 2)
+                break
+                ;;
+            "3") # Yellow
+                color=$(tput setaf 3)
+                break
+                ;;
+            "4") # Blue
+                color=$(tput setaf 4)
+                break
+                ;;
+            "5") # Magenta
+                color=$(tput setaf 5)
+                break
+                ;;
+            "6") # Cyan
+                color=$(tput setaf 6)
+                break
+                ;;
+            "7") # White
+                color=$(tput setaf 7)
+                break
+                ;;
+            "8") # Bright Black (Gray)
+                color=$(tput setaf 8)
+                break
+                ;;
+            "9") # Bright Red
+                color=$(tput setaf 9)
+                break
+                ;;
+            "10") # Bright Green
+                color=$(tput setaf 10)
+                break
+                ;;
+            "11") # Bright Yellow
+                color=$(tput setaf 11)
+                break
+                ;;
+            "12") # Bright Blue
+                color=$(tput setaf 12)
+                break
+                ;;
+            "13") # Bright Magenta
+                color=$(tput setaf 13)
+                break
+                ;;
+            "14") # Bright Cyan
+                color=$(tput setaf 14)
+                break
+                ;;
+            "15") # Bright White
+                color=$(tput setaf 15)
+                break
+                ;;
+            *)
+                echo "❌ Invalid color code! Using default blue."
+                color=$(tput setaf 4) # Default: Blue
+                break
+                ;;
+            esac
+        done
+    fi
+
+    bold=$(tput bold)
+    reset=$(tput sgr0)
+    echo "$bold$color$arg$reset"
+}
+
+# color_echo function
+# Prints text to the terminal with customizable colors using `tput` and ANSI escape sequences.
+#
+# Usage:
+#   color_echo <message> [color_code]
+#
+# Parameters:
+#   - <message>: The text message to display.
+#   - [color_code]: (Optional) A number from 0 to 255 representing the text color.
+#       - 0–15: Standard colors (Black, Red, Green, etc.)
+#       - 16–231: Extended 6x6x6 color cube
+#       - 232–255: Grayscale shades
+#
+# Description:
+#   The `color_echo` function prints a message in bold and a specific color, if a valid color code is provided.
+#   It uses ANSI escape sequences for 256-color support. If no color code is specified, it defaults to blue (code 4).
+#
+# Options:
+#   None
+#
+# Example usage:
+#   color_echo "Hello, World!"          # Prints in default blue (code 4).
+#   color_echo "Error occurred" 196     # Prints in bright red.
+#   color_echo "Task completed" 46      # Prints in vibrant green.
+#   color_echo "Shades of gray" 245     # Prints in a mid-gray shade.
+#
+# Notes:
+#   - Requires a terminal with 256-color support.
+#   - Use ANSI color codes for finer control over colors.
+color_echo() {
+    local message=$1
+    local color_code=${2:-4} # Default to blue (ANSI color code 4)
+
+    # Validate color code range (0 to 255)
+    if [[ $color_code -lt 0 || $color_code -gt 255 ]]; then
+        echo "❌ Invalid color code! Please provide a number between 0 and 255."
+        return 1
+    fi
+
+    # Construct ANSI color escape code
+    local color="\033[38;5;${color_code}m" # Foreground 256-color ANSI code
+    local bold="\033[1m"                   # Bold text attribute
+    local reset="\033[0m"                  # Reset all attributes
+
+    # Print the colored and bold message
+    echo -e "${bold}${color}${message}${reset}"
+}
+
 # wsd_exe_cmd function
 # Execute a command and print it for logging purposes.
 #
@@ -47,15 +226,44 @@ function add_suffix_if_needed() {
 function wsd_exe_cmd() {
     local command="$*"
     # Print the command
-    cecho "🐞 $command" 6
+    color_echo "🐞 $command" 46
     # Execute the command without using eval
     "$@"
 }
 
+# wsd_exe_cmd_eval function
+# Execute a command using eval and print it for logging purposes.
+#
+# Usage:
+#   wsd_exe_cmd_eval <command>
+#
+# Parameters:
+#   - <command>: The command to be executed (as a single string).
+#
+# Description:
+#   The 'wsd_exe_cmd_eval' function executes a command by passing it to the `eval` command.
+#   This allows the execution of complex commands with arguments, pipes, or redirections
+#   that are difficult to handle with standard execution.
+#   It logs the command before execution to provide visibility into what is being run.
+#
+# Options:
+#   None
+#
+# Example usage:
+#   wsd_exe_cmd_eval "ls -l | grep txt"
+#
+# Instructions:
+#   1. Use 'wsd_exe_cmd_eval' when executing commands that require interpretation by the shell.
+#   2. It is particularly useful for running dynamically constructed commands or those with special characters.
+#
+# Notes:
+#   - The use of `eval` can be risky if the input command contains untrusted data, as it can lead to
+#     command injection vulnerabilities. Ensure the command is sanitized before using this function.
+#   - Prefer the 'wsd_exe_cmd' function for simpler commands without special characters or pipes.
 function wsd_exe_cmd_eval() {
     local command="$*"
     # Print the command
-    cecho "🐞 $command" 6
+    color_echo "🐞 $command" 46
     # Execute the command without using eval
     eval "$command"
 }
