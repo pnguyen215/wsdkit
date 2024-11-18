@@ -1070,7 +1070,7 @@ function git_push_with_format() {
     git_command=$(echo "$selected_command" | cut -d'#' -f1 | xargs)
 
     # Replace placeholder <branch> with the actual branch name if present
-    git_command=$(echo "$git_command" | sed "s/<branch>/$branch_name/g")
+    # git_command=$(echo "$git_command" | sed "s/<branch>/$branch_name/g")
 
     # Confirm the selected command
     echo "🚀 Selected Git push command:"
