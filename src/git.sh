@@ -1054,6 +1054,7 @@ function git_push_with_format() {
         "git push -o ci.skip origin $branch_name # Push with CI skip option"
         "git push --prune origin               # Prune deleted branches from the remote"
         "git push --signed origin $branch_name # Push with GPG signing for verification"
+        "git push                              # Push branch to remote"
     )
 
     # Use `fzf` to interactively select a Git push command
