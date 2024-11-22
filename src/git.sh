@@ -962,7 +962,7 @@ function git_commit_with_format() {
         echo -n "Enter a concise and clear commit desc: "
         read commit_description
         if [ -z "$commit_description" ]; then
-            echo "❌ Invalid commit desc. Please try again."
+            color_echo "🟡 Invalid commit desc. Please try again." 196
         fi
     done
 
@@ -972,7 +972,7 @@ function git_commit_with_format() {
         echo -n "Enter issue number (e.g. #1): "
         read issue_number
         if [ -z "$issue_number" ]; then
-            echo "❌ Invalid issue number. Please try again."
+            color_echo "🟡 Invalid issue number. Please try again." 196
         fi
     done
 
@@ -991,13 +991,13 @@ function git_commit_with_format() {
     echo -e "$commit_message"
 
     # Ask for confirmation
-    echo "❓ Wanna to commit this message? (y/n): "
+    color_echo "❓ Wanna to commit this message? (y/n): " 90
     read confirm
 
     #   The user input is checked to be a valid confirmation response (y/yes/Yes/YES or n/no/No/NO).
     #   If an invalid response is entered, the prompt will be repeated until a valid response is received.
     while [[ ! "$confirm" =~ ^(y|yes|Yes|YES|n|no|No|NO)$ ]]; do
-        echo "❌ Invalid input. Please enter a valid response(y/n): "
+        color_echo "Invalid input. Please enter a valid response(y/n): " 11
         read confirm
     done
 
@@ -1013,9 +1013,9 @@ function git_commit_with_format() {
         send_telegram_git_activity "🚀 *AI Workflow Administrator* \n - *username*: *$git_username* \n - *repository*: [$repository_name]($server_remote_url)\n - *branch*: \`$current_branch\` \n - *hash*: \`$commit_hash\` \n - *message*: \`$commit_message\` \n\n ⏰ *timestamp*: \`$timestamp\`"
 
         git_push_with_format "$current_branch"
-        cecho "🍺 The commit pushed successfully to origin." 10
+        color_echo "🍺 The commit pushed successfully to origin." 10
     else
-        cecho "🍌 Commit aborted." 11
+        color_echo "🍌 Commit aborted." 11
     fi
 }
 alias gitcommitwithformat="git_commit_with_format"
@@ -1034,7 +1034,7 @@ alias gcf="git_commit_with_format"
 #   Once the command is selected, it replaces `wsd_exe_cmd git push -f` with the chosen command and executes it.
 function git_push_with_format() {
     if [[ -z "$1" ]]; then
-        echo "❌ Usage: git_push_with_format <branch_name>"
+        color_echo "Usage: git_push_with_format <branch_name>" 11
         return 1
     fi
 
@@ -1063,7 +1063,7 @@ function git_push_with_format() {
 
     # Check if a command was selected
     if [[ -z "$selected_command" ]]; then
-        echo "❌ No command selected. Aborting."
+        color_echo "❌ No command selected. Aborting." 196
         return 1
     fi
 
@@ -1078,21 +1078,21 @@ function git_push_with_format() {
     echo "$git_command"
 
     # Ask for confirmation
-    echo "❓ Do you want to execute this command? (y/n): "
+    color_echo "❓ Do you want to execute this command? (y/n): " 90
     read confirm
 
     # Validate user input for confirmation
     while [[ ! "$confirm" =~ ^(y|yes|Yes|YES|n|no|No|NO)$ ]]; do
-        echo "❌ Invalid input. Please enter a valid response (y/n): "
+        color_echo "Invalid input. Please enter a valid response (y/n): " 11
         read confirm
     done
 
     # Execute the command if confirmed
     if [[ "$confirm" =~ ^(y|yes|Yes|YES)$ ]]; then
         wsd_exe_cmd_eval "$git_command"
-        cecho "🍺 The command executed successfully." 10
+        color_echo "🍺 The command executed successfully." 10
     else
-        cecho "🍌 Command execution aborted." 11
+        color_echo "🍌 Command execution aborted." 11
     fi
 }
 alias gitpushwithformat="git_push_with_format"
