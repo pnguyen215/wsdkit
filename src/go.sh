@@ -122,10 +122,14 @@ function go_gen_app() {
     wsd_exe_cmd go mod init $app_name
     create_file_if_not_exists ".gitignore"
     allow_full_perm ".gitignore"
+    create_file_if_not_exists "Makefile"
+    allow_full_perm "Makefile"
     create_directory_if_not_exists ".github/workflows"
     allow_full_perm ".github"
     create_directory_if_not_exists "sh"
     allow_full_perm "sh"
+    create_directory_if_not_exists "docs"
+    allow_full_perm "docs"
     gitignore_go_gen
     github_add_go_ci
     echo "Go application $app_name created with go mod tidy!"

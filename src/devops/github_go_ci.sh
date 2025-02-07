@@ -27,5 +27,7 @@ function github_add_go_ci() {
     download_file ".github/workflows/ci_notify.yml" "https://raw.githubusercontent.com/pnguyen215/wsdkit.keys/master/devops/github_workflow/ci_notify.yml"
     download_file "sh/git_changelog.sh" "https://raw.githubusercontent.com/pnguyen215/wsdkit.keys/master/sh/git_changelog.sh"
     download_file "sh/go_deps.sh" "https://raw.githubusercontent.com/pnguyen215/wsdkit.keys/master/sh/go/go_deps.sh"
+    download_file "docs/RELEASE.md" "https://raw.githubusercontent.com/pnguyen215/wsdkit.keys/master/docs/RELEASE.md"
+    download_file "Makefile" "https://raw.githubusercontent.com/pnguyen215/wsdkit.keys/master/cmd/go/Makefile"
 }
 alias githubaddgoci="github_add_go_ci"
