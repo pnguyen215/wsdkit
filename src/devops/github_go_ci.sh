@@ -23,7 +23,9 @@
 #   - Ensure that 'curl' is installed for proper functionality.
 #   - The URLs point to specific files in the 'wsdkit.keys' repository on GitHub.
 function github_add_go_ci() {
-    download_file ".github/workflows/ci.yml" "https://raw.githubusercontent.com/pnguyen215/wsdkit.keys/master/devops/github_workflow/go_ci.yml"
+    download_file ".github/workflows/ci.yml" "https://raw.githubusercontent.com/pnguyen215/wsdkit.keys/master/devops/github_workflow/go/go_ci.yml"
+    download_file ".github/workflows/ci_notify.yml" "https://raw.githubusercontent.com/pnguyen215/wsdkit.keys/master/devops/github_workflow/ci_notify.yml"
     download_file "git_changelog.sh" "https://raw.githubusercontent.com/pnguyen215/wsdkit.keys/master/sh/git_changelog.sh"
+    download_file "go_deps.sh" "https://raw.githubusercontent.com/pnguyen215/wsdkit.keys/master/sh/go/go_deps.sh"
 }
 alias githubaddgoci="github_add_go_ci"

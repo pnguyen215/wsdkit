@@ -418,6 +418,48 @@ function create_file_if_not_exists() {
 }
 alias createfileifnotexists="create_file_if_not_exists"
 
+# create_directory_if_not_exists function
+# Utility function to create a directory (including nested directories) if it doesn't exist.
+#
+# Usage:
+#   create_directory_if_not_exists <directory_path>
+#
+# Parameters:
+#   - <directory_path>: The directory path to be created.
+#
+# Description:
+#   The 'create_directory_if_not_exists' function checks if the specified directory exists.
+#   If the directory does not exist, it creates the directory (and any necessary parent directories)
+#   using sudo to ensure proper privileges.
+#
+# Example usage:
+#   create_directory_if_not_exists /path/to/nested/directory
+function create_directory_if_not_exists() {
+    if [ $# -lt 1 ]; then
+        echo "Usage: create_directory_if_not_exists <directory_path>"
+        return 1
+    fi
+
+    local dir="$1"
+
+    # Check if the directory exists
+    if [ ! -d "$dir" ]; then
+        echo "📁 Directory '$dir' does not exist. Creating the directory (including nested directories) with admin privileges..."
+        # Use sudo to create the directory and any required parent directories
+        sudo mkdir -p "$dir"
+        if [ $? -eq 0 ]; then
+            echo "✅ Directory created successfully."
+            return 0
+        else
+            echo "❌ Error: Failed to create the directory."
+            return 1
+        fi
+    else
+        echo "✅ Directory '$dir' already exists."
+    fi
+}
+alias createdir="create_directory_if_not_exists"
+
 # check_port function
 # Utility function to check if a specific port is in use (listening).
 #
