@@ -242,10 +242,33 @@ color_echo() {
 #
 # Notes:
 #   - This function is useful for logging commands before they are executed.
-function wsd_exe_cmd() {
+wsd_exe_cmd() {
     local command="$*"
-    # Print the command
-    color_echo "🐞 $command" 46
+
+    # Use detect_kernel to determine OS-specific behavior
+    detect_kernel
+    local kernel_type=$?
+
+    # Set appropriate color based on OS
+    local color_code=36 # Default cyan
+    if [ $kernel_type -eq 1 ]; then
+        # Linux - use blue
+        color_code=34
+    elif [ $kernel_type -eq 2 ]; then
+        # macOS - use green
+        color_code=32
+    fi
+
+    # Print the command with OS-appropriate emoji
+    local emoji="🔍"
+    if [ $kernel_type -eq 1 ]; then
+        emoji="🐧" # Penguin for Linux
+    elif [ $kernel_type -eq 2 ]; then
+        emoji="🍎" # Apple for macOS
+    fi
+
+    color_echo "$emoji $command" $color_code
+
     # Execute the command without using eval
     "$@"
 }
@@ -285,6 +308,95 @@ function wsd_exe_cmd_eval() {
     color_echo "🐞 $command" 46
     # Execute the command without using eval
     eval "$command"
+}
+
+# is_command_available function
+# Check if a command is available in the system's PATH.
+#
+# Usage:
+#   is_command_available <command>
+#
+# Parameters:
+#   - <command>: The command to check
+#
+# Returns:
+#   0 if the command is available, 1 otherwise
+#
+# Example usage:
+#   if is_command_available git; then
+#     echo "Git is installed"
+#   else
+#     echo "Git is not installed"
+#   fi
+function is_command_available() {
+    command -v "$1" &>/dev/null
+    return $?
+}
+
+# install_package function
+# Cross-platform package installation function that works on both macOS and Linux.
+#
+# Usage:
+#   install_package <package_name>
+#
+# Parameters:
+#   - <package_name>: The name of the package to install
+#
+# Example usage:
+#   install_package git
+function install_package() {
+    local package="$1"
+
+    detect_kernel
+    local kernel=$?
+
+    if [ "$kernel" -eq 1 ]; then # Linux
+        if is_command_available apt-get; then
+            wsd_exe_cmd_eval "sudo apt-get update && sudo apt-get install -y $package"
+        elif is_command_available yum; then
+            wsd_exe_cmd_eval "sudo yum install -y $package"
+        elif is_command_available dnf; then
+            wsd_exe_cmd_eval "sudo dnf install -y $package"
+        else
+            color_echo "Error: Unsupported package manager on Linux." 31
+            return 1
+        fi
+    elif [ "$kernel" -eq 2 ]; then # macOS
+        if ! is_command_available brew; then
+            color_echo "Homebrew is not installed. Installing Homebrew..." 33
+            wsd_exe_cmd_eval '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
+        fi
+        wsd_exe_cmd_eval "brew install $package"
+    else
+        color_echo "Error: Unsupported operating system." 31
+        return 1
+    fi
+}
+
+# get_temp_dir function
+# Returns the appropriate temporary directory based on the detected kernel.
+#
+# Usage:
+#   get_temp_dir
+#
+# Returns:
+#   The path to the temporary directory for the current operating system.
+#
+# Example usage:
+#   TEMP_DIR=$(get_temp_dir)
+#   echo "Using temporary directory: $TEMP_DIR"
+function get_temp_dir() {
+    detect_kernel
+    local kernel=$?
+
+    if [ "$kernel" -eq 1 ]; then # Linux
+        echo "/tmp"
+    elif [ "$kernel" -eq 2 ]; then # macOS
+        echo "/private/tmp"
+    else
+        # Fallback to a common temporary directory
+        echo "/tmp"
+    fi
 }
 
 # wsd_exe_cmd_hook function
