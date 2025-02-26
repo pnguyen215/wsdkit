@@ -1,13 +1,64 @@
+# function install_homebrew_if_needed() {
+#     if ! is_homebrew_installed; then
+#         echo "🚀 Installing Homebrew..."
+#         install_homebrew
+#         echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >>"/Users/$(whoami)/.zprofile"
+#         eval "$(/opt/homebrew/bin/brew shellenv)"
+#         source "/Users/$(whoami)/.zprofile"
+#         echo "🍺 brew installed successfully! $(which brew)"
+#     else
+#         # echo "🍺 brew already installed successfully! $(which brew)"
+#     fi
+# }
 function install_homebrew_if_needed() {
     if ! is_homebrew_installed; then
         echo "🚀 Installing Homebrew..."
         install_homebrew
-        echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >>"/Users/$(whoami)/.zprofile"
-        eval "$(/opt/homebrew/bin/brew shellenv)"
-        source "/Users/$(whoami)/.zprofile"
-        echo "🍺 brew installed successfully! $(which brew)"
+
+        detect_kernel
+        local kernel=$?
+        local shell_profile
+        local brew_path
+
+        case $kernel in
+        1) # Linux
+            # Check possible brew paths
+            if [ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]; then
+                brew_path="/home/linuxbrew/.linuxbrew/bin/brew"
+            elif [ -f "$HOME/.linuxbrew/bin/brew" ]; then
+                brew_path="$HOME/.linuxbrew/bin/brew"
+            else
+                echo "Error: Could not find Homebrew installation on Linux."
+                return 1
+            fi
+            shell_profile="$HOME/.bashrc"
+            ;;
+        2) # macOS
+            # Check for Apple Silicon first
+            if [ -f "/opt/homebrew/bin/brew" ]; then
+                brew_path="/opt/homebrew/bin/brew"
+            elif [ -f "/usr/local/bin/brew" ]; then
+                brew_path="/usr/local/bin/brew"
+            else
+                echo "Error: Could not find Homebrew installation on macOS."
+                return 1
+            fi
+            shell_profile="$HOME/.zprofile"
+            ;;
+        *)
+            echo "Unsupported OS for Homebrew installation."
+            return 1
+            ;;
+        esac
+
+        # Append brew to shell profile and update current session
+        echo "eval \"\$($brew_path shellenv)\"" >>"$shell_profile"
+        eval "$($brew_path shellenv)"
+        source "$shell_profile"
+
+        echo "🍺 brew installed successfully! $(command -v brew)"
     else
-        # echo "🍺 brew already installed successfully! $(which brew)"
+        : # Do nothing if already installed
     fi
 }
 

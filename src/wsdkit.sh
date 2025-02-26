@@ -1,19 +1,21 @@
 #!/bin/bash
 # Define the global variable
 function set_global_variables() {
+    # Use $HOME instead of hardcoded /Users paths
+    local user_home="$HOME"
     # Usage configs
-    filename_conf="/Users/$(whoami)/wsdkit/assets/usage.json"
+    filename_conf="$user_home/wsdkit/assets/usage.json"
 
     # Key configs
-    filename_secret_conf="/Users/$(whoami)/wsdkit.conf/assets/secrets.txt"
-    filename_secret_bak_conf="/Users/$(whoami)/wsdkit.conf/assets/secrets.txt.bak"
+    filename_secret_conf="$user_home/wsdkit.conf/assets/secrets.txt"
+    filename_secret_bak_conf="$user_home/wsdkit.conf/assets/secrets.txt.bak"
 
-    # Env Configs
-    filename_ssh_kit_conf="/Users/$(whoami)/.ssh"
-    filename_asset_base_conf="/Users/$(whoami)/wsdkit.conf/assets"
-    filename_custom_base_conf="/Users/$(whoami)/wsdkit.conf/custom"
-    filename_ssh_forward_base_conf="/Users/$(whoami)/wsdkit.conf/sfc"
-    filename_telegram_base_conf="/Users/$(whoami)/wsdkit.conf/telegram"
+    # Env Configs (keep .ssh path as it's standard on both systems)
+    filename_ssh_kit_conf="$user_home/.ssh"
+    filename_asset_base_conf="$user_home/wsdkit.conf/assets"
+    filename_custom_base_conf="$user_home/wsdkit.conf/custom"
+    filename_ssh_forward_base_conf="$user_home/wsdkit.conf/sfc"
+    filename_telegram_base_conf="$user_home/wsdkit.conf/telegram"
 
     # Github repositories
     github_golang_template_repository="https://github.com/sivaosorg/gocell/archive/master.zip"
@@ -21,12 +23,8 @@ function set_global_variables() {
     github_java_gradle_sdk_template_repository="https://github.com/sivaosorg/wizards2s4j/archive/master.zip"
     github_java_gradle_suit_template_repository="https://github.com/sivaosorg/suit4j/archive/master.zip"
 
-    # Devops
+    # DevOps
     github_workflow_conf=".github/workflows"
-
-    # local -g vars
-    # filename_secret_conf="./assets/secrets.txt"
-    # filename_conf="./assets/usage.json"
 }
 
 # Set the global variables
@@ -63,98 +61,98 @@ function wsdkit() {
     #### Requirements ####
     ######################
     install_homebrew_if_needed
-    install_fzf_if_needed
-    install_jq_if_needed
-    local json_filename_conf=$filename_conf
+    # install_fzf_if_needed
+    # install_jq_if_needed
+    # local json_filename_conf=$filename_conf
 
-    if [ ! -f "$json_filename_conf" ]; then
-        echo "❌ Error JSON file 'usage.json' not found: $filename_conf"
-        return 1
-    fi
+    # if [ ! -f "$json_filename_conf" ]; then
+    #     echo "❌ Error JSON file 'usage.json' not found: $filename_conf"
+    #     return 1
+    # fi
 
-    while true; do
-        local selected_title
-        local selected_key
-        local selected_enabled
+    # while true; do
+    #     local selected_title
+    #     local selected_key
+    #     local selected_enabled
 
-        selected_title=$(jq -r '. | map(select(.enabled == true)) | .[].title' "$json_filename_conf" | fzf --prompt="👉 Select (Ctrl+C to exit): " --select-1)
-        if [ -n "$selected_title" ]; then
-            selected_key=$(jq -r --arg title "$selected_title" '.[] | select(.title == $title) | .key' "$json_filename_conf")
-            selected_enabled=$(jq -r --arg title "$selected_title" '.[] | select(.title == $title) | .enabled' "$json_filename_conf")
+    #     selected_title=$(jq -r '. | map(select(.enabled == true)) | .[].title' "$json_filename_conf" | fzf --prompt="👉 Select (Ctrl+C to exit): " --select-1)
+    #     if [ -n "$selected_title" ]; then
+    #         selected_key=$(jq -r --arg title "$selected_title" '.[] | select(.title == $title) | .key' "$json_filename_conf")
+    #         selected_enabled=$(jq -r --arg title "$selected_title" '.[] | select(.title == $title) | .enabled' "$json_filename_conf")
 
-            if [ "$selected_enabled" = "true" ]; then
-                echo "✅ $selected_title"
+    #         if [ "$selected_enabled" = "true" ]; then
+    #             echo "✅ $selected_title"
 
-                case "$selected_key" in
-                "wsd_install_brew")
-                    install_homebrew_if_needed
-                    ;;
-                "wsd_install_git")
-                    install_git_if_needed
-                    ;;
-                "wsd_install_zsh")
-                    install_zsh_if_needed
-                    ;;
-                "wsd_install_git_credentials")
-                    install_git_credentials_if_needed
-                    ;;
-                "wsd_uninstall_brew")
-                    wsd_exe_cmd_hook uninstall_homebrew
-                    ;;
-                "wsd_list_git_configs")
-                    git_config_global_setting
-                    ;;
-                "wsd_add_secret")
-                    add_secret
-                    ;;
-                "wsd_get_secret")
-                    get_secret_noop
-                    ;;
-                "wsd_remove_secret")
-                    delete_secret_noop
-                    ;;
-                "wsd_get_all_secret")
-                    get_all_secret
-                    ;;
-                "wsd_install_jdk8")
-                    install_java8_if_needed
-                    ;;
-                "wsd_uninstall_jdk8")
-                    uninstall_java8_if_needed
-                    ;;
-                "wsd_bak_secret")
-                    backup_key_secrets_if_needed
-                    ;;
-                "wsd_uninstall_zsh")
-                    uninstall_zsh_if_needed
-                    ;;
-                "wsd_install_oh_my_zsh")
-                    install_oh_my_zsh_if_needed
-                    ;;
-                "wsd_uninstall_oh_my_zsh")
-                    uninstall_oh_my_zsh_if_needed
-                    ;;
-                "wsd_install_zsh_autosuggestions")
-                    manual_zsh_autosuggestions_if_needed
-                    ;;
-                "wsd_install_zsh_syntax_highlighting")
-                    manual_zsh_syntax_highlighting_if_needed
-                    ;;
-                "wsd_customize_theme_oh_my_zsh")
-                    manual_customize_theme_oh_my_zsh_if_needed
-                    ;;
-                *)
-                    echo "❓ Unsupported function."
-                    ;;
-                esac
-            else
-                echo "❌ The selected option is not enabled. Please choose another option."
-            fi
-        else
-            echo "❌ Unsupported function. Exiting..."
-            break
-        fi
-    done
+    #             case "$selected_key" in
+    #             "wsd_install_brew")
+    #                 install_homebrew_if_needed
+    #                 ;;
+    #             "wsd_install_git")
+    #                 install_git_if_needed
+    #                 ;;
+    #             "wsd_install_zsh")
+    #                 install_zsh_if_needed
+    #                 ;;
+    #             "wsd_install_git_credentials")
+    #                 install_git_credentials_if_needed
+    #                 ;;
+    #             "wsd_uninstall_brew")
+    #                 wsd_exe_cmd_hook uninstall_homebrew
+    #                 ;;
+    #             "wsd_list_git_configs")
+    #                 git_config_global_setting
+    #                 ;;
+    #             "wsd_add_secret")
+    #                 add_secret
+    #                 ;;
+    #             "wsd_get_secret")
+    #                 get_secret_noop
+    #                 ;;
+    #             "wsd_remove_secret")
+    #                 delete_secret_noop
+    #                 ;;
+    #             "wsd_get_all_secret")
+    #                 get_all_secret
+    #                 ;;
+    #             "wsd_install_jdk8")
+    #                 install_java8_if_needed
+    #                 ;;
+    #             "wsd_uninstall_jdk8")
+    #                 uninstall_java8_if_needed
+    #                 ;;
+    #             "wsd_bak_secret")
+    #                 backup_key_secrets_if_needed
+    #                 ;;
+    #             "wsd_uninstall_zsh")
+    #                 uninstall_zsh_if_needed
+    #                 ;;
+    #             "wsd_install_oh_my_zsh")
+    #                 install_oh_my_zsh_if_needed
+    #                 ;;
+    #             "wsd_uninstall_oh_my_zsh")
+    #                 uninstall_oh_my_zsh_if_needed
+    #                 ;;
+    #             "wsd_install_zsh_autosuggestions")
+    #                 manual_zsh_autosuggestions_if_needed
+    #                 ;;
+    #             "wsd_install_zsh_syntax_highlighting")
+    #                 manual_zsh_syntax_highlighting_if_needed
+    #                 ;;
+    #             "wsd_customize_theme_oh_my_zsh")
+    #                 manual_customize_theme_oh_my_zsh_if_needed
+    #                 ;;
+    #             *)
+    #                 echo "❓ Unsupported function."
+    #                 ;;
+    #             esac
+    #         else
+    #             echo "❌ The selected option is not enabled. Please choose another option."
+    #         fi
+    #     else
+    #         echo "❌ Unsupported function. Exiting..."
+    #         break
+    #     fi
+    # done
 }
 
 # wsdkit_upgrade function

@@ -3,7 +3,8 @@
 
 # Check if Homebrew is installed
 function is_homebrew_installed() {
-  command -v brew >/dev/null 2>&1
+  # command -v brew >/dev/null 2>&1
+  is_command_available brew
 }
 
 # Check if a package is installed with Homebrew
@@ -19,7 +20,8 @@ function is_homebrew_pkg_installed() {
 
 # Install Homebrew
 function install_homebrew() {
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  # wsd_exe_cmd_eval /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  wsd_exe_cmd_eval '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
 }
 
 # Install a package with Homebrew
@@ -37,7 +39,7 @@ function uninstall_homebrew() {
   if is_homebrew_installed; then
     echo "🚀 Uninstalling Homebrew..."
     # Remove Homebrew installation
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)"
+    wsd_exe_cmd_eval '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)"'
 
     # Remove Homebrew-related lines from the shell profile
     sed -i.bak '/# Homebrew/d' "$HOME/.zprofile"
