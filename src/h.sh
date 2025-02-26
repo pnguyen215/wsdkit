@@ -185,13 +185,36 @@ color_echo() {
         return 1
     fi
 
-    # Construct ANSI color escape code
-    local color="\033[38;5;${color_code}m" # Foreground 256-color ANSI code
-    local bold="\033[1m"                   # Bold text attribute
-    local reset="\033[0m"                  # Reset all attributes
+    # Check terminal capabilities
+    detect_kernel
+    local kernel=$?
+    local has_color_support=true
 
-    # Print the colored and bold message
-    echo -e "${bold}${color}${message}${reset}"
+    # Check if terminal supports colors
+    if ! command -v tput &>/dev/null || [[ $(tput colors 2>/dev/null || echo 0) -lt 8 ]]; then
+        has_color_support=false
+    fi
+
+    if $has_color_support; then
+        # Use 256-color support if available
+        if [[ $(tput colors 2>/dev/null || echo 0) -ge 256 ]]; then
+            local color="\033[38;5;${color_code}m" # Foreground 256-color ANSI code
+            local bold="\033[1m"                   # Bold text attribute
+            local reset="\033[0m"                  # Reset all attributes
+            echo -e "${bold}${color}${message}${reset}"
+        else
+            # Fall back to basic 8 colors for limited terminals
+            # Map 256-color code to basic color (simplified mapping)
+            local basic_color=$((color_code % 8))
+            local bold="\033[1m"
+            local color="\033[3${basic_color}m"
+            local reset="\033[0m"
+            echo -e "${bold}${color}${message}${reset}"
+        fi
+    else
+        # No color support detected, print plain text
+        echo "${message}"
+    fi
 }
 
 # wsd_exe_cmd function
