@@ -521,10 +521,12 @@ function create_file_if_not_exists() {
     if [ ! -d "$directory" ]; then
         echo "📁 Directory does not exist. Creating $directory with admin privileges..."
         # Use sudo to create the directory with elevated privileges
-        sudo mkdir -p "$directory"
+        wsd_exe_cmd sudo mkdir -p "$directory"
         # Check if the directory was successfully created
         if [ $? -eq 0 ]; then
             echo "✅ Directory created successfully."
+            # Optional: Set directory permissions to 700
+            wsd_exe_cmd sudo chmod 700 "$directory"
         else
             echo "❌ Error: Failed to create the directory."
             return 1
@@ -535,10 +537,12 @@ function create_file_if_not_exists() {
     if [ ! -e "$filename" ]; then
         echo "📄 File does not exist. Creating $filename with admin privileges..."
         # Use sudo to create the file with elevated privileges
-        sudo touch "$filename"
+        wsd_exe_cmd sudo touch "$filename"
         # Check if the file was successfully created
         if [ $? -eq 0 ]; then
             echo "✅ File created successfully."
+            # Set file permissions to 600
+            wsd_exe_cmd sudo chmod 600 "$filename"
             return 0
         else
             echo "❌ Error: Failed to create the file."
