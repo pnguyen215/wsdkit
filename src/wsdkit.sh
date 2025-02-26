@@ -1,4 +1,8 @@
 #!/bin/bash
+
+# Get the absolute path of the directory containing this script
+wsdkit_bash_source="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 # Define the global variable
 function set_global_variables() {
     # Use $HOME instead of hardcoded /Users paths
@@ -31,16 +35,17 @@ function set_global_variables() {
 set_global_variables
 
 # Firstly, load all function helpers
-source "$(dirname "$0")/h.sh"
+# source "$(dirname "$0")/h.sh"
+source "$wsdkit_bash_source/h.sh"
 
-# Get the absolute path of wsdkit
-wsdkit_bash_source="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Now add_suffix_if_needed (defined in h.sh) should be available
 wsdkit_suffix="wsdkit"
 wsdkit_wrk=$(add_suffix_if_needed "$wsdkit_bash_source" "$wsdkit_suffix")
 echo "🍺 DEBUG: wsdkit working on $wsdkit_wrk"
 
-# Reload functions
-source "$(dirname "$0")/deps.sh"
+# Reload other functions
+source "$wsdkit_bash_source/deps.sh"
+# source "$(dirname "$0")/deps.sh"
 
 # wsdkit function
 # Main function for managing and executing wsdkit commands.
