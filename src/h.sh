@@ -19,6 +19,52 @@ function add_suffix_if_needed() {
     echo "$path"
 }
 
+# detect_kernel function
+# This function determines the current operating system kernel by using the uname command.
+#
+# Return Values:
+#   1 - if the kernel is Linux
+#   2 - if the kernel is macOS (Darwin)
+#   3 - if the kernel is Windows-like (e.g., CYGWIN, MINGW, MSYS)
+#   0 - if the kernel is not recognized
+#
+# Example usage:
+# detect_kernel
+# result=$?
+# case $result in
+#   1)
+#     echo "Kernel is Linux."
+#     ;;
+#   2)
+#     echo "Kernel is macOS."
+#     ;;
+#   3)
+#     echo "Kernel is Windows."
+#     ;;
+#   *)
+#     echo "Kernel not recognized."
+#     ;;
+# esac
+detect_kernel() {
+    local os_name
+    os_name=$(uname)
+
+    case "$os_name" in
+    Linux)
+        return 1
+        ;;
+    Darwin)
+        return 2
+        ;;
+    CYGWIN* | MINGW* | MSYS*)
+        return 3
+        ;;
+    *)
+        return 0
+        ;;
+    esac
+}
+
 # cecho function
 # Prints text to the terminal with customizable colors using `tput`.
 #
@@ -62,92 +108,42 @@ function add_suffix_if_needed() {
 #   - The function resets the terminal color attributes after printing.
 #   - It uses `tput` for color manipulation, which requires terminal support for ANSI colors.
 cecho() {
-    local arg=$1
-    local arg2=$2
+    local message="$1"
+    local color_code="$2"
+    local color=""
+    local bold=""
+    local reset=""
 
-    # Default to blue if no color is provided
-    if [[ -z $arg2 ]]; then
-        color=$(tput setaf 4) # Default: Blue
-    else
-        # Set color based on provided code
-        while [ $2 -ge 0 ]; do
-            case $arg2 in
-            "0") # Black
-                color=$(tput setaf 0)
-                break
-                ;;
-            "1") # Red
-                color=$(tput setaf 1)
-                break
-                ;;
-            "2") # Green
-                color=$(tput setaf 2)
-                break
-                ;;
-            "3") # Yellow
-                color=$(tput setaf 3)
-                break
-                ;;
-            "4") # Blue
-                color=$(tput setaf 4)
-                break
-                ;;
-            "5") # Magenta
-                color=$(tput setaf 5)
-                break
-                ;;
-            "6") # Cyan
-                color=$(tput setaf 6)
-                break
-                ;;
-            "7") # White
-                color=$(tput setaf 7)
-                break
-                ;;
-            "8") # Bright Black (Gray)
-                color=$(tput setaf 8)
-                break
-                ;;
-            "9") # Bright Red
-                color=$(tput setaf 9)
-                break
-                ;;
-            "10") # Bright Green
-                color=$(tput setaf 10)
-                break
-                ;;
-            "11") # Bright Yellow
-                color=$(tput setaf 11)
-                break
-                ;;
-            "12") # Bright Blue
-                color=$(tput setaf 12)
-                break
-                ;;
-            "13") # Bright Magenta
-                color=$(tput setaf 13)
-                break
-                ;;
-            "14") # Bright Cyan
-                color=$(tput setaf 14)
-                break
-                ;;
-            "15") # Bright White
-                color=$(tput setaf 15)
-                break
-                ;;
-            *)
-                echo "❌ Invalid color code! Using default blue."
-                color=$(tput setaf 4) # Default: Blue
-                break
-                ;;
-            esac
-        done
+    # Set default color code to 4 (blue) if not provided
+    [[ -z "$color_code" ]] && color_code=4
+
+    # Validate color code is numeric
+    if ! [[ "$color_code" =~ ^[0-9]+$ ]]; then
+        echo "❌ Invalid color code! Using default blue."
+        color_code=4
     fi
 
-    bold=$(tput bold)
-    reset=$(tput sgr0)
-    echo "$bold$color$arg$reset"
+    # Check if the terminal supports colors
+    if [[ -t 1 ]]; then
+        bold=$(tput bold 2>/dev/null || echo "")
+        reset=$(tput sgr0 2>/dev/null || echo "")
+
+        # Check if the terminal supports the requested color
+        detect_kernel
+        kernel_type=$?
+
+        # Some Linux terminals might not support bright colors (8-15)
+        if [[ $kernel_type -eq 1 ]] && [[ $color_code -gt 7 ]]; then
+            # Map bright colors to their regular counterparts on Linux if needed
+            # Colors: bright black(8)->black(0), bright red(9)->red(1), etc.
+            tput setaf $color_code >/dev/null 2>&1 || color_code=$((color_code - 8))
+        fi
+
+        color=$(tput setaf $color_code 2>/dev/null || echo "")
+    fi
+
+    # Print the message with styling
+    echo -e "${bold}${color}${message}${reset}"
 }
 
 # color_echo function
